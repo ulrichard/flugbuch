@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Flugbuch2_unittests" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Flugbuch2_unittests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+				</Compiler>
+				<Linker>
+					<Add library="boost_unit_test_framework-mt-d" />
+					<Add library="boost_serialization-mt-d" />
+					<Add library="boost_date_time-mt-d" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Flugbuch2_unittests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="boost_unit_test_framework-mt" />
+					<Add library="boost_serialization-mt" />
+					<Add library="boost_date_time-mt" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../../src/core/CoreStructures.cpp" />
+		<Unit filename="../../../src/core/CoreStructures.h" />
+		<Unit filename="../../../src/core/FlightDatabase.cpp" />
+		<Unit filename="../../../src/core/FlightDatabase.h" />
+		<Unit filename="../../../src/core/FormatStr.h" />
+		<Unit filename="../../../src/core/MainExternalIncludes.h" />
+		<Unit filename="../../../src/inout/inout.h" />
+		<Unit filename="../../../src/inout/inout_mdb.cpp" />
+		<Unit filename="../../../src/inout/inout_mdb.h" />
+		<Unit filename="../../../src/inout/inout_xml.cpp" />
+		<Unit filename="../../../src/inout/inout_xml.h" />
+		<Unit filename="../../../src/test/FlugbuchMain.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion>
+				<search_path add="../../../src/core" />
+				<search_path add="../../../src/inout" />
+			</code_completion>
+			<lib_finder disable_auto="1">
+				<lib name="boost_serialization-mt-d" />
+				<lib name="boost_date_time-mt-d" />
+				<lib name="boost_unit_test_framework-mt-d" />
+			</lib_finder>
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

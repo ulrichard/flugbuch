@@ -1,0 +1,85 @@
+
+table.tableFlights
+{
+  width: 100%;
+  border: 2px solid black;
+  padding: 3px 2px 3px 2px;
+}
+
+tr.title
+{
+	background-color: #e5e5f8;
+}
+tr.even
+{
+	background-color: #e5e5f8;
+}
+tr.odd
+{
+	background-color: #ffffff;
+}
+
+span.tableHeader
+{
+  margin:3px;
+  color: blue;
+  font-size: 14;
+  font-weight: bold;
+  background-color: #eeeeee
+}
+
+span.tableContent
+{
+  margin:3px;
+  color: black;
+  font-size: 12;
+  font-weight: normal;
+}
+
+span.FilterTitle
+{
+  color: red;
+  font-size: 13;
+  font-weight: bold;
+  padding: 3px 2px 3px 2px;
+}
+
+span.FilterSubTitle
+{
+  color: red;
+  font-size: 12;
+  font-weight: normal;
+  padding: 3px 2px 3px 2px;
+}
+
+span.pageNumbers
+{
+  color: black;
+  font-size: 13;
+  font-weight: normal;
+  cursor: pointer;
+  padding: 3px 2px 3px 2px;
+}
+
+span.pageNumbers:hover
+{
+  color: black;
+  font-size: 13;
+  font-weight: normal;
+  cursor: pointer;
+  background-color: #bfbfbf;
+}
+
+span.pageNumbersCurr
+{
+  color: brown;
+  font-size: 13;
+  font-weight: bold;
+  cursor: default;
+  padding: 3px 2px 3px 2px;
+}
+
+img.operationImg
+{
+  cursor: pointer;
+}
