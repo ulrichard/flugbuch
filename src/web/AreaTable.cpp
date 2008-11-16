@@ -126,6 +126,8 @@ void AreaTableRow::save()
 
     	// display the information as text without the edit fields
         show();
+
+        isNewEntry_ = false;
     }
     catch(std::exception &ex)
     {

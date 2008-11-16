@@ -1,4 +1,7 @@
+sudo apt-get install codeblocks
 sudo apt-get install witty
+sudo apt-get install witty-dev
+sudo apt-get install witty-dbg
 sudo apt-get install mdbtools
 sudo apt-get install libboost-serialization-dev
 sudo apt-get install libboost-test-dev

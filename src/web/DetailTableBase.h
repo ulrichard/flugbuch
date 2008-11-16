@@ -45,8 +45,8 @@ protected:
 	virtual void   clearRow() = 0;
 
     const size_t rowNr_;
-    const bool   isNewEntry_;   // cancel results in deletion
-	Wt::WTable    *table_;      // the parent
+    bool         isNewEntry_;  // cancel results in deletion
+	Wt::WTable   *table_;      // the parent
 	const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
