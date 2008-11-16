@@ -132,6 +132,13 @@ void FlightTableRow::show()
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked.connect(SLOT(this, FlightTableRow::edit));
+
+	WImage *wiDelete = new WImage("img/delete.png");
+	wiDelete->setToolTip("Flug löschen");
+	wiDelete->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
+	wiDelete->clicked.connect(SLOT(this, FlightTableRow::remove));
+
 	if(flight_->hasTrack())
 	{
 		WImage *wiTrack = new WImage("img/track.gif");
@@ -183,7 +190,10 @@ void FlightTableRow::edit()
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
-	wiCancel->clicked.connect(SLOT(this, FlightTableRow::show));
+	if(isNewEntry_)
+        wiCancel->clicked.connect(SLOT(this, FlightTableRow::remove));
+    else
+        wiCancel->clicked.connect(SLOT(this, FlightTableRow::show));
 	// flight number
 	nbrEdit_ = new Wt::Ext::NumberField();
 	nbrEdit_->setValue(flight_->number());
@@ -288,6 +298,19 @@ void FlightTableRow::save()
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightTableRow::remove()
+{
+    try
+    {
+        flightDb_->deleteFlight(flight_);
+        clearRow();
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 FlightTable::FlightTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -355,9 +378,9 @@ void FlightTable::createFooterRow()
 	wiAdd->clicked.connect(SLOT(this, FlightTable::addNewFlight));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-FlightTableRow* FlightTable::addFlight(shared_ptr<Flight> fl, size_t row)
+FlightTableRow* FlightTable::addFlight(shared_ptr<Flight> fl, size_t row, bool newEntry)
 {
-	FlightTableRow *flr = new FlightTableRow(fl, this, flightDb_, row);
+	FlightTableRow *flr = new FlightTableRow(fl, this, flightDb_, row, newEntry);
 	flr->show();
 	rows_.push_back(flr);
 	return flr;
@@ -374,7 +397,7 @@ void FlightTable::addNewFlight()
         newFlight->setDuration(0);
         newFlight->clearWaypoints();
         flightDb_->addFlight(newFlight);
-        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++);
+        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++, true);
         newRow->edit();
     }
     else
@@ -409,7 +432,7 @@ void FlightTable::addNewFlight()
                                                 *itTo,                          // takeoff
                                                 *itLa));                        // landing
         flightDb_->addFlight(newFlight);
-        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++);
+        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++, true);
         newRow->edit();
     }
     createFooterRow();

@@ -33,18 +33,20 @@ class DetailTableBase;
 class DetailTableRowBase : public Wt::WObject, boost::noncopyable
 {
 public:
-	DetailTableRowBase(Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr);
+	DetailTableRowBase(Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry);
 	virtual ~DetailTableRowBase() {  }
 
-	virtual void show() = 0;
-	virtual void edit() = 0;
-	virtual void save() = 0;
+	virtual void show()   = 0;
+	virtual void edit()   = 0;
+	virtual void save()   = 0;
+	virtual void remove() = 0;
 
 protected:
 	virtual void   clearRow() = 0;
 
     const size_t rowNr_;
-	Wt::WTable  			                      *table_;      // the parent
+    const bool   isNewEntry_;   // cancel results in deletion
+	Wt::WTable    *table_;      // the parent
 	const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8

@@ -55,6 +55,12 @@ void GliderTableRow::show()
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked.connect(SLOT(this, GliderTableRow::edit));
 
+	WImage *wiDelete = new WImage("img/delete.png");
+	wiDelete->setToolTip("Schirm löschen");
+	wiDelete->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
+	wiDelete->clicked.connect(SLOT(this, GliderTableRow::remove));
+
 	// prepare the text
 	vector<string> vsText;
 	vsText.push_back(glider_->brand());
@@ -89,7 +95,10 @@ void GliderTableRow::edit()
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
-	wiCancel->clicked.connect(SLOT(this, GliderTableRow::show));
+	if(isNewEntry_)
+        wiCancel->clicked.connect(SLOT(this, GliderTableRow::remove));
+    else
+        wiCancel->clicked.connect(SLOT(this, GliderTableRow::show));
 	// brand
 	edBrand_ = new Wt::Ext::LineEdit();
 	edBrand_->setText(glider_->brand());
@@ -170,6 +179,19 @@ void GliderTableRow::save()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void GliderTableRow::remove()
+{
+    try
+    {
+        flightDb_->deleteGlider(glider_);
+        clearRow();
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 GliderTable::GliderTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -201,9 +223,9 @@ void GliderTable::createFooterRow()
 	wiAdd->clicked.connect(SLOT(this, GliderTable::addNewGlider));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-GliderTableRow * GliderTable::addGlider(shared_ptr<Glider> gld, size_t row)
+GliderTableRow * GliderTable::addGlider(shared_ptr<Glider> gld, size_t row, bool newEntry)
 {
-	GliderTableRow *gldrw = new GliderTableRow(gld, this, flightDb_, row);
+	GliderTableRow *gldrw = new GliderTableRow(gld, this, flightDb_, row, newEntry);
 	gldrw->show();
 	rows_.push_back(gldrw);
 	return gldrw;
@@ -219,7 +241,7 @@ void GliderTable::addNewGlider()
                                             boost::gregorian::day_clock::local_day().year(), // year
                                             "CEN A"));                                       // classification
     flightDb_->addGlider(newGlider);
-    GliderTableRow *newRow = addGlider(newGlider, insertRowNr_++);
+    GliderTableRow *newRow = addGlider(newGlider, insertRowNr_++, true);
     newRow->edit();
     createFooterRow();
 }

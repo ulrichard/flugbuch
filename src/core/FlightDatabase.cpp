@@ -67,6 +67,15 @@ void FlightDatabase::deleteFlightArea(FlightDatabase::SeqFlightAreas::iterator i
 	FlightAreas_.erase(itdel);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightDatabase::deleteFlightArea(boost::shared_ptr<FlightArea> flar)
+{
+    SeqFlightAreas::iterator itdel = find(FlightAreas_.begin(), FlightAreas_.end(), flar);
+    if(itdel == FlightAreas_.end())
+        throw runtime_error("Fluggebiet ist nicht in dieser Datenbank");
+    else
+        deleteFlightArea(itdel);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightDatabase::deleteLocation(FlightDatabase::SeqLocations::iterator itdel)
 {
 	static const std::string errmsg("Der Ort wird noch verwendet. Zum Beispiel bei Flug Nummer ");
@@ -84,6 +93,15 @@ void FlightDatabase::deleteLocation(FlightDatabase::SeqLocations::iterator itdel
 	Locations_.erase(itdel);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightDatabase::deleteLocation(boost::shared_ptr<Location> loc)
+{
+    SeqLocations::iterator itdel = find(Locations_.begin(), Locations_.end(), loc);
+    if(itdel == Locations_.end())
+        throw runtime_error("Ort ist nicht in dieser Datenbank");
+    else
+        deleteLocation(itdel);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightDatabase::deleteGlider(FlightDatabase::SeqGliders::iterator itdel)
 {
 	BOOST_FOREACH(shared_ptr<Flight> flight, Flights_)
@@ -92,9 +110,27 @@ void FlightDatabase::deleteGlider(FlightDatabase::SeqGliders::iterator itdel)
 	Gliders_.erase(itdel);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightDatabase::deleteGlider(boost::shared_ptr<Glider> gld)
+{
+    SeqGliders::iterator itdel = find(Gliders_.begin(), Gliders_.end(), gld);
+    if(itdel == Gliders_.end())
+        throw runtime_error("Schirm ist nicht in dieser Datenbank");
+    else
+        deleteGlider(itdel);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightDatabase::deleteFlight(FlightDatabase::SeqFlights::iterator itdel)
 {
 	Flights_.erase(itdel);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightDatabase::deleteFlight(boost::shared_ptr<Flight> fl)
+{
+    SeqFlights::iterator itdel = find(Flights_.begin(), Flights_.end(), fl);
+    if(itdel == Flights_.end())
+        throw runtime_error("Flug ist nicht in dieser Datenbank");
+    else
+        deleteFlight(itdel);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 const FlightDatabase::SeqFlightAreas FlightDatabase::getFlightAreasEx(Location::UseAs use) const

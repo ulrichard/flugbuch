@@ -306,10 +306,16 @@ void LocationTableRow::show()
 	clearRow();
 
 	WImage *wiEdit = new WImage("img/edit.png");
-	wiEdit->setToolTip("Fluggebiet bearbeiten");
+	wiEdit->setToolTip("Ort bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked.connect(SLOT(this, LocationTableRow::edit));
+
+	WImage *wiDelete = new WImage("img/delete.png");
+	wiDelete->setToolTip("Ort löschen");
+	wiDelete->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
+	wiDelete->clicked.connect(SLOT(this, LocationTableRow::remove));
 
 	// prepare the text
 	vector<string> vsText;
@@ -345,7 +351,10 @@ void LocationTableRow::edit()
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
-	wiCancel->clicked.connect(SLOT(this, LocationTableRow::show));
+	if(isNewEntry_)
+        wiCancel->clicked.connect(SLOT(this, LocationTableRow::remove));
+    else
+        wiCancel->clicked.connect(SLOT(this, LocationTableRow::show));
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
@@ -419,6 +428,19 @@ void LocationTableRow::save()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void LocationTableRow::remove()
+{
+    try
+    {
+        flightDb_->deleteLocation(location_);
+        clearRow();
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 LocationTable::LocationTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -448,9 +470,9 @@ void LocationTable::createFooterRow()
 	wiAdd->clicked.connect(SLOT(this, LocationTable::addNewLocation));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-LocationTableRow* LocationTable::addLocation(shared_ptr<Location> loc, size_t row)
+LocationTableRow* LocationTable::addLocation(shared_ptr<Location> loc, size_t row, bool newEntry)
 {
-	LocationTableRow *locr = new LocationTableRow(loc, this, flightDb_, row);
+	LocationTableRow *locr = new LocationTableRow(loc, this, flightDb_, row, newEntry);
 	locr->show();
 	rows_.push_back(locr);
 	return locr;
@@ -467,7 +489,7 @@ void LocationTable::addNewLocation()
 
     shared_ptr<Location> newLocation(new Location(area, "", 0, 0.0, 0.0, Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
-    LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++);
+    LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++, true);
     newRow->edit();
     createFooterRow();
 }

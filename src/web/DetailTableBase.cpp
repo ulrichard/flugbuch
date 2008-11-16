@@ -17,8 +17,8 @@ using boost::lexical_cast;
 using Wt::WText;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-DetailTableRowBase::DetailTableRowBase(Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr)
-	: rowNr_(rowNr), table_(table), flightDb_(flightDb)
+DetailTableRowBase::DetailTableRowBase(Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry)
+	: rowNr_(rowNr), isNewEntry_(newEntry), table_(table), flightDb_(flightDb)
 {
     table_->rowAt(rowNr)->setStyleClass(rowNr % 2 ? "odd" : "even");
 }

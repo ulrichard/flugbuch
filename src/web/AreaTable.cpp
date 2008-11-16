@@ -55,6 +55,12 @@ void AreaTableRow::show()
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked.connect(SLOT(this, AreaTableRow::edit));
 
+	WImage *wiDelete = new WImage("img/delete.png");
+	wiDelete->setToolTip("Fluggebiet löschen");
+	wiDelete->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
+	wiDelete->clicked.connect(SLOT(this, AreaTableRow::remove));
+
 	// prepare the text
 	vector<string> vsText;
 	vsText.push_back(area_->name());
@@ -85,7 +91,10 @@ void AreaTableRow::edit()
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
-	wiCancel->clicked.connect(SLOT(this, AreaTableRow::show));
+	if(isNewEntry_)
+        wiCancel->clicked.connect(SLOT(this, AreaTableRow::remove));
+    else
+        wiCancel->clicked.connect(SLOT(this, AreaTableRow::show));
     // name
     edName_ = new Wt::Ext::LineEdit();
     edName_->setText(area_->name());
@@ -125,6 +134,19 @@ void AreaTableRow::save()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void AreaTableRow::remove()
+{
+    try
+    {
+        flightDb_->deleteFlightArea(area_);
+        clearRow();
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 AreaTable::AreaTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -154,9 +176,9 @@ void AreaTable::createFooterRow()
 	wiAdd->clicked.connect(SLOT(this, AreaTable::addNewArea));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-AreaTableRow* AreaTable::addArea(shared_ptr<FlightArea> flar, size_t row)
+AreaTableRow* AreaTable::addArea(shared_ptr<FlightArea> flar, size_t row, bool newEntry)
 {
-	AreaTableRow *flr = new AreaTableRow(flar, this, flightDb_, row);
+	AreaTableRow *flr = new AreaTableRow(flar, this, flightDb_, row, newEntry);
 	flr->show();
 	rows_.push_back(flr);
 	return flr;
@@ -166,7 +188,7 @@ void AreaTable::addNewArea()
 {
     shared_ptr<FlightArea> newArea(new FlightArea("", "", ""));
     flightDb_->addFlightArea(newArea);
-    AreaTableRow *newRow = addArea(newArea, insertRowNr_++);
+    AreaTableRow *newRow = addArea(newArea, insertRowNr_++, true);
     newRow->edit();
     createFooterRow();
 }
@@ -195,7 +217,7 @@ void AreaTable::loadPage(unsigned int page)
     clear();
     createHeaderRow();
     const int nFirst = (pageNr_ - 1) * entriesPerPage_;
-    if(nFirst > areas_.size())
+    if(nFirst < areas_.size())
     {
         vector<shared_ptr<FlightArea> >::iterator ibeg = areas_.begin();
         std::advance(ibeg, (pageNr_ - 1) * entriesPerPage_);

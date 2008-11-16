@@ -31,7 +31,7 @@
       </runarguments>
       <debugarguments>
         <Flugbuch2_unittests/>
-        <Flugbuch2_wt/>
+        <Flugbuch2_wt></Flugbuch2_wt>
         <Flugbuch2_qt/>
       </debugarguments>
       <cwd>
@@ -176,8 +176,8 @@
       <includestyle>4</includestyle>
       <root>/usr/share/qt3</root>
       <designerintegration>ExternalDesigner</designerintegration>
-      <qmake>/usr/bin/qmake-qt4</qmake>
-      <designer>/usr/bin/designer-qt4</designer>
+      <qmake></qmake>
+      <designer></designer>
       <designerpluginpaths/>
     </qt>
     <references/>

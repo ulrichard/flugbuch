@@ -26,13 +26,14 @@ namespace flbwt
 class GliderTableRow : public DetailTableRowBase
 {
 public:
-	GliderTableRow(shared_ptr<flb::Glider> glider, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr)
-	: DetailTableRowBase(table, flightDb, rowNr), glider_(glider) {  };
+	GliderTableRow(shared_ptr<flb::Glider> glider, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry)
+	: DetailTableRowBase(table, flightDb, rowNr, newEntry), glider_(glider) {  };
 	virtual ~GliderTableRow() {  }
 
 	virtual void show();
 	virtual void edit();
 	virtual void save();
+	virtual void remove();
 
 private:
 	virtual void clearRow();
@@ -69,7 +70,7 @@ public:
 	virtual ~GliderTable() {  }
 
     virtual void loadPage(unsigned int page);
-	GliderTableRow * addGlider(shared_ptr<flb::Glider> gl, size_t row);
+	GliderTableRow * addGlider(shared_ptr<flb::Glider> gl, size_t row, bool newEntry = false);
     void addNewGlider();
     virtual unsigned int entriesCount() const { return gliders_.size(); };
     void filter(const std::string &brand, const std::string &classification);

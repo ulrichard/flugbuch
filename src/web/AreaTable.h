@@ -28,13 +28,14 @@ namespace flbwt
 class AreaTableRow : public DetailTableRowBase
 {
 public:
-	AreaTableRow(boost::shared_ptr<flb::FlightArea> flar, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr)
-	: DetailTableRowBase(table, flightDb, rowNr), area_(flar) {  };
+	AreaTableRow(boost::shared_ptr<flb::FlightArea> flar, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry)
+	: DetailTableRowBase(table, flightDb, rowNr, newEntry), area_(flar) {  };
 	virtual ~AreaTableRow() {  }
 
 	virtual void show();
 	virtual void edit();
 	virtual void save();
+	virtual void remove();
 
 private:
 	virtual void clearRow();
@@ -61,7 +62,7 @@ public:
 	virtual ~AreaTable() {  }
 
     virtual void loadPage(unsigned int page);
-	AreaTableRow * addArea(shared_ptr<flb::FlightArea> flar, size_t row);
+	AreaTableRow * addArea(shared_ptr<flb::FlightArea> flar, size_t row, bool newEntry = false);
     void addNewArea();
     virtual unsigned int entriesCount() const { return areas_.size(); };
     void filter(const std::string &country);

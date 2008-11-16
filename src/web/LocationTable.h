@@ -57,13 +57,14 @@ private:
 class LocationTableRow : public DetailTableRowBase
 {
 public:
-	LocationTableRow(shared_ptr<flb::Location> loc, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr)
-	: DetailTableRowBase(table, flightDb, rowNr), location_(loc) {  };
+	LocationTableRow(shared_ptr<flb::Location> loc, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry)
+	: DetailTableRowBase(table, flightDb, rowNr, newEntry), location_(loc) {  };
 	virtual ~LocationTableRow() {  }
 
 	virtual void show();
 	virtual void edit();
 	virtual void save();
+	virtual void remove();
 
 private:
 	virtual void clearRow();
@@ -98,7 +99,7 @@ public:
 	virtual ~LocationTable() {  }
 
     virtual void loadPage(unsigned int page);
-	LocationTableRow * addLocation(shared_ptr<flb::Location> loc, size_t row);
+	LocationTableRow * addLocation(shared_ptr<flb::Location> loc, size_t row, bool newEntry = false);
     void addNewLocation();
     virtual unsigned int entriesCount() const { return locations_.size(); };
     void filter(const std::string &area, bool takeoff, bool landing, bool waypnt);

@@ -51,13 +51,14 @@ private:
 class FlightTableRow : public DetailTableRowBase
 {
 public:
-	FlightTableRow(shared_ptr<flb::Flight> flight, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr)
-	: DetailTableRowBase(table, flightDb, rowNr), flight_(flight) {  };
+	FlightTableRow(shared_ptr<flb::Flight> flight, Wt::WTable *table, const boost::shared_ptr<flb::FlightDatabase>  flightDb, size_t rowNr, bool newEntry)
+	: DetailTableRowBase(table, flightDb, rowNr, newEntry), flight_(flight) {  };
 	virtual ~FlightTableRow() {  }
 
 	virtual void show();
 	virtual void edit();
 	virtual void save();
+	virtual void remove();
 
 private:
 	virtual void clearRow();
@@ -93,7 +94,7 @@ public:
 	virtual ~FlightTable() {  }
 
     virtual void loadPage(unsigned int page);
-	FlightTableRow * addFlight(shared_ptr<flb::Flight> fl, size_t row);
+	FlightTableRow * addFlight(shared_ptr<flb::Flight> fl, size_t row, bool newEntry = false);
     void addNewFlight();
     virtual unsigned int entriesCount() const { return flights_.size(); };
     void filter(const std::string &area);

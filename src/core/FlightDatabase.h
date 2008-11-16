@@ -49,9 +49,13 @@ public:
 
 	// deleter functions
 	void deleteFlightArea(SeqFlightAreas::iterator itdel);
+	void deleteFlightArea(boost::shared_ptr<FlightArea> flar);
 	void deleteLocation(SeqLocations::iterator itdel);
+	void deleteLocation(boost::shared_ptr<Location> loc);
 	void deleteGlider(SeqGliders::iterator itdel);
+	void deleteGlider(boost::shared_ptr<Glider> gld);
 	void deleteFlight(SeqFlights::iterator itdel);
+	void deleteFlight(boost::shared_ptr<Flight> fl);
 	// selectors
 	const boost::shared_ptr<FlightArea> getArea(const std::string &nam) const;
 	const SeqFlightAreas getFlightAreasEx(Location::UseAs use) const;
