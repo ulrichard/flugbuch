@@ -69,27 +69,49 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightLogApp::finalize()
 {
-    // ask the user to save
-    string docroot;
-    if(!readConfigurationProperty("docroot", docroot))
-        docroot = "/home/richi";
-	const string filename = FormatStr() << docroot << "/Flugbuch_" << flightDb_->pilotName() << ".xml";
+    // todo : ask the user to save
+    const string filename = getPersistFileName(flightDb_->pilotName());
 
     flb::inout_xml ioxml;
 	ioxml.write(*flightDb_, filename);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+string FlightLogApp::getPersistFileName(const string &usr)
+{
+    string persistenceDir;
+    if(!readConfigurationProperty("persistenceDir", persistenceDir))
+        persistenceDir = "/home/richi/sourcecode/flugbuch2/flb";
+	const string filename = FormatStr() << persistenceDir << "/Flugbuch_" << usr << ".xml";
+	return filename;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightLogApp::doLogin()
 {
+    // display the welcome page with different login options
     mainStack_->setCurrentWidget(welcomeScreen_);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-void FlightLogApp::loadFlightDb(const std::string &usr, const std::string &pwd)
+void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
 {
-    loadFlights(flb::FlightDatabase::makeTestDb());
+    const string filename = getPersistFileName(usr);
+
+    try
+    {
+        flb::inout_xml ioxml;
+        shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
+        if(!fldb->checkPassword(pwd))
+            throw std::invalid_argument("incorrect password");
+
+        loadFlights(flb::FlightDatabase::makeTestDb());
+   }
+    catch(std::exception &ex)
+    {
+        const string msg(FormatStr() << "Flugbuch für " << usr << " konnte nicht eingelesen werden : " << ex.what());
+        throw std::runtime_error(msg);
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-void FlightLogApp::createFlightDb(const std::string &usr, const std::string &pwd, bool useStdLoc)
+void FlightLogApp::createFlightDb(const string &usr, const string &pwd, bool useStdLoc)
 {
     shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(usr, pwd));
 

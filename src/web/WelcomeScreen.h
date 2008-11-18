@@ -39,13 +39,22 @@ private:
     void doImport();
     void uploadTooBig(int size);
 
-    Wt::WText               *txt_;
-    Wt::WLineEdit           *username_;
-    Wt::WLineEdit           *password_;
-    Wt::WLineEdit           *password2_;
-    Wt::WCheckBox           *useStdLoc_;
-    Wt::WFileUpload         *uploader_;
-    Wt::Ext::ProgressDialog *progress_;
+    // normal login
+    Wt::WText               *nl_txt_;
+    Wt::WLineEdit           *nl_username_;
+    Wt::WLineEdit           *nl_password_;
+    // register
+    Wt::WText               *rg_txt_;
+    Wt::WLineEdit           *rg_username_;
+    Wt::WLineEdit           *rg_password_;
+    Wt::WLineEdit           *rg_password2_;
+    Wt::WCheckBox           *rg_useStdLoc_;
+    // testdb
+    Wt::WText               *td_txt_;
+    // import mdb
+    Wt::WText               *im_txt_;
+    Wt::WFileUpload         *im_uploader_;
+    Wt::Ext::ProgressDialog *im_progress_;
 
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8

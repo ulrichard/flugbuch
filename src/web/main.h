@@ -41,6 +41,7 @@ public:
 
 protected:
     virtual void finalize();
+    std::string getPersistFileName(const std::string &usr);
 private:
    Wt::WStackedWidget                       *mainStack_;
    WelcomeScreen                            *welcomeScreen_;
