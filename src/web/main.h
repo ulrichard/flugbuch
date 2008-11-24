@@ -15,6 +15,7 @@
 namespace Wt
 {
     class WStackedWidget;
+    class WContainerWidget;
 }
 namespace flb
 {
@@ -26,6 +27,7 @@ namespace flbwt
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 //forward declarations
 class WelcomeScreen;
+class TabControl;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 class FlightLogApp : public Wt::WApplication
 {
@@ -38,6 +40,8 @@ public:
     void loadTestDb();
     void importFlightDb(const std::string &file, bool del);
     void loadFlights(boost::shared_ptr<flb::FlightDatabase> fldb);
+    void saveDb(void);
+    void reload(void);
 
 protected:
     virtual void finalize();
@@ -45,6 +49,8 @@ protected:
 private:
    Wt::WStackedWidget                       *mainStack_;
    WelcomeScreen                            *welcomeScreen_;
+   Wt::WContainerWidget                     *mainScreen_;
+   flbwt::TabControl                        *tabCtrl_;
    boost::shared_ptr<flb::FlightDatabase>   flightDb_;
 
 };

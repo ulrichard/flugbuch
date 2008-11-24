@@ -166,7 +166,7 @@ const boost::shared_ptr<FlightArea> FlightDatabase::getArea(const std::string &n
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 {
-    shared_ptr<FlightDatabase> fldb(new flb::FlightDatabase("Richard Ulrich"));
+    shared_ptr<FlightDatabase> fldb(new flb::FlightDatabase("*testdb*"));
 	// flight areas
 	shared_ptr<flb::FlightArea> arRothenflue(new flb::FlightArea("Rothenflue", "Schweiz", "Das Baehnli faehrt leider nicht mehr."));
 	fldb->addFlightArea(arRothenflue);

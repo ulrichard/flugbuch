@@ -147,6 +147,8 @@
 		<Unit filename="../../../src/web/GliderTable.h" />
 		<Unit filename="../../../src/web/LocationTable.cpp" />
 		<Unit filename="../../../src/web/LocationTable.h" />
+		<Unit filename="../../../src/web/MainMenu.cpp" />
+		<Unit filename="../../../src/web/MainMenu.h" />
 		<Unit filename="../../../src/web/TabControl.cpp" />
 		<Unit filename="../../../src/web/TabControl.h" />
 		<Unit filename="../../../src/web/WelcomeScreen.cpp" />

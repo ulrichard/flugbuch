@@ -5,6 +5,7 @@
 #include "TabControl.h"
 #include "WelcomeScreen.h"
 #include "FormatStr.h"
+#include "MainMenu.h"
 // witty
 #include <Wt/WBorderLayout>
 #include <Wt/Ext/Dialog>
@@ -50,6 +51,8 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
 
     mainStack_     = new Wt::WStackedWidget(root());
     welcomeScreen_ = new WelcomeScreen(mainStack_);
+    mainScreen_    = NULL;
+    tabCtrl_       = NULL;
     doLogin();
 
 /*
@@ -70,10 +73,7 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
 void FlightLogApp::finalize()
 {
     // todo : ask the user to save
-    const string filename = getPersistFileName(flightDb_->pilotName());
-
-    flb::inout_xml ioxml;
-	ioxml.write(*flightDb_, filename);
+    saveDb();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 string FlightLogApp::getPersistFileName(const string &usr)
@@ -102,8 +102,8 @@ void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
         if(!fldb->checkPassword(pwd))
             throw std::invalid_argument("incorrect password");
 
-        loadFlights(flb::FlightDatabase::makeTestDb());
-   }
+        loadFlights(fldb);
+    }
     catch(std::exception &ex)
     {
         const string msg(FormatStr() << "Flugbuch für " << usr << " konnte nicht eingelesen werden : " << ex.what());
@@ -127,8 +127,31 @@ void FlightLogApp::createFlightDb(const string &usr, const string &pwd, bool use
 void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 {
     flightDb_ = fldb;
-    flbwt::TabControl *tabCtrl = new flbwt::TabControl(fldb, mainStack_);
-    mainStack_->setCurrentWidget(tabCtrl);
+
+    if(mainScreen_)
+    {
+        mainStack_->removeWidget(mainScreen_);
+        delete mainScreen_;
+    }
+
+//    if(!mainScreen_)
+//    {
+        flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
+
+        tabCtrl_ = new flbwt::TabControl(fldb);
+
+        mainScreen_ = new Wt::WContainerWidget(mainStack_);
+        Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
+        mainScreen_->setLayout(borderLayout);
+        borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);
+        borderLayout->addWidget(tabCtrl_,  Wt::WBorderLayout::Center);
+//    }
+//    else
+//    {
+//        tabCtrl_->reload(fldb);
+//    }
+
+    mainStack_->setCurrentWidget(mainScreen_);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void FlightLogApp::loadTestDb()
@@ -147,3 +170,27 @@ void FlightLogApp::importFlightDb(const std::string &file, bool del)
         unlink(file.c_str());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightLogApp::saveDb()
+{
+    const string filename = getPersistFileName(flightDb_->pilotName());
+
+    flb::inout_xml ioxml;
+	ioxml.write(*flightDb_, filename);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void FlightLogApp::reload()
+{
+    if(flightDb_->pilotName() == "*testdb*")
+        loadTestDb();
+    else
+    {
+        const string filename = getPersistFileName(flightDb_->pilotName());
+        flb::inout_xml ioxml;
+        shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
+        // no password checking this time
+        loadFlights(fldb);
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+
+

@@ -177,8 +177,9 @@ void WelcomeScreen::uploadTooBig(int size)
     im_progress_ = NULL;
 
     int maxreqsize = Wt::WApplication::instance()->maximumRequestSize();
-    std::string msg(FormatStr() << "Die Datei ist zu gross fuer den upload : " << size / 1024 << " kB -> maximum is : "
-                                << maxreqsize / 1024 << " kB");
+    std::string msg(FormatStr() << "Die Datei ist zu gross fuer den upload :\n"
+                                << "Upload  : " << size / 1024 << " kB\n"
+                                << "Maximum : " << maxreqsize / 1024 << " kB");
     im_txt_->setText(msg);
 //    Wt::Ext::MessageBox::show("Error", msg, Wt::Warning, true);
 }

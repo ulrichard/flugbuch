@@ -11,46 +11,34 @@
 using namespace flbwt;
 using Wt::Ext::Panel;
 using std::string;
+using boost::shared_ptr;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-TabControl::TabControl(boost::shared_ptr<flb::FlightDatabase> flightDb, Wt::WContainerWidget *parent)
+TabControl::TabControl(shared_ptr<flb::FlightDatabase> flightDb, Wt::WContainerWidget *parent)
 // : Wt::Ext::TabWidget(parent), flightDb_(flightDb)
  : Wt::WTabWidget(parent), flightDb_(flightDb)
 {
     // add the flights
-//    FlightTable *flightTable = new FlightTable(flightDb_);
-//    addTab(flightTable, "Fluege");
-    FlightPanel *flightPanel = new FlightPanel(flightDb_);
-    addTab(flightPanel, "Fluege");
+    flightPanel_ = new FlightPanel(flightDb_);
+    addTab(flightPanel_, "Fluege");
     // add the gliders
-//    GliderTable *gliderTable = new GliderTable(flightDb_);
-//    addTab(gliderTable, "Schirme");
-    GliderPanel *gliderPanel = new GliderPanel(flightDb_);
-    addTab(gliderPanel, "Schirme");
+    gliderPanel_ = new GliderPanel(flightDb_);
+    addTab(gliderPanel_, "Schirme");
     // add the flight areas
-//    AreaTable *areaTable = new AreaTable(flightDb_);
-//    addTab(areaTable, "Fluggebiete");
-    AreaPanel *areaPanel = new AreaPanel(flightDb_);
-    addTab(areaPanel, "Fluggebiete");
-    // add the flight areas
-//    LocationTable *locTable = new LocationTable(flightDb_);
-//    addTab(locTable, "Orte");
-    LocationPanel *locPanel = new LocationPanel(flightDb_);
-    addTab(locPanel, "Orte");
+    areaPanel_ = new AreaPanel(flightDb_);
+    addTab(areaPanel_, "Fluggebiete");
+    // add the locations
+    locPanel_ = new LocationPanel(flightDb_);
+    addTab(locPanel_, "Orte");
     // add a tab with some special functions
 
-/*
-
-    // add areas panel
-    Panel *panAreas = new Panel();
-    panAreas->setTitle("Gebiete");
-    addTab(panAreas);
-
-    // add locations panel
-    Panel *panLocations = new Panel();
-    panLocations->setTitle("Plaetze");
-    addTab(panLocations);
-*/
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void TabControl::reload(shared_ptr<flb::FlightDatabase> flightDb)
+{
+    flightPanel_->filter();
+    gliderPanel_->filter();
+    areaPanel_->filter();
+    locPanel_->filter();
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
