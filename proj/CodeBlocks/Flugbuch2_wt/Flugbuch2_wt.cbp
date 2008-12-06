@@ -6,8 +6,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug\" />
+				<Option output="bin/Debug/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="--docroot ../../../res --http-address 0.0.0.0 --http-port 8080" />
@@ -15,10 +15,10 @@
 					<Add option="-march=pentium3" />
 					<Add option="-g" />
 					<Add option="-D__DEBUG" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add library="boost_date_time-mt-d" />
@@ -30,17 +30,17 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\res\flugbuch2.fcgi" prefix_auto="0" extension_auto="0" />
-				<Option object_output="obj\Release\" />
+				<Option output="../../../res/flugbuch2.fcgi" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="--docroot . --http-address 0.0.0.0 --http-port 8080" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -55,8 +55,8 @@
 			</Target>
 			<Target title="Debug_MSVC">
 				<Option platforms="Windows;" />
-				<Option output="bin\Debug_MSVC\Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug_MSVC\" />
+				<Option output="bin/Debug_MSVC/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug_MSVC/" />
 				<Option type="1" />
 				<Option compiler="msvc8" />
 				<Option use_console_runner="0" />
@@ -70,10 +70,10 @@
 					<Add option="/Zc:forScope" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/DWIN32;_DEBUG;_CONSOLE" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add option="/DEBUG" />
@@ -128,39 +128,41 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="..\..\..\res\flugbuch2.css" />
-		<Unit filename="..\..\..\res\img\edit.png" />
-		<Unit filename="..\..\..\res\img\save.png" />
-		<Unit filename="..\..\..\src\core\CoreStructures.cpp" />
-		<Unit filename="..\..\..\src\core\CoreStructures.h" />
-		<Unit filename="..\..\..\src\core\FlightDatabase.cpp" />
-		<Unit filename="..\..\..\src\core\FlightDatabase.h" />
-		<Unit filename="..\..\..\src\core\MainExternalIncludes.h" />
-		<Unit filename="..\..\..\src\inout\inout.h" />
-		<Unit filename="..\..\..\src\inout\inout_mdb.cpp" />
-		<Unit filename="..\..\..\src\inout\inout_mdb.h" />
-		<Unit filename="..\..\..\src\inout\inout_xml.cpp" />
-		<Unit filename="..\..\..\src\inout\inout_xml.h" />
-		<Unit filename="..\..\..\src\util\FormatStr.h" />
-		<Unit filename="..\..\..\src\util\LocaleFormatting.h" />
-		<Unit filename="..\..\..\src\web\AreaTable.cpp" />
-		<Unit filename="..\..\..\src\web\AreaTable.h" />
-		<Unit filename="..\..\..\src\web\DetailTableBase.cpp" />
-		<Unit filename="..\..\..\src\web\DetailTableBase.h" />
-		<Unit filename="..\..\..\src\web\FlightTable.cpp" />
-		<Unit filename="..\..\..\src\web\FlightTable.h" />
-		<Unit filename="..\..\..\src\web\GliderTable.cpp" />
-		<Unit filename="..\..\..\src\web\GliderTable.h" />
-		<Unit filename="..\..\..\src\web\LocationTable.cpp" />
-		<Unit filename="..\..\..\src\web\LocationTable.h" />
-		<Unit filename="..\..\..\src\web\MainMenu.cpp" />
-		<Unit filename="..\..\..\src\web\MainMenu.h" />
-		<Unit filename="..\..\..\src\web\TabControl.cpp" />
-		<Unit filename="..\..\..\src\web\TabControl.h" />
-		<Unit filename="..\..\..\src\web\WelcomeScreen.cpp" />
-		<Unit filename="..\..\..\src\web\WelcomeScreen.h" />
-		<Unit filename="..\..\..\src\web\main.cpp" />
-		<Unit filename="..\..\..\src\web\main.h" />
+		<Unit filename="../../../res/flugbuch2.css" />
+		<Unit filename="../../../res/img/edit.png" />
+		<Unit filename="../../../res/img/save.png" />
+		<Unit filename="../../../src/core/CoreStructures.cpp" />
+		<Unit filename="../../../src/core/CoreStructures.h" />
+		<Unit filename="../../../src/core/FlightDatabase.cpp" />
+		<Unit filename="../../../src/core/FlightDatabase.h" />
+		<Unit filename="../../../src/core/MainExternalIncludes.h" />
+		<Unit filename="../../../src/inout/inout.h" />
+		<Unit filename="../../../src/inout/inout_mdb.cpp" />
+		<Unit filename="../../../src/inout/inout_mdb.h" />
+		<Unit filename="../../../src/inout/inout_xml.cpp" />
+		<Unit filename="../../../src/inout/inout_xml.h" />
+		<Unit filename="../../../src/util/FormatStr.h" />
+		<Unit filename="../../../src/util/LocaleFormatting.h" />
+		<Unit filename="../../../src/web/AreaTable.cpp" />
+		<Unit filename="../../../src/web/AreaTable.h" />
+		<Unit filename="../../../src/web/DetailTableBase.cpp" />
+		<Unit filename="../../../src/web/DetailTableBase.h" />
+		<Unit filename="../../../src/web/FlightTable.cpp" />
+		<Unit filename="../../../src/web/FlightTable.h" />
+		<Unit filename="../../../src/web/GliderTable.cpp" />
+		<Unit filename="../../../src/web/GliderTable.h" />
+		<Unit filename="../../../src/web/LocationTable.cpp" />
+		<Unit filename="../../../src/web/LocationTable.h" />
+		<Unit filename="../../../src/web/MainMenu.cpp" />
+		<Unit filename="../../../src/web/MainMenu.h" />
+		<Unit filename="../../../src/web/StatisticsTab.cpp" />
+		<Unit filename="../../../src/web/StatisticsTab.h" />
+		<Unit filename="../../../src/web/TabControl.cpp" />
+		<Unit filename="../../../src/web/TabControl.h" />
+		<Unit filename="../../../src/web/WelcomeScreen.cpp" />
+		<Unit filename="../../../src/web/WelcomeScreen.h" />
+		<Unit filename="../../../src/web/main.cpp" />
+		<Unit filename="../../../src/web/main.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

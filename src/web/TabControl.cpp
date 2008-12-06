@@ -4,6 +4,7 @@
 #include "GliderTable.h"
 #include "AreaTable.h"
 #include "LocationTable.h"
+#include "StatisticsTab.h"
 // witty
 #include <Wt/Ext/Panel>
 #include <Wt/WFitLayout>
@@ -29,6 +30,9 @@ TabControl::TabControl(shared_ptr<flb::FlightDatabase> flightDb, Wt::WContainerW
     // add the locations
     locPanel_ = new LocationPanel(flightDb_);
     addTab(locPanel_, "Orte");
+    // add the statistics
+    statPanel_ = new StatisticsPanel(flightDb_);
+    addTab(statPanel_, "Statistiken");
     // add a tab with some special functions
 
 }
