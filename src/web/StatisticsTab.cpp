@@ -1,9 +1,12 @@
 // flugbuch
 #include "StatisticsTab.h"
+#include "FormatStr.h"
 // witty
 #include <Wt/Ext/ComboBox>
 #include <Wt/WContainerWidget>
 #include <Wt/Chart/WPieChart>
+#include <Wt/Chart/WCartesianChart>
+#include <Wt/Chart/WDataSeries>
 #include <Wt/WHBoxLayout>
 #include <Wt/WBorderLayout>
 #include <Wt/WText>
@@ -11,15 +14,21 @@
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/foreach.hpp>
 // standard library
 #include <algorithm>
 #include <map>
+#include <utility>
 
 using std::string;
 using std::map;
+using std::pair;
+using std::make_pair;
 using std::for_each;
 using boost::shared_ptr;
 using boost::any;
+using boost::gregorian::date;
 using namespace boost::lambda;
 using namespace flbwt;
 
@@ -41,6 +50,9 @@ StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightD
 
     cbStatSel_->addItem("Fluege pro Schirm");
     cbStatSel_->addItem("Flugzeit pro Schirm");
+    cbStatSel_->addItem("Fluege pro Jahr");
+    cbStatSel_->addItem("Fluege pro Monat");
+    cbStatSel_->addItem("Fluege pro Woche");
 
     topBar->layout()->addWidget(wtStat);
     topBar->layout()->addWidget(cbStatSel_);
@@ -56,7 +68,24 @@ StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightD
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void StatisticsPanel::load(int ind)
 {
-    FlightsPerGlider(ind);
+    switch(ind)
+    {
+    case 0:
+        FlightsPerGlider(false);
+        break;
+    case 1:
+        FlightsPerGlider(true);
+        break;
+    case 2:
+        FlightsPerTimePeriod(0);
+        break;
+    case 3:
+        FlightsPerTimePeriod(1);
+        break;
+    case 4:
+        FlightsPerTimePeriod(2);
+        break;
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void StatisticsPanel::FlightsPerGlider(bool airtime)
@@ -96,6 +125,79 @@ void StatisticsPanel::FlightsPerGlider(bool airtime)
     pie->setDataColumn(airtime ? 2 : 1);
     pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
     pie->setPerspectiveEnabled(true, 0.3);
+
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void StatisticsPanel::FlightsPerTimePeriod(int mode)
+{
+    blayout_->removeWidget(chart_);
+ //   delete chart_;
+    Wt::Chart::WCartesianChart *cartchart = new Wt::Chart::WCartesianChart();
+    blayout_->addWidget(cartchart, Wt::WBorderLayout::Center);
+    chart_ = cartchart;
+
+    assert(flightDb_->flights().size());
+    const date firstDay = (*flightDb_->flights().begin())->date();
+    const date lastDay  = (*flightDb_->flights().rbegin())->date();
+
+    map<string, pair<int, int> > counts;
+
+    if(mode == 0)
+    {
+        for(int yy = firstDay.year(); yy <= lastDay.year(); ++yy)
+            counts[FormatStr() << yy] = make_pair(0, 0);
+    }
+    else if(mode == 1)
+    {
+        const date lastMonth = date(lastDay.year(), lastDay.month(), 1);
+        for(date mm = date(firstDay.year(), firstDay.month(), 1); mm < lastMonth; mm += boost::gregorian::months(1))
+            counts[FormatStr() << mm.year() << "." << mm.month()] = make_pair(0, 0);
+    }
+    else if(mode == 2)
+    {
+        const date lastWeek = date(lastDay.year(), lastDay.month(), 1);
+        for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += boost::gregorian::weeks(1))
+            counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, 0);
+    }
+
+    BOOST_FOREACH(shared_ptr<flb::Flight> fl, flightDb_->flights())
+    {
+        if(mode == 0)
+        {
+            const string key(FormatStr() << fl->date().year());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+        else if(mode == 1)
+        {
+            const string key(FormatStr() << fl->date().year() << "." << fl->date().month());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+        else if(mode == 2)
+        {
+            const string key(FormatStr() << fl->date().year() << "." << fl->date().week_number());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+    }
+
+    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(counts.size(), 3);
+
+    int i = 0;
+    for(map<string, pair<int, int> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
+    {
+        model->setData(i, 0, any(it->first));
+        model->setData(i, 1, any(it->second.first));
+        model->setData(i, 2, any(it->second.second));
+    }
+
+
+    cartchart->setModel(model);
+    cartchart->setXSeriesColumn(0);
+    cartchart->addSeries(Wt::Chart::WDataSeries(1, Wt::Chart::PointSeries, Wt::Chart::Y1Axis));
+    cartchart->addSeries(Wt::Chart::WDataSeries(2, Wt::Chart::PointSeries, Wt::Chart::Y2Axis));
+    cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8

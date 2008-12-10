@@ -35,6 +35,7 @@ public:
     void load(int ind);
 
     void FlightsPerGlider(bool airtime);
+    void FlightsPerTimePeriod(int mode);
 private:
     boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     Wt::WContainerWidget      *impl_;
