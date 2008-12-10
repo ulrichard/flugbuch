@@ -195,9 +195,14 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
 
     cartchart->setModel(model);
     cartchart->setXSeriesColumn(0);
-    cartchart->addSeries(Wt::Chart::WDataSeries(1, Wt::Chart::PointSeries, Wt::Chart::Y1Axis));
-    cartchart->addSeries(Wt::Chart::WDataSeries(2, Wt::Chart::PointSeries, Wt::Chart::Y2Axis));
+    Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
+    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
+    data1.setLegendEnabled(true);
+    data2.setLegendEnabled(true);
+    cartchart->addSeries(data1);
+    cartchart->addSeries(data2);
     cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
+    cartchart->setLegendEnabled(true);
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
