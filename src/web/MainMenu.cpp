@@ -1,10 +1,14 @@
 // Flugbuch
 #include "MainMenu.h"
 #include "main.h"
+#include "FormatStr.h"
 // witty
 #include <Wt/Ext/Menu>
 #include <Wt/Ext/Button>
 #include <Wt/Ext/MessageBox>
+#include <Wt/WEnvironment>
+// boost
+#include <boost/version.hpp>
 
 
 using namespace flbwt;
@@ -51,13 +55,13 @@ MainMenu::MainMenu(Wt::WContainerWidget *parent)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 void MainMenu::info(void)
 {
-    const string msg("Flugbuch2 ist ein Programm zum verwalten von Flügen mit Gleitschirm, Delta ..."
-                     "<br>Entwickelt von Richard Ulrich (richi@paraeasy.ch)"
-                     "<br>Die hier vorliegende Web - Version ist zur Verwendung im Browser. Daneben soll es in Zukunft auch eine Gui-Version geben."
-                     "<br>Folgende Drittbibliotheken wurden verwendet:"
-                     "<br>www.boost.org"
-                     "<br>www.webtoolkit.eu"
-                     "<br>www.extjs.com");
+    const string msg(FormatStr() << "Flugbuch2 ist ein Programm zum verwalten von Flügen mit Gleitschirm, Delta ..."
+                     << "<br>Entwickelt von Richard Ulrich (richi@paraeasy.ch)"
+                     << "<br>Die hier vorliegende Web - Version ist zur Verwendung im Browser. Daneben soll es in Zukunft auch eine Gui-Version geben."
+                     << "<br>Folgende Drittbibliotheken wurden verwendet:"
+                     << "<br>www.boost.org " << BOOST_VERSION / 100000 << "." << (BOOST_VERSION / 100) % 1000 << "." << BOOST_VERSION % 100
+                     << "<br>www.webtoolkit.eu  " << Wt::WEnvironment::libraryVersion()
+                     << "<br>www.extjs.com");
 
     Wt::Ext::MessageBox::show("Informationen zum Flugbuch2", msg, Wt::Information, true);
 }

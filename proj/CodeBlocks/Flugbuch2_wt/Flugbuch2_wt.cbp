@@ -34,7 +34,6 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--docroot . --http-address 0.0.0.0 --http-port 8080" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="../../../src/core" />
@@ -89,8 +88,8 @@
 			</Target>
 			<Target title="Release_MSVC">
 				<Option platforms="Windows;" />
-				<Option output="bin\Release_MSVC\Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release_MSVC\" />
+				<Option output="bin/Release_MSVC/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release_MSVC/" />
 				<Option type="1" />
 				<Option compiler="msvc8" />
 				<Option use_console_runner="0" />
@@ -107,10 +106,10 @@
 					<Add option="/W3" />
 					<Add option="/Zc:forScope" />
 					<Add option="/DWIN32;NDEBUG;_CONSOLE" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add library="libboost_date_time-vc80-mt-1_36" />
