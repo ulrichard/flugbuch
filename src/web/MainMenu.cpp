@@ -59,9 +59,10 @@ void MainMenu::info(void)
                      << "<br>Entwickelt von Richard Ulrich (richi@paraeasy.ch)"
                      << "<br>Die hier vorliegende Web - Version ist zur Verwendung im Browser. Daneben soll es in Zukunft auch eine Gui-Version geben."
                      << "<br>Folgende Drittbibliotheken wurden verwendet:"
-                     << "<br>www.boost.org " << BOOST_VERSION / 100000 << "." << (BOOST_VERSION / 100) % 1000 << "." << BOOST_VERSION % 100
                      << "<br>www.webtoolkit.eu  " << Wt::WEnvironment::libraryVersion()
-                     << "<br>www.extjs.com");
+                     << "<br>www.boost.org " << BOOST_VERSION / 100000 << "." << (BOOST_VERSION / 100) % 1000 << "." << BOOST_VERSION % 100
+                     << "<br>www.extjs.com"
+                     << "<br>mdbtools.sourceforge.net");
 
     Wt::Ext::MessageBox::show("Informationen zum Flugbuch2", msg, Wt::Information, true);
 }

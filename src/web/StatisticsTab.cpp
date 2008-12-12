@@ -53,6 +53,8 @@ StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightD
     cbStatSel_->addItem("Fluege pro Jahr");
     cbStatSel_->addItem("Fluege pro Monat");
     cbStatSel_->addItem("Fluege pro Woche");
+    cbStatSel_->addItem("Fluege pro Fluggebiet");
+    cbStatSel_->addItem("Flugzeit pro Fluggebiet");
 
     topBar->layout()->addWidget(wtStat);
     topBar->layout()->addWidget(cbStatSel_);
@@ -84,6 +86,12 @@ void StatisticsPanel::load(int ind)
         break;
     case 4:
         FlightsPerTimePeriod(2);
+        break;
+    case 5:
+        FlightAreas(false);
+        break;
+    case 6:
+        FlightAreas(true);
         break;
     }
 }
@@ -206,4 +214,38 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+void StatisticsPanel::FlightAreas(bool airtime)
+{
+    blayout_->removeWidget(chart_);
+//   delete chart_;
+    Wt::Chart::WPieChart *pie = new Wt::Chart::WPieChart();
+    blayout_->addWidget(pie, Wt::WBorderLayout::Center);
+    chart_ = pie;
+
+    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(flightDb_->flightAreas().size(), 3);
+
+
+    int i = 0;
+    for(flb::FlightDatabase::SeqFlightAreas::iterator it = flightDb_->flightAreas().begin(); it != flightDb_->flightAreas().end(); ++it, ++i)
+    {
+        string nam = (*it)->name();
+        int cnt = 0, dur = 0;
+        for(flb::FlightDatabase::SeqFlights::iterator itf = flightDb_->flights().begin(); itf != flightDb_->flights().end(); ++itf)
+            if((*itf)->takeoff()->area() == *it)
+            {
+                cnt++;
+                dur += (*itf)->duration();
+            }
+
+        model->setData(i, 0, any(nam));
+        model->setData(i, 1, any(cnt));
+        model->setData(i, 2, any(dur));
+    }
+
+    pie->setModel(model);
+    pie->setLabelsColumn(0);
+    pie->setDataColumn(airtime ? 2 : 1);
+    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie->setPerspectiveEnabled(true, 0.3);
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
