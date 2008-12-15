@@ -223,6 +223,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\web\StatisticsTab.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\web\TabControl.cpp"
 				>
 			</File>
@@ -286,6 +290,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\MainMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\web\StatisticsTab.h"
 				>
 			</File>
 			<File
