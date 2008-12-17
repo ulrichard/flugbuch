@@ -84,6 +84,7 @@
 					<Add library="wthttpd" />
 					<Add library="Advapi32.lib" />
 					<Add library="Winmm.lib" />
+					<Add library="shell32.lib" />
 				</Linker>
 			</Target>
 			<Target title="Release_MSVC">
@@ -120,6 +121,7 @@
 					<Add library="wthttp" />
 					<Add library="Advapi32.lib" />
 					<Add library="Winmm.lib" />
+					<Add library="shell32.lib" />
 				</Linker>
 			</Target>
 		</Build>
@@ -142,6 +144,8 @@
 		<Unit filename="..\..\..\src\inout\inout_xml.h" />
 		<Unit filename="..\..\..\src\util\FormatStr.h" />
 		<Unit filename="..\..\..\src\util\LocaleFormatting.h" />
+		<Unit filename="..\..\..\src\util\SystemInformation.cpp" />
+		<Unit filename="..\..\..\src\util\SystemInformation.h" />
 		<Unit filename="..\..\..\src\web\AreaTable.cpp" />
 		<Unit filename="..\..\..\src\web\AreaTable.h" />
 		<Unit filename="..\..\..\src\web\DetailTableBase.cpp" />
