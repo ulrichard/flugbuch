@@ -4,8 +4,13 @@ Section: web
 Priority: optional
 Architecture: i386
 Essential: no
+standards-Version: 3.8.0
+Homepage: http://sourceforge.net/projects/flugbuch2
 Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl
 Recommends: mozilla | netscape | firefox  
 Installed-Size: 1024
 Maintainer: Richard Ulrich <richi@paraeasy.ch>
-Description: Manage your flight log book. Mainly intended for paraglider pilots, but can also be used for others.
+Description: Flight log book for paraglider pilots
+.
+Manage your flight log book. Mainly intended for paraglider pilots, but can also be used for others.
+
