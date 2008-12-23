@@ -28,7 +28,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	# $(MAKE)
-	codeblocks --build $(CURDIR)/../../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp
+	codeblocks --build $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp
 	#docbook-to-man debian/testapp.sgml > testapp.1
 
 	touch $@
@@ -40,7 +40,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	# $(MAKE) clean
-	codeblocks --clean $(CURDIR)/../../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp
+	codeblocks --clean $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp
 
 	dh_clean 
 
@@ -52,7 +52,7 @@ install: build
 
 	# Add here commands to install the package into debian/testapp.
 	# $(MAKE) DESTDIR=$(CURDIR)/debian/testapp install
-	cp $(CURDIR)/../../res $(CURDIR)/debian/testapp/usr/bin
+	cp $(CURDIR)/../res $(CURDIR)/debian/testapp/usr/bin
 
 
 
