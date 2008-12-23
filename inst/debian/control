@@ -11,6 +11,3 @@ Recommends: mozilla | netscape | firefox
 Installed-Size: 1024
 Maintainer: Richard Ulrich <richi@paraeasy.ch>
 Description: Flight log book for paraglider pilots
-.
-Manage your flight log book. Mainly intended for paraglider pilots, but can also be used for others.
-
