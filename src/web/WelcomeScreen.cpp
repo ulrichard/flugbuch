@@ -18,12 +18,12 @@
 using namespace flbwt;
 using std::string;
 
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 WelcomeScreen::WelcomeScreen(Wt::WContainerWidget *parent)
  : Wt::WTabWidget(parent)
 {
     nl_txt_ = rg_txt_ = td_txt_ = im_txt_ = NULL;
-    nl_username_  = nl_password_ = rg_username_  = rg_password_ = rg_password2_ = NULL;
+    nl_username_  = nl_password_ = rg_username_  = rg_password_ = rg_password2_ = im_username_ = im_password_ = NULL;
     im_uploader_  = NULL;
     rg_useStdLoc_ = NULL;
     im_progress_  = NULL;
@@ -37,7 +37,7 @@ WelcomeScreen::WelcomeScreen(Wt::WContainerWidget *parent)
     addTab(makeImportTab(), "Import");
 
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * WelcomeScreen::makeNormalLoginTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
@@ -61,7 +61,7 @@ Wt::WWidget * WelcomeScreen::makeNormalLoginTab()
 
     return cont;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::doLogin()
 {
     FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
@@ -80,7 +80,7 @@ void WelcomeScreen::doLogin()
         nl_txt_->setText(ex.what());
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * WelcomeScreen::makeRegistrationTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
@@ -89,6 +89,7 @@ Wt::WWidget * WelcomeScreen::makeRegistrationTab()
     Wt::WBreak *brk2 = new Wt::WBreak(cont);
 
     Wt::WTable *layout = new Wt::WTable(cont);
+
     Wt::WLabel *usernameLabel = new Wt::WLabel("Benutzername: ", layout->elementAt(0, 0));
     layout->elementAt(0, 0)->resize(Wt::WLength(14, Wt::WLength::FontEx), Wt::WLength());
     rg_username_ = new Wt::WLineEdit(layout->elementAt(0, 1));
@@ -113,7 +114,7 @@ Wt::WWidget * WelcomeScreen::makeRegistrationTab()
 
     return cont;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::doRegister()
 {
     FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
@@ -123,7 +124,7 @@ void WelcomeScreen::doRegister()
     else
         app->createFlightDb(rg_username_->text().narrow(), rg_password_->text().narrow(), rg_useStdLoc_->isChecked());
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * WelcomeScreen::makeTestDbTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
@@ -134,14 +135,14 @@ Wt::WWidget * WelcomeScreen::makeTestDbTab()
 
     return cont;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::doTest()
 {
    FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
 
     app->loadTestDb();
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * WelcomeScreen::makeImportTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
@@ -153,6 +154,18 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     im_uploader_->uploaded.connect(SLOT(this, WelcomeScreen::doImport));
     im_uploader_->fileTooLarge.connect(SLOT(this, WelcomeScreen::uploadTooBig));
 
+    Wt::WTable *layout = new Wt::WTable(cont);
+
+    Wt::WLabel *usernameLabel = new Wt::WLabel("Benutzername: ", layout->elementAt(0, 0));
+    layout->elementAt(0, 0)->resize(Wt::WLength(14, Wt::WLength::FontEx), Wt::WLength());
+    im_username_ = new Wt::WLineEdit(layout->elementAt(0, 1));
+    usernameLabel->setBuddy(im_username_);
+
+    Wt::WLabel *passwordLabel = new Wt::WLabel("Passwort: ", layout->elementAt(1, 0));
+    im_password_ = new Wt::WLineEdit(layout->elementAt(1, 1));
+    im_password_->setEchoMode(Wt::WLineEdit::Password);
+    passwordLabel->setBuddy(im_password_);
+
     Wt::WBreak *brk2 = new Wt::WBreak(cont);
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Importieren", cont);
@@ -161,7 +174,7 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
 
     return cont;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::startUpload()
 {
     im_progress_ = new Wt::Ext::ProgressDialog("Die Datei wird hochgeladen...", "Abbrechen", 0, 100);
@@ -169,7 +182,7 @@ void WelcomeScreen::startUpload()
 
     im_uploader_->upload();
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::uploadTooBig(int size)
 {
     im_progress_->cancel();
@@ -183,11 +196,13 @@ void WelcomeScreen::uploadTooBig(int size)
     im_txt_->setText(msg);
 //    Wt::Ext::MessageBox::show("Error", msg, Wt::Warning, true);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::doImport()
 {
     assert(im_uploader_);
     assert(im_progress_);
+    assert(im_username_);
+    assert(im_password_);
 
     im_progress_->cancel();
     delete im_progress_;
@@ -195,9 +210,9 @@ void WelcomeScreen::doImport()
 
     im_uploader_->stealSpooledFile();
     FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
-    app->importFlightDb(im_uploader_->spoolFileName(), true);
+    app->importFlightDb(im_uploader_->spoolFileName(), true, im_username_->text().narrow(), im_password_->text().narrow());
 
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

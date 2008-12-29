@@ -26,5 +26,17 @@ bfs::path SystemInformation::homeDir()
 #endif
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+bfs::path SystemInformation::tempDir()
+{
+#ifdef WIN32
+    char tmp[MAX_PATH];
+    DWORD len = MAX_PATH;
+    GetTempPath(len, tmp);
+    return bfs::path(tmp);
+#else
+    return bfs::path("/tmp");
+#endif
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 
 

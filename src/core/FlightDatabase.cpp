@@ -25,7 +25,7 @@ using std::endl;
 using namespace boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
- /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+ /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addFlightArea(shared_ptr<FlightArea> flar)
 {
 	if(find(FlightAreas_.begin(), FlightAreas_.end(), flar) != FlightAreas_.end())
@@ -34,7 +34,7 @@ void FlightDatabase::addFlightArea(shared_ptr<FlightArea> flar)
 			throw std::invalid_argument("Fluggebiet existiert bereits");
 	FlightAreas_.push_back(flar);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addLocation(shared_ptr<Location> loc)
 {
 	BOOST_FOREACH(shared_ptr<Location> los, Locations_)
@@ -42,7 +42,7 @@ void FlightDatabase::addLocation(shared_ptr<Location> loc)
 			throw std::invalid_argument(("Ort existiert bereits : " + loc->name()).c_str());
 	Locations_.push_back(loc);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addGlider(shared_ptr<Glider> gld)
 {
 	BOOST_FOREACH(shared_ptr<Glider> gls, Gliders_)
@@ -50,7 +50,7 @@ void FlightDatabase::addGlider(shared_ptr<Glider> gld)
 			throw std::invalid_argument("Flugger�t existiert bereits");
 	Gliders_.push_back(gld);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addFlight(shared_ptr<Flight> fl)
 {
 	BOOST_FOREACH(shared_ptr<Flight> fs, Flights_)
@@ -58,7 +58,7 @@ void FlightDatabase::addFlight(shared_ptr<Flight> fl)
 			throw std::invalid_argument("Flugnummer schon vergeben");
 	Flights_.insert(fl);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteFlightArea(FlightDatabase::SeqFlightAreas::iterator itdel)
 {
 	BOOST_FOREACH(shared_ptr<Location> loc, Locations_)
@@ -66,7 +66,7 @@ void FlightDatabase::deleteFlightArea(FlightDatabase::SeqFlightAreas::iterator i
 			throw runtime_error(FormatStr() << "Das Gebiet wird noch verwendet. Zum Beispiel bei Ort " << loc->name());
 	FlightAreas_.erase(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteFlightArea(boost::shared_ptr<FlightArea> flar)
 {
     SeqFlightAreas::iterator itdel = find(FlightAreas_.begin(), FlightAreas_.end(), flar);
@@ -75,7 +75,7 @@ void FlightDatabase::deleteFlightArea(boost::shared_ptr<FlightArea> flar)
     else
         deleteFlightArea(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteLocation(FlightDatabase::SeqLocations::iterator itdel)
 {
 	static const std::string errmsg("Der Ort wird noch verwendet. Zum Beispiel bei Flug Nummer ");
@@ -92,7 +92,7 @@ void FlightDatabase::deleteLocation(FlightDatabase::SeqLocations::iterator itdel
 	}
 	Locations_.erase(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteLocation(boost::shared_ptr<Location> loc)
 {
     SeqLocations::iterator itdel = find(Locations_.begin(), Locations_.end(), loc);
@@ -101,7 +101,7 @@ void FlightDatabase::deleteLocation(boost::shared_ptr<Location> loc)
     else
         deleteLocation(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteGlider(FlightDatabase::SeqGliders::iterator itdel)
 {
 	BOOST_FOREACH(shared_ptr<Flight> flight, Flights_)
@@ -109,7 +109,7 @@ void FlightDatabase::deleteGlider(FlightDatabase::SeqGliders::iterator itdel)
 			throw runtime_error(FormatStr() << "Das Flugger�t wird noch verwendet. Zum Beispiel bei Flug Nummer " << flight->number());
 	Gliders_.erase(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteGlider(boost::shared_ptr<Glider> gld)
 {
     SeqGliders::iterator itdel = find(Gliders_.begin(), Gliders_.end(), gld);
@@ -118,12 +118,12 @@ void FlightDatabase::deleteGlider(boost::shared_ptr<Glider> gld)
     else
         deleteGlider(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteFlight(FlightDatabase::SeqFlights::iterator itdel)
 {
 	Flights_.erase(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::deleteFlight(boost::shared_ptr<Flight> fl)
 {
     SeqFlights::iterator itdel = find(Flights_.begin(), Flights_.end(), fl);
@@ -132,7 +132,7 @@ void FlightDatabase::deleteFlight(boost::shared_ptr<Flight> fl)
     else
         deleteFlight(itdel);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const FlightDatabase::SeqFlightAreas FlightDatabase::getFlightAreasEx(Location::UseAs use) const
 {
     std::set<shared_ptr<FlightArea> > selset;
@@ -144,7 +144,7 @@ const FlightDatabase::SeqFlightAreas FlightDatabase::getFlightAreasEx(Location::
     copy(selset.begin(), selset.end(), back_inserter(sel));
     return sel;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const FlightDatabase::SeqLocations FlightDatabase::getLocationsEx(const shared_ptr<FlightArea> flar, Location::UseAs useas) const
 {
     SeqLocations sel;
@@ -155,7 +155,7 @@ const FlightDatabase::SeqLocations FlightDatabase::getLocationsEx(const shared_p
 //            sel.push_back(loc);
     return sel;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const boost::shared_ptr<FlightArea> FlightDatabase::getArea(const std::string &nam) const
 {
     SeqFlightAreas::const_iterator fit = find_if(FlightAreas_.begin(), FlightAreas_.end(), bind(&FlightArea::name, *_1) == nam);
@@ -163,7 +163,7 @@ const boost::shared_ptr<FlightArea> FlightDatabase::getArea(const std::string &n
         return *fit;
     throw std::runtime_error("no FlightArea found with name" + nam);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 {
     shared_ptr<FlightDatabase> fldb(new flb::FlightDatabase("*testdb*"));
@@ -214,7 +214,7 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 
 	return fldb;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::printCounts(std::ostream &strm)
 {
     strm << "pilot name : "   << PilotName_.size()   << endl;
@@ -223,7 +223,7 @@ void FlightDatabase::printCounts(std::ostream &strm)
 	strm << "gliders : " <<	Gliders_.size() << endl;
 	strm << "flights : " << Flights_.size() << endl;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 string FlightDatabase::encryptPassword(const string &pwd)
 {
     // todo : use an md5 or some other hashing algorithm here
@@ -233,6 +233,11 @@ string FlightDatabase::encryptPassword(const string &pwd)
     string pwh = lexical_cast<string>(sum) + lexical_cast<string>(has);
     return pwh;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightDatabase::setPilotNameAndPwd(const string &usr, const string &pwd)
+{
+    PilotName_ = usr;
+    Password_  = encryptPassword(pwd);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

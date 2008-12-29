@@ -32,7 +32,7 @@ using boost::gregorian::date;
 using namespace boost::lambda;
 using namespace flbwt;
 
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
@@ -67,7 +67,7 @@ StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightD
 
 
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::load(int ind)
 {
     switch(ind)
@@ -95,7 +95,7 @@ void StatisticsPanel::load(int ind)
         break;
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::FlightsPerGlider(bool airtime)
 {
     blayout_->removeWidget(chart_);
@@ -135,7 +135,7 @@ void StatisticsPanel::FlightsPerGlider(bool airtime)
     pie->setPerspectiveEnabled(true, 0.3);
 
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::FlightsPerTimePeriod(int mode)
 {
     blayout_->removeWidget(chart_);
@@ -213,7 +213,7 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
     cartchart->setLegendEnabled(true);
 
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::FlightAreas(bool airtime)
 {
     blayout_->removeWidget(chart_);
@@ -248,4 +248,4 @@ void StatisticsPanel::FlightAreas(bool airtime)
     pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
     pie->setPerspectiveEnabled(true, 0.3);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

@@ -15,6 +15,7 @@ class SystemInformation
 public:
 
     static boost::filesystem::path homeDir();
+    static boost::filesystem::path tempDir();
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 }

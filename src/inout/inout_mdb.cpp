@@ -1,5 +1,6 @@
 // flugbuch
 #include "inout_mdb.h"
+#include "SystemInformation.h"
 // boost
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -7,6 +8,7 @@
 #include <boost/ref.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
+#include <boost/filesystem/fstream.hpp>
 // standard library
 #include <fstream>
 #include <vector>
@@ -27,9 +29,10 @@ using std::count;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
+namespace bfs = boost::filesystem;
 
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-FlightDatabase inout_mdb::read(const std::string &source)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+FlightDatabase inout_mdb::read(const bfs::path &source)
 {
 	FlightDatabase fldb("");
     // the areas can be used as is
@@ -67,21 +70,23 @@ FlightDatabase inout_mdb::read(const std::string &source)
 
 	return fldb;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-string inout_mdb::export_csv(const std::string &source, const std::string &tablename)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+bfs::path inout_mdb::export_csv(const bfs::path &source, const string &tablename)
 {
-    const string outfile = "/tmp/flb_imp_" + tablename + ".csv";
-    const string cmd = "mdb-export " + source + " " + tablename + " -H -D %Y/%m/%d > " + outfile;
-    unlink(outfile.c_str());
+    const bfs::path outfile = flb::SystemInformation::tempDir() / ("flb_imp_" + tablename + ".csv");
+    const string cmd = "mdb-export " + source.external_file_string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.external_file_string();
+    bfs::remove(outfile);
     system(cmd.c_str());
     // todo : check if the file was written
+    if(!bfs::exists(outfile))
+        throw std::runtime_error("failed to write file " + outfile.string());
     return outfile;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-void inout_mdb::parse_csv(const string &file, boost::function<void(const vector<string>&)> lineFunc)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void inout_mdb::parse_csv(const bfs::path &file, boost::function<void(const vector<string>&)> lineFunc)
 {
     typedef boost::tokenizer<boost::escaped_list_separator<char> > TokenizerT;
-    std::ifstream ifs(file.c_str());
+    bfs::ifstream ifs(file);
     if(!ifs.good())
         throw std::runtime_error("file not found");
     string line, adline;
@@ -101,7 +106,7 @@ void inout_mdb::parse_csv(const string &file, boost::function<void(const vector<
         lineFunc(tokens);
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readCountry(const vector<string> &tokens)
 {
     if(tokens.size() == 3)
@@ -109,7 +114,7 @@ void inout_mdb::readCountry(const vector<string> &tokens)
     else
         assert(!"wrong number of tokens for Country");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readFlightArea(const vector<string> &tokens)
 {
     if(tokens.size() == 4)
@@ -120,7 +125,7 @@ void inout_mdb::readFlightArea(const vector<string> &tokens)
     else
         assert(!"wrong number of tokens for FlightArea");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readGlider(const vector<string> &tokens)
 {
     if(tokens.size() == 9)
@@ -146,7 +151,7 @@ void inout_mdb::readGlider(const vector<string> &tokens)
     else
         assert(!"wrong number of tokens for Glider");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readLocation(const vector<string> &tokens, std::map<unsigned int, boost::shared_ptr<Location> > &locations)
 {
     if(tokens.size() == 8)
@@ -162,7 +167,7 @@ void inout_mdb::readLocation(const vector<string> &tokens, std::map<unsigned int
     else
         assert(!"wrong number of tokens for Location");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readFlight(const vector<string> &tokens)
 {
     if(tokens.size() == 8)
@@ -192,7 +197,7 @@ void inout_mdb::readFlight(const vector<string> &tokens)
     else
         assert(!"wrong number of tokens for Flight");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readWptLink(const vector<string> &tokens)
 {
     if(tokens.size() == 3)
@@ -203,7 +208,7 @@ void inout_mdb::readWptLink(const vector<string> &tokens)
     else
         assert(!"wrong number of tokens for WptLink");
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)
 {
     FlightDatabase::SeqLocations::const_iterator fit = find_if(fldb.locations().begin(), fldb.locations().end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
@@ -225,5 +230,5 @@ void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location
         locp.second = *fit;
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

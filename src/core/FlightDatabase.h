@@ -12,10 +12,10 @@
 // standard library
 #include <fstream>
 #include <set>
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 namespace flb
 {
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class FlightDatabase
 {
 	friend class boost::serialization::access;
@@ -46,6 +46,8 @@ public:
 	SeqLocations   & locations(void)   { return Locations_; }
 	SeqGliders     & gliders(void)     { return Gliders_; }
 	SeqFlights     & flights(void)     { return Flights_; }
+	// setters
+	void setPilotNameAndPwd(const std::string &usr, const std::string &pwd);
 
 	// deleter functions
 	void deleteFlightArea(SeqFlightAreas::iterator itdel);
@@ -83,6 +85,6 @@ private:
 };
 
 
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 } // namespace flb
 #endif // FLIGHTDATABASE_H

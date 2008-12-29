@@ -1,20 +1,22 @@
 #include "inout_xml.h"
-#include <fstream>
-//#include <boost/archive/text_oarchive.hpp>
-//#include <boost/archive/text_iarchive.hpp>
+// boost
 #include <boost/archive/tmpdir.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/gregorian/greg_serialize.hpp>
+#include <boost/filesystem/fstream.hpp>
+// standard library
+#include <fstream>
 
 using namespace flb;
+namespace bfs = boost::filesystem;
 
-FlightDatabase inout_xml::read(const std::string &source)
+FlightDatabase inout_xml::read(const bfs::path &source)
 {
 	FlightDatabase fldb("");
 	// create and open an archive for input
-    std::ifstream ifs(source.c_str());
+    bfs::ifstream ifs(source);
 	if(!ifs.good())
         throw std::runtime_error("file not found");
 	boost::archive::xml_iarchive ia(ifs);
@@ -24,10 +26,12 @@ FlightDatabase inout_xml::read(const std::string &source)
 	return fldb;
 }
 
-void inout_xml::write(const FlightDatabase &fdb, const std::string &destination)
+void inout_xml::write(const FlightDatabase &fdb, const bfs::path &destination)
 {
-	std::ofstream ofs(destination.c_str());
-	assert(ofs.good());
+    bfs::create_directories(destination.branch_path());
+	bfs::ofstream ofs(destination);
+	if(!ofs.good())
+        throw std::runtime_error("could not write to " + destination.string());
 	boost::archive::xml_oarchive oa(ofs);
     // write class instance to archive
 	oa << BOOST_SERIALIZATION_NVP(fdb);

@@ -24,6 +24,7 @@
 					<Add library="boost_date_time-mt-d" />
 					<Add library="boost_serialization-mt-d" />
 					<Add library="boost_signals-mt-d" />
+					<Add library="boost_filesystem-mt-d" />
 					<Add library="wt" />
 					<Add library="wtext" />
 					<Add library="wthttp" />
@@ -46,6 +47,7 @@
 					<Add library="boost_date_time-mt" />
 					<Add library="boost_serialization-mt" />
 					<Add library="boost_signals-mt" />
+					<Add library="boost_filesystem-mt" />
 					<Add library="wt" />
 					<Add library="wtext" />
 					<Add library="wtfcgi" />

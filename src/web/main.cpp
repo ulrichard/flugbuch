@@ -6,6 +6,7 @@
 #include "WelcomeScreen.h"
 #include "FormatStr.h"
 #include "MainMenu.h"
+#include "SystemInformation.h"
 // witty
 #include <Wt/WBorderLayout>
 #include <Wt/Ext/Dialog>
@@ -23,8 +24,8 @@
 
 
 using std::string;
-//using namespace Wt;
 using namespace flbwt;
+namespace bfs = boost::filesystem;
 
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
@@ -35,13 +36,13 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 
 	return flapp;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // main entry point of the application
 int main(int argc, char *argv[])
 {
 	return Wt::WRun(argc, argv, &createApplication);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // We have a FlightLogApp object for each session (user...)
 FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
  : Wt::WApplication(env), flightDb_(shared_ptr<flb::FlightDatabase>())
@@ -69,31 +70,32 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
 #endif
 */
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::finalize()
 {
     // todo : ask the user to save
     saveDb();
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-string FlightLogApp::getPersistFileName(const string &usr)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+bfs::path FlightLogApp::getPersistFileName(const string &usr)
 {
+    string filename = FormatStr()  << "Flugbuch_" << usr << ".xml";
     string persistenceDir;
-    if(!readConfigurationProperty("persistenceDir", persistenceDir))
-        persistenceDir = "/home/richi/sourcecode/flugbuch2/flb";
-	const string filename = FormatStr() << persistenceDir << "/Flugbuch_" << usr << ".xml";
-	return filename;
+    if(readConfigurationProperty("persistenceDir", persistenceDir))
+        return bfs::path(persistenceDir) / filename;
+    else
+        return flb::SystemInformation::homeDir() / "flugbuch2" / filename;
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::doLogin()
 {
     // display the welcome page with different login options
     mainStack_->setCurrentWidget(welcomeScreen_);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
 {
-    const string filename = getPersistFileName(usr);
+    const bfs::path filename = getPersistFileName(usr);
 
     try
     {
@@ -110,7 +112,7 @@ void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
         throw std::runtime_error(msg);
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::createFlightDb(const string &usr, const string &pwd, bool useStdLoc)
 {
     shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(usr, pwd));
@@ -123,7 +125,7 @@ void FlightLogApp::createFlightDb(const string &usr, const string &pwd, bool use
 
     loadFlights(fldb);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 {
     flightDb_ = fldb;
@@ -153,44 +155,45 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 
     mainStack_->setCurrentWidget(mainScreen_);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadTestDb()
 {
     loadFlights(flb::FlightDatabase::makeTestDb());
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
-void FlightLogApp::importFlightDb(const std::string &file, bool del)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string &usr, const string &pwd)
 {
     flb::inout_mdb iomdb;
 	shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(file)));
+	fldb->setPilotNameAndPwd(usr, pwd);
 
     loadFlights(fldb);
 
     if(del)
-        unlink(file.c_str());
+        bfs::remove(file);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::saveDb()
 {
-    const string filename = getPersistFileName(flightDb_->pilotName());
+    const bfs::path filename = getPersistFileName(flightDb_->pilotName());
 
     flb::inout_xml ioxml;
 	ioxml.write(*flightDb_, filename);
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::reload()
 {
     if(flightDb_->pilotName() == "*testdb*")
         loadTestDb();
     else
     {
-        const string filename = getPersistFileName(flightDb_->pilotName());
+        const bfs::path filename = getPersistFileName(flightDb_->pilotName());
         flb::inout_xml ioxml;
         shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
         // no password checking this time
         loadFlights(fldb);
     }
 }
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 
 
