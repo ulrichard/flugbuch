@@ -80,9 +80,9 @@
 	    <!-- Session timeout (seconds).
 
 	       When a session remains inactive for this amount of time, it is
-	       cleaned up.
+	       cleaned up. (default : 600)
 	      -->
-	    <timeout>600</timeout>
+	    <timeout>3600</timeout>
 	</session-management>
 
 	<!-- Settings that apply only to the FastCGI connector.
@@ -103,11 +103,6 @@
                If debugging is enabled and this path is not empty, then valgrind
 	       will be started for every shared process, or for every session
 	       which has ?debug appended to the command line.
-
-	       The variable is slighly misnamed. Not only a path can be set,
-	       but also options, like for example:
-
-                 /usr/bin/valgrind --leak-check=full
              -->
 	    <valgrind-path></valgrind-path>
 
@@ -128,7 +123,7 @@
          -->
 	<log-file></log-file>
 
-	<!-- Maximum HTTP request size (Kb) -->
+	<!-- Maximum HTTP request size (Kb) (default : 128)-->
 	<max-request-size>5120</max-request-size>
 
 	<!-- Session id length (number of characters) -->
@@ -149,20 +144,6 @@
 	   if you are not using SVG (used by the WPaintedWidget).
 	  -->
 	<send-xhtml-mime-type>false</send-xhtml-mime-type>
-
-	<!-- Redirect message shown for browsers without JavaScript support
-
-	   By default, Wt will use an automatic redirect to start the
-	   application when the browser does not support JavaScript. However,
-	   browsers are not required to follow the redirection, and in some
-           situations (when using XHTML), such automatic redirection is not
-           supported.
-
-	   This configures the text that is shown in the anchor which
-	   the user may click to be redirected to a basic HTML version of
-           your application.
-          -->
-	<redirect-message>Load basic HTML</redirect-message>
 
 	<!-- Whether we are sitting behind a reverse proxy 
 
@@ -203,15 +184,38 @@
     </application-settings>
 
 
-    <!-- Override settings for specific applications.
+	<application-settings location="/home/richi/sourcecode/flugbuch2/res/flugbuch2.fcgi">
 
-       Location refers to physical filesystem location of the
-       application. The application prints this location to the log
-       file on startup, and this should match exactly.
-      -->
-    <!--
-    <application-settings
-       location="/var/www/localhost/wt-examples/hello.wt">
+        <!-- Session management. -->
+	<session-management>
+	    <!-- Session timeout (seconds).
+
+	       When a session remains inactive for this amount of time, it is
+	       cleaned up. (default : 600)
+	      -->
+	    <timeout>3600</timeout>
+	</session-management>
+
+	<!-- Maximum HTTP request size (Kb) (default : 128)-->
+	<max-request-size>5120</max-request-size>
+
+	<!-- Session id length (number of characters) -->
+	<session-id-length>16</session-id-length>
+
+	<!-- Runtime Properties
+     
+           These properties may be used to adapt applications to their
+	   deployment environment. Typical use is for paths to resources
+	   that may or may not be shared between several applications.
+	  -->
+	<properties>
+            <!-- persistenceDir property
+
+	       Where the flight logbooks are stored
+              -->
+	    <property name="persistenceDir">/home/richi/sourcecode/flugbuch2/flb</property>
+
+	</properties>
+
     </application-settings>
-    -->
 </server>

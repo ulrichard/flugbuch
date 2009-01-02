@@ -14,11 +14,13 @@
 					<Add option="-g" />
 					<Add directory="../../../src/core" />
 					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add library="boost_unit_test_framework-mt-d" />
 					<Add library="boost_serialization-mt-d" />
 					<Add library="boost_date_time-mt-d" />
+					<Add library="boost_filesystem-mt-d" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -30,12 +32,14 @@
 					<Add option="-O2" />
 					<Add directory="../../../src/core" />
 					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/util" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add library="boost_unit_test_framework-mt" />
 					<Add library="boost_serialization-mt" />
 					<Add library="boost_date_time-mt" />
+					<Add library="boost_filesystem-mt" />
 				</Linker>
 			</Target>
 		</Build>
@@ -54,6 +58,7 @@
 		<Unit filename="../../../src/inout/inout_xml.cpp" />
 		<Unit filename="../../../src/inout/inout_xml.h" />
 		<Unit filename="../../../src/test/FlugbuchMain.cpp" />
+		<Unit filename="../../../src/util/SystemInformation.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion>
