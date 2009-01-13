@@ -36,6 +36,7 @@ public:
 
     void FlightsPerGlider(bool airtime);
     void FlightsPerTimePeriod(int mode);
+    void FlightlessTime();
     void FlightAreas(bool airtime);
 private:
     boost::shared_ptr<flb::FlightDatabase>  flightDb_;
