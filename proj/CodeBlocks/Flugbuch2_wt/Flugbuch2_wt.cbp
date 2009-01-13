@@ -132,8 +132,13 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="../../../res/flugbuch2.css" />
+		<Unit filename="../../../res/img/add.png" />
+		<Unit filename="../../../res/img/delete.png" />
 		<Unit filename="../../../res/img/edit.png" />
+		<Unit filename="../../../res/img/home.png" />
+		<Unit filename="../../../res/img/print.png" />
 		<Unit filename="../../../res/img/save.png" />
+		<Unit filename="../../../res/img/undo.png" />
 		<Unit filename="../../../src/core/CoreStructures.cpp" />
 		<Unit filename="../../../src/core/CoreStructures.h" />
 		<Unit filename="../../../src/core/FlightDatabase.cpp" />
@@ -144,6 +149,14 @@
 		<Unit filename="../../../src/inout/inout_mdb.h" />
 		<Unit filename="../../../src/inout/inout_xml.cpp" />
 		<Unit filename="../../../src/inout/inout_xml.h" />
+		<Unit filename="../../../src/inout/odbc_wrapper.cpp">
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
+		<Unit filename="../../../src/inout/odbc_wrapper.h">
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
 		<Unit filename="../../../src/util/FormatStr.h" />
 		<Unit filename="../../../src/util/LocaleFormatting.h" />
 		<Unit filename="../../../src/util/SystemInformation.cpp" />

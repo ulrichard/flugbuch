@@ -83,29 +83,6 @@ public:
   BOOL Connect(LPCTSTR User=_T(""),LPCTSTR Pass=_T(""), LPCTSTR Host=_T("(local)"),BOOL Trusted=1, enumProtocols Proto=protoNamedPipes);
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class DB2Connection : private ODBCConnection
-{
-public:
-    DB2Connection() { };
-    virtual ~DB2Connection() { };
-    int Connect(LPCTSTR DBPath);
- };
- /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class XLSConnection : private ODBCConnection
-{
-public:
-  XLSConnection(){};
-  virtual ~XLSConnection(){};
-  int Connect(LPCTSTR XLSPath,LPCTSTR DefDir=_T(""));
-};
- /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class TXTConnection : private ODBCConnection
-{
- public:
-  TXTConnection(){};
-  int Connect(LPCTSTR TXTPath);
- };
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class MDBConnection : public ODBCConnection
  {
  public:
@@ -132,26 +109,26 @@ public:
     USHORT GetColumnCount()
     {
         short nCols=0;
-        if(!IS_SQL_OK(SQLNumResultCols(m_hStmt,&nCols)))
+        if(!IS_SQL_OK(SQLNumResultCols(m_hStmt, &nCols)))
             return 0;
         return nCols;
     }
     DWORD GetChangedRowCount(void)
     {
         long nRows=0;
-        if(!IS_SQL_OK(SQLRowCount(m_hStmt,&nRows)))
+        if(!IS_SQL_OK(SQLRowCount(m_hStmt, &nRows)))
             return 0;
         return nRows;
     }
-    BOOL Query( LPCTSTR strSQL)
+    BOOL Query(LPCTSTR strSQL)
     {
-        SQLRETURN nRet=SQLExecDirect( m_hStmt, (SQLTCHAR *)strSQL, SQL_NTS );
-        return IS_SQL_OK( nRet );
+        SQLRETURN nRet = SQLExecDirect(m_hStmt, (SQLTCHAR *)strSQL, SQL_NTS);
+        return IS_SQL_OK(nRet);
     }
     BOOL Fetch()
     {
-        SQLRETURN nRet=SQLFetch(m_hStmt);
-        return IS_SQL_OK( nRet );
+        SQLRETURN nRet = SQLFetch(m_hStmt);
+        return IS_SQL_OK(nRet);
     }
     BOOL FecthRow(UINT nRow)
     {
@@ -159,33 +136,32 @@ public:
     }
     BOOL FetchPrevious()
     {
-        SQLRETURN nRet=SQLFetchScroll(m_hStmt,SQL_FETCH_PRIOR,0);
+        SQLRETURN nRet = SQLFetchScroll(m_hStmt, SQL_FETCH_PRIOR, 0);
         return IS_SQL_OK(nRet);
     }
     BOOL FecthNext()
     {
-        SQLRETURN nRet=SQLFetchScroll(m_hStmt,SQL_FETCH_NEXT,0);
+        SQLRETURN nRet = SQLFetchScroll(m_hStmt, SQL_FETCH_NEXT, 0);
         return IS_SQL_OK(nRet);
     }
-    BOOL FetchRow(ULONG nRow,BOOL Absolute=1)
+    BOOL FetchRow(ULONG nRow, BOOL Absolute = 1)
     {
-        SQLRETURN nRet=SQLFetchScroll(m_hStmt,
-            (Absolute ? SQL_FETCH_ABSOLUTE : SQL_FETCH_RELATIVE),nRow);
+        SQLRETURN nRet = SQLFetchScroll(m_hStmt, (Absolute ? SQL_FETCH_ABSOLUTE : SQL_FETCH_RELATIVE), nRow);
         return IS_SQL_OK(nRet);
     }
     BOOL FetchFirst()
     {
-        SQLRETURN nRet=SQLFetchScroll(m_hStmt,SQL_FETCH_FIRST,0);
+        SQLRETURN nRet = SQLFetchScroll(m_hStmt, SQL_FETCH_FIRST, 0);
         return IS_SQL_OK(nRet);
     }
     BOOL FetchLast()
     {
-        SQLRETURN nRet=SQLFetchScroll(m_hStmt,SQL_FETCH_LAST,0);
+        SQLRETURN nRet = SQLFetchScroll(m_hStmt, SQL_FETCH_LAST, 0);
         return IS_SQL_OK(nRet);
     }
     BOOL Cancel()
     {
-        SQLRETURN nRet=SQLCancel(m_hStmt);
+        SQLRETURN nRet = SQLCancel(m_hStmt);
         return IS_SQL_OK(nRet);
     }
 };
@@ -203,25 +179,24 @@ public:
             return 0;
         return nCols;
     }
-    BOOL BindColumn(USHORT Column,LPVOID pBuffer,
-        ULONG pBufferSize,LONG * pReturnedBufferSize=NULL,
-        USHORT nType=SQL_C_TCHAR)
+    BOOL BindColumn(USHORT Column, LPVOID pBuffer,
+        ULONG pBufferSize, LONG * pReturnedBufferSize = NULL,
+        USHORT nType = SQL_C_TCHAR)
     {
-        LONG pReturnedSize=0;
-        SQLRETURN Ret=SQLBindCol(m_hStmt,Column,nType,
-               pBuffer,pBufferSize,&pReturnedSize);
+        LONG pReturnedSize = 0;
+        SQLRETURN Ret = SQLBindCol(m_hStmt, Column, nType, pBuffer, pBufferSize, &pReturnedSize);
         if(*pReturnedBufferSize)
-            *pReturnedBufferSize=pReturnedSize;
+            *pReturnedBufferSize = pReturnedSize;
         return IS_SQL_OK(Ret);
     }
     USHORT GetColumnByName(LPCTSTR Column)
     {
-        SHORT nCols=GetColumnCount();
-        for(USHORT i=1;i<(nCols+1);i++)
+        SHORT nCols = GetColumnCount();
+        for(USHORT i=1; i<(nCols+1); i++)
         {
-            TCHAR Name[256]=_T("");
-            GetColumnName(i,Name,sizeof(Name));
-            if(!_tcsicmp(Name,Column))
+            TCHAR Name[256] = _T("");
+            GetColumnName(i, Name, sizeof(Name));
+            if(!_tcsicmp(Name, Column))
                 return i;
         }
         return 0;
@@ -239,13 +214,13 @@ public:
             *dataLen=od;
         return 1;
     }
-    int GetColumnType( USHORT Column )
+    int GetColumnType(USHORT Column)
     {
        int nType=SQL_C_DEFAULT;
        SQLTCHAR svColName[ 256 ]=_T("");
        SWORD swCol=0,swType=0,swScale=0,swNull=0;
        UDWORD pcbColDef;
-       SQLDescribeCol(m_hStmt,            // Statement handle
+       SQLDescribeCol(m_hStmt,             // Statement handle
                        Column,             // ColumnNumber
                        svColName,          // ColumnName
                        sizeof( svColName), // BufferLength
@@ -253,16 +228,16 @@ public:
                        &swType,            // DataTypePtr
                        &pcbColDef,         // ColumnSizePtr
                        &swScale,           // DecimalDigitsPtr
-                       &swNull );          // NullablePtr
-        nType=(int)swType;
-        return( nType );
+                       &swNull);           // NullablePtr
+        nType = (int)swType;
+        return(nType);
     }
-    DWORD GetColumnSize( USHORT Column )
+    DWORD GetColumnSize(USHORT Column)
     {
-       int nType=SQL_C_DEFAULT;
-       SQLTCHAR svColName[ 256 ]=_T("");
-       SWORD swCol=0,swType=0,swScale=0,swNull=0;
-       DWORD pcbColDef=0;
+       int nType = SQL_C_DEFAULT;
+       SQLTCHAR svColName[256] = _T("");
+       SWORD swCol = 0, swType = 0, swScale = 0, swNull = 0;
+       DWORD pcbColDef = 0;
        SQLDescribeCol( m_hStmt,            // Statement handle
                        Column,             // ColumnNumber
                        svColName,          // ColumnName
@@ -274,49 +249,12 @@ public:
                        &swNull );          // NullablePtr
         return pcbColDef;
     }
-    DWORD GetColumnScale( USHORT Column )
+    DWORD GetColumnScale(USHORT Column)
     {
-       int nType=SQL_C_DEFAULT;
-       SQLTCHAR svColName[ 256 ]=_T("");
-       SWORD swCol=0,swType=0,swScale=0,swNull=0;
-       DWORD pcbColDef=0;
-       SQLDescribeCol( m_hStmt,            // Statement handle
-                   Column,             // ColumnNumber
-                   svColName,          // ColumnName
-                   sizeof( svColName), // BufferLength
-                   &swCol,             // NameLengthPtr
-                   &swType,            // DataTypePtr
-                   &pcbColDef,         // ColumnSizePtr
-                   &swScale,           // DecimalDigitsPtr
-                   &swNull );          // NullablePtr
-       return swScale;
-    }
-    BOOL GetColumnName(USHORT Column, LPTSTR Name, SHORT NameLen )
-    {
-       int nType=SQL_C_DEFAULT;
-       SWORD swCol=0,swType=0,swScale=0,swNull=0;
-       DWORD pcbColDef=0;
-       SQLRETURN Ret=
-        SQLDescribeCol m_hStmt,            // Statement handle
-                       Column,               // ColumnNumber
-                       (SQLTCHAR*)Name,     // ColumnName
-                       NameLen,    // BufferLength
-                       &swCol,             // NameLengthPtr
-                       &swType,            // DataTypePtr
-                       &pcbColDef,         // ColumnSizePtr
-                       &swScale,           // DecimalDigitsPtr
-                       &swNull );          // NullablePtr
-
-       if(IS_SQL_ERR(Ret))
-            return 0;
-       return 1;
-    }
-    BOOL IsColumnNullable(USHORT Column)
-    {
-       int nType=SQL_C_DEFAULT;
-       SQLTCHAR svColName[256]=_T("");
-       SWORD swCol=0, swType=0, swScale=0, swNull=0;
-       UDWORD pcbColDef;
+       int nType = SQL_C_DEFAULT;
+       SQLTCHAR svColName[256] = _T("");
+       SWORD swCol = 0, swType = 0, swScale = 0, swNull = 0;
+       DWORD pcbColDef = 0;
        SQLDescribeCol( m_hStmt,            // Statement handle
                        Column,             // ColumnNumber
                        svColName,          // ColumnName
@@ -325,9 +263,46 @@ public:
                        &swType,            // DataTypePtr
                        &pcbColDef,         // ColumnSizePtr
                        &swScale,           // DecimalDigitsPtr
-                       &swNull );          // NullablePtr
+                       &swNull);           // NullablePtr
+       return swScale;
+    }
+    BOOL GetColumnName(USHORT Column, LPTSTR Name, SHORT NameLen )
+    {
+       int nType = SQL_C_DEFAULT;
+       SWORD swCol = 0, swType = 0, swScale = 0, swNull = 0;
+       DWORD pcbColDef = 0;
+       SQLRETURN Ret=
+        SQLDescribeCol m_hStmt,             // Statement handle
+                       Column,              // ColumnNumber
+                       (SQLTCHAR*)Name,     // ColumnName
+                       NameLen,             // BufferLength
+                       &swCol,              // NameLengthPtr
+                       &swType,             // DataTypePtr
+                       &pcbColDef,          // ColumnSizePtr
+                       &swScale,            // DecimalDigitsPtr
+                       &swNull);            // NullablePtr
 
-       return (swNull==SQL_NULLABLE);
+       if(IS_SQL_ERR(Ret))
+            return 0;
+       return 1;
+    }
+    BOOL IsColumnNullable(USHORT Column)
+    {
+       int nType = SQL_C_DEFAULT;
+       SQLTCHAR svColName[256] = _T("");
+       SWORD swCol = 0, swType = 0, swScale = 0, swNull = 0;
+       UDWORD pcbColDef;
+       SQLDescribeCol( m_hStmt,            // Statement handle
+                       Column,             // ColumnNumber
+                       svColName,          // ColumnName
+                       sizeof(svColName),  // BufferLength
+                       &swCol,             // NameLengthPtr
+                       &swType,            // DataTypePtr
+                       &pcbColDef,         // ColumnSizePtr
+                       &swScale,           // DecimalDigitsPtr
+                       &swNull);           // NullablePtr
+
+       return (swNull == SQL_NULLABLE);
     }
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

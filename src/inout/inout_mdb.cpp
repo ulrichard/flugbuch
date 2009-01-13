@@ -1,6 +1,14 @@
 // flugbuch
 #include "inout_mdb.h"
 #include "SystemInformation.h"
+// mdb odbc
+#ifdef WIN32
+ #include "odbc_wrapper.h"
+ #include <windows.h>
+ #include <stdio.h>
+ #include <conio.h>
+ #include <tchar.h>
+#endif
 // boost
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -30,7 +38,9 @@ using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
 namespace bfs = boost::filesystem;
-
+#ifdef WIN32
+ using namespace ODBC;
+#endif
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_mdb::read(const bfs::path &source)
 {
@@ -56,7 +66,7 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 	parse_csv(export_csv(source, "Fluege"),        bind(&inout_mdb::readFlight,     this, _1));
     for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
         fldb.addFlight(it->second);
-    // find gaps in the flight number sequence, and calculate the distance
+    // find gaps in the flight number sequence, and calculate the flown distance
     size_t flnr = 1;
     for(FlightDatabase::SeqFlights::iterator it = fldb.flights().begin(); it != fldb.flights().end(); ++it, ++flnr)
     {
@@ -74,10 +84,48 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 bfs::path inout_mdb::export_csv(const bfs::path &source, const string &tablename)
 {
     const bfs::path outfile = flb::SystemInformation::tempDir() / ("flb_imp_" + tablename + ".csv");
-    const string cmd = "mdb-export " + source.external_file_string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.external_file_string();
     bfs::remove(outfile);
+#ifndef WIN32
+    // linux version
+    const string cmd = "mdb-export " + source.external_file_string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.external_file_string();
     system(cmd.c_str());
-    // todo : check if the file was written
+#else
+    // windows version
+    bfs::ofstream ofs(outfile);
+    MDBConnection link;
+    // Connect(LPCTSTR MDBPath,LPCTSTR User=_T(""), LPCTSTR Pass=_T(""),BOOL Exclusive=0);
+    if(link.Connect(source.external_file_string().c_str()))
+    {
+        ODBCStmt Stmt(link);
+//        SQLExecDirect(Stmt,(SQLTCHAR*)_T("USE NorthWind"),SQL_NTS);
+        string strQuery("SELECT * FROM " + tablename);
+        int nRet=Stmt.Query(strQuery.c_str());
+        // write the header
+        for(int i=0; i < Stmt.GetColumnCount(); ++i)
+        {
+            TCHAR Name[256] = _T("");
+            rec.GetColumnName(i+1, Name, sizeof(Name));
+            ofs << Name << ";";
+        }
+        ofs << std::endl;
+        // write the data
+        while(Stmt.Fetch())
+        {
+            ODBCRecord rec(Stmt);
+            for(int i=0; i < Stmt.GetColumnCount(); ++i)
+            {
+                TCHAR Desc[512] = _T("");
+                SQLINTEGER cbDesc = 0;
+                rec.GetData(i+1, Desc, sizeof(Desc), &cbDesc);
+                ofs << "\"" << Desc << "\";";
+            }
+            ofs << std::endl;
+        };
+    }
+    link.Disconnect();
+    ofs.close();
+#endif
+    // check if the file was written
     if(!bfs::exists(outfile))
         throw std::runtime_error("failed to write file " + outfile.string());
     return outfile;
