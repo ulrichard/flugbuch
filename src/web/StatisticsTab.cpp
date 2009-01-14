@@ -259,7 +259,7 @@ void StatisticsPanel::FlightlessTime()
     }
 
 //    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(counts.size(), 3);
-    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(counts.size(), 2);
+    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(flightlessWeeks.size(), 2);
 
     int i = 0;
     for(map<int, int>::iterator it=flightlessWeeks.begin(); it!=flightlessWeeks.end(); ++it, ++i)
