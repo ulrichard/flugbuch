@@ -42,7 +42,7 @@ bool DSNConnection::Connect(LPCTSTR svSource ,LPCTSTR szUsername, LPCTSTR szPass
     return 0;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-virtual DSNConnection::~DSNConnection()
+DSNConnection::~DSNConnection()
 {
     if(m_hDBC != NULL)
         m_nReturn = SQLFreeHandle(SQL_HANDLE_DBC,  m_hDBC);
@@ -68,7 +68,7 @@ ODBCConnection::ODBCConnection()
     m_nReturn = SQL_ERROR;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-virtual ODBCConnection::~ODBCConnection()
+ODBCConnection::~ODBCConnection()
 {
     if(m_hDBC != NULL)
         m_nReturn = SQLFreeHandle(SQL_HANDLE_DBC, m_hDBC);
@@ -161,7 +161,7 @@ BOOL MSSQLConnection::Connect(LPCTSTR User,LPCTSTR Pass, LPCTSTR Host, BOOL Trus
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-int MDBConnection::Connect(LPCTSTR MDBPath, LPCTSTR User, LPCTSTR Pass, BOOL Exclusive)
+int MDBConnection::Connect(const LPCTSTR MDBPath, const LPCTSTR User, const LPCTSTR Pass, BOOL Exclusive)
 {
     TCHAR str[512]=_T("");
     _stprintf(_T("Driver={Microsoft Access Driver (*.mdb)}; Dbq=%s;Uid=%s;Pwd=%s;Exclusive=%s;"),

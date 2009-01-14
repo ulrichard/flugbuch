@@ -4,10 +4,6 @@
 // mdb odbc
 #ifdef WIN32
  #include "odbc_wrapper.h"
- #include <windows.h>
- #include <stdio.h>
- #include <conio.h>
- #include <tchar.h>
 #endif
 // boost
 #include <boost/tokenizer.hpp>
@@ -99,15 +95,18 @@ bfs::path inout_mdb::export_csv(const bfs::path &source, const string &tablename
         ODBCStmt Stmt(link);
 //        SQLExecDirect(Stmt,(SQLTCHAR*)_T("USE NorthWind"),SQL_NTS);
         string strQuery("SELECT * FROM " + tablename);
-        int nRet=Stmt.Query(strQuery.c_str());
+        int nRet = Stmt.Query(strQuery.c_str());
         // write the header
-        for(int i=0; i < Stmt.GetColumnCount(); ++i)
-        {
-            TCHAR Name[256] = _T("");
-            rec.GetColumnName(i+1, Name, sizeof(Name));
-            ofs << Name << ";";
-        }
-        ofs << std::endl;
+		{
+			ODBCRecord rec(Stmt);
+			for(int i=0; i < Stmt.GetColumnCount(); ++i)
+			{
+				TCHAR Name[256] = _T("");
+				rec.GetColumnName(i+1, Name, sizeof(Name));
+				ofs << Name << ";";
+			}
+			ofs << std::endl;
+		}
         // write the data
         while(Stmt.Fetch())
         {

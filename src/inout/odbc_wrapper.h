@@ -6,9 +6,13 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 namespace ODBC
 {
+#include <windows.h>
 #include <sql.h>
 #include <sqlext.h>
 #include <odbcinst.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <conio.h>
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 #pragma comment(lib,"odbc32.lib")
 #pragma comment(lib,"odbcbcp.lib")
@@ -88,7 +92,7 @@ class MDBConnection : public ODBCConnection
  public:
   MDBConnection() {};
   virtual ~MDBConnection() {};
-  int Connect(LPCTSTR MDBPath,LPCTSTR User=_T(""), LPCTSTR Pass=_T(""),BOOL Exclusive=0);
+  int Connect(const LPCTSTR MDBPath, const LPCTSTR User = _T(""), const LPCTSTR Pass = _T(""),BOOL Exclusive=0);
  };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class ODBCStmt
@@ -120,7 +124,7 @@ public:
             return 0;
         return nRows;
     }
-    BOOL Query(LPCTSTR strSQL)
+    BOOL Query(const LPCTSTR strSQL)
     {
         SQLRETURN nRet = SQLExecDirect(m_hStmt, (SQLTCHAR *)strSQL, SQL_NTS);
         return IS_SQL_OK(nRet);
@@ -272,7 +276,7 @@ public:
        SWORD swCol = 0, swType = 0, swScale = 0, swNull = 0;
        DWORD pcbColDef = 0;
        SQLRETURN Ret=
-        SQLDescribeCol m_hStmt,             // Statement handle
+        SQLDescribeCol(m_hStmt,             // Statement handle
                        Column,              // ColumnNumber
                        (SQLTCHAR*)Name,     // ColumnName
                        NameLen,             // BufferLength

@@ -97,7 +97,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -223,6 +223,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\inout\odbc_wrapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\web\StatisticsTab.cpp"
 				>
 			</File>
@@ -290,6 +294,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\MainMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inout\odbc_wrapper.h"
 				>
 			</File>
 			<File
