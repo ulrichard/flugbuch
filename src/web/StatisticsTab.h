@@ -29,17 +29,17 @@ namespace flbwt
 class StatisticsPanel : public Wt::WCompositeWidget
 {
 public:
-    StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent = 0);
+    StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent = 0);
     virtual ~StatisticsPanel() { }
 
     void load(int ind);
 
     void FlightsPerGlider(bool airtime);
     void FlightsPerTimePeriod(int mode);
-    void FlightlessTime();
+    void FlightlessTimeStat();
     void FlightAreas(bool airtime);
 private:
-    boost::shared_ptr<flb::FlightDatabase>  flightDb_;
+    const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     Wt::WContainerWidget      *impl_;
     Wt::Ext::ComboBox         *cbStatSel_;
     Wt::Chart::WAbstractChart *chart_;

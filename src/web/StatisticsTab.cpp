@@ -1,6 +1,7 @@
 // flugbuch
 #include "StatisticsTab.h"
 #include "FormatStr.h"
+#include "FlightlessTime.h"
 // witty
 #include <Wt/Ext/ComboBox>
 #include <Wt/WContainerWidget>
@@ -26,6 +27,7 @@ using std::map;
 using std::pair;
 using std::make_pair;
 using std::for_each;
+using std::max;
 using boost::shared_ptr;
 using boost::any;
 using boost::gregorian::date;
@@ -33,7 +35,7 @@ using namespace boost::lambda;
 using namespace flbwt;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-StatisticsPanel::StatisticsPanel(boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
+StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
@@ -89,7 +91,7 @@ void StatisticsPanel::load(int ind)
         FlightsPerTimePeriod(2);
         break;
     case 5:
-        FlightlessTime();
+        FlightlessTimeStat();
         break;
     case 6:
         FlightAreas(false);
@@ -218,7 +220,7 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void StatisticsPanel::FlightlessTime()
+void StatisticsPanel::FlightlessTimeStat()
 {
     blayout_->removeWidget(chart_);
  //   delete chart_;
@@ -226,58 +228,16 @@ void StatisticsPanel::FlightlessTime()
     blayout_->addWidget(cartchart, Wt::WBorderLayout::Center);
     chart_ = cartchart;
 
-    assert(flightDb_->flights().size());
-    const date firstDay = (*flightDb_->flights().begin())->date();
-    const date lastDay  = (*flightDb_->flights().rbegin())->date();
+    FlightlessTime flt(flightDb_);
 
-    map<string, int> counts;
-    map<int, int> flightlessWeeks; // per year
-    map<int, int> longestGap;      // per year
-
-    const date lastWeek = date(lastDay.year(), lastDay.month(), 1);
-    for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += boost::gregorian::weeks(1))
-        counts[FormatStr() << ww.year() << "." << ww.week_number()] = 0;
-
-    BOOST_FOREACH(shared_ptr<flb::Flight> fl, flightDb_->flights())
-    {
-        const string key(FormatStr() << fl->date().year() << "." << fl->date().week_number());
-        counts[key]++;
-    }
-
-    for(int yy = firstDay.year(); yy <= lastDay.year(); ++yy)
-    {
-        const string syy = FormatStr() << yy;
-//        flightlessWeeks[yy] = count_if(counts.begin(), counts.end(),
-//            (bind(&string::substr, bind(&pair<string, int>::first, boost::lambda::_1), 0, 4) == syy) &&
-//            (bind(&pair<string, int>::second, boost::lambda::_1) == constant(0)));
-
-        int flcount = 0;
-        for(map<string, int>::iterator it = counts.begin(); it != counts.end(); ++it)
-            if(it->first.substr(0, 4) == syy && it->second == 0)
-                ++flcount;
-        flightlessWeeks[yy] = flcount;
-    }
-
-//    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(counts.size(), 3);
-    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(flightlessWeeks.size(), 2);
-
-    int i = 0;
-    for(map<int, int>::iterator it=flightlessWeeks.begin(); it!=flightlessWeeks.end(); ++it, ++i)
-    {
-        model->setData(i, 0, any(it->first));
-        model->setData(i, 1, any(it->second));
-//        model->setData(i, 2, any(it->second.second));
-    }
-
-
-    cartchart->setModel(model);
+    cartchart->setModel(flt.model(flightDb_->flights()).release());
     cartchart->setXSeriesColumn(0);
     Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
-//    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
+    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
     data1.setLegendEnabled(true);
-//    data2.setLegendEnabled(true);
+    data2.setLegendEnabled(true);
     cartchart->addSeries(data1);
-//    cartchart->addSeries(data2);
+    cartchart->addSeries(data2);
     cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
     cartchart->setLegendEnabled(true);
 
