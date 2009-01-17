@@ -9,16 +9,19 @@
 #include <algorithm>
 
 using namespace flbwt;
-using std::string;
-using std::map;
-using std::vector;
-using std::auto_ptr;
-using std::max;
+using Wt::WStandardItemModel;
 using boost::gregorian::date;
 using boost::shared_ptr;
 using boost::any;
+using std::string;
+using std::map;
+using std::vector;
+using std::pair;
+using std::make_pair;
+using std::auto_ptr;
+using std::max;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-auto_ptr<Wt::WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::SeqFlights &flights)
+auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::SeqFlights &flights)
 {
     assert(flights.size());
     const date firstDay = (*flights.begin())->date();
@@ -55,7 +58,7 @@ auto_ptr<Wt::WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase
         flightlessWeeks[yy] = flcount;
     }
 
-    auto_ptr<Wt::WStandardItemModel> model(new  Wt::WStandardItemModel(flightlessWeeks.size(), 3));
+    auto_ptr<WStandardItemModel> model(new  Wt::WStandardItemModel(flightlessWeeks.size(), 3));
 
     int i = 0;
     for(map<int, int>::iterator it=flightlessWeeks.begin(); it!=flightlessWeeks.end(); ++it, ++i)
@@ -70,9 +73,34 @@ auto_ptr<Wt::WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::SeqFlights &flights)
+{
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+
+
+    int i = 0;
+    for(flb::FlightDatabase::SeqGliders::iterator it = flightDb_->gliders().begin(); it != flightDb_->gliders().end(); ++it, ++i)
+    {
+        string nam = (*it)->identity();
+/*
+        int    cnt = std::count_if(flightDb_->flights().begin(), flightDb_->flights().end(),
+            *it == boost::bind(&flb::Flight::glider, ::_1));
+*/
+        int cnt = 0, dur = 0;
+        for(flb::FlightDatabase::SeqFlights::iterator itf = flights.begin(); itf != flights.end(); ++itf)
+            if((*itf)->glider() == *it)
+            {
+                cnt++;
+                dur += (*itf)->duration();
+            }
+
+        model->setData(i, 0, any(nam));
+        model->setData(i, 1, any(cnt));
+        model->setData(i, 2, any(dur));
+    }
+
+    return model;
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

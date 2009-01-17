@@ -34,7 +34,7 @@ public:
 
     void load(int ind);
 
-    void FlightsPerGlider(bool airtime);
+    void FlightsPerGliderF(bool airtime);
     void FlightsPerTimePeriod(int mode);
     void FlightlessTimeStat();
     void FlightAreas(bool airtime);

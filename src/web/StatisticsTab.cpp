@@ -17,6 +17,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 // standard library
 #include <algorithm>
 #include <map>
@@ -31,6 +32,7 @@ using std::max;
 using boost::shared_ptr;
 using boost::any;
 using boost::gregorian::date;
+using boost::ptr_vector;
 using namespace boost::lambda;
 using namespace flbwt;
 
@@ -76,10 +78,10 @@ void StatisticsPanel::load(int ind)
     switch(ind)
     {
     case 0:
-        FlightsPerGlider(false);
+        FlightsPerGliderF(false);
         break;
     case 1:
-        FlightsPerGlider(true);
+        FlightsPerGliderF(true);
         break;
     case 2:
         FlightsPerTimePeriod(0);
@@ -102,7 +104,7 @@ void StatisticsPanel::load(int ind)
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void StatisticsPanel::FlightsPerGlider(bool airtime)
+void StatisticsPanel::FlightsPerGliderF(bool airtime)
 {
     blayout_->removeWidget(chart_);
  //   delete chart_;
@@ -110,31 +112,9 @@ void StatisticsPanel::FlightsPerGlider(bool airtime)
     blayout_->addWidget(pie, Wt::WBorderLayout::Center);
     chart_ = pie;
 
-    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(flightDb_->gliders().size(), 3);
+    FlightsPerGlider flg(flightDb_);
 
-
-    int i = 0;
-    for(flb::FlightDatabase::SeqGliders::iterator it = flightDb_->gliders().begin(); it != flightDb_->gliders().end(); ++it, ++i)
-    {
-        string nam = (*it)->identity();
-/*
-        int    cnt = std::count_if(flightDb_->flights().begin(), flightDb_->flights().end(),
-            *it == boost::bind(&flb::Flight::glider, ::_1));
-*/
-        int cnt = 0, dur = 0;
-        for(flb::FlightDatabase::SeqFlights::iterator itf = flightDb_->flights().begin(); itf != flightDb_->flights().end(); ++itf)
-            if((*itf)->glider() == *it)
-            {
-                cnt++;
-                dur += (*itf)->duration();
-            }
-
-        model->setData(i, 0, any(nam));
-        model->setData(i, 1, any(cnt));
-        model->setData(i, 2, any(dur));
-    }
-
-    pie->setModel(model);
+    pie->setModel(flg.model(flightDb_->flights()).release());
     pie->setLabelsColumn(0);
     pie->setDataColumn(airtime ? 2 : 1);
     pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
@@ -150,64 +130,12 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
     blayout_->addWidget(cartchart, Wt::WBorderLayout::Center);
     chart_ = cartchart;
 
-    assert(flightDb_->flights().size());
-    const date firstDay = (*flightDb_->flights().begin())->date();
-    const date lastDay  = (*flightDb_->flights().rbegin())->date();
+    ptr_vector<StatBase> flp;
+    flp.push_back(new FlightsPerPeriod<FLP_YEAR>(flightDb_));
+    flp.push_back(new FlightsPerPeriod<FLP_MONTH>(flightDb_));
+    flp.push_back(new FlightsPerPeriod<FLP_WEEK>(flightDb_));
 
-    map<string, pair<int, int> > counts;
-
-    if(mode == 0)
-    {
-        for(int yy = firstDay.year(); yy <= lastDay.year(); ++yy)
-            counts[FormatStr() << yy] = make_pair(0, 0);
-    }
-    else if(mode == 1)
-    {
-        const date lastMonth = date(lastDay.year(), lastDay.month(), 1);
-        for(date mm = date(firstDay.year(), firstDay.month(), 1); mm < lastMonth; mm += boost::gregorian::months(1))
-            counts[FormatStr() << mm.year() << "." << mm.month()] = make_pair(0, 0);
-    }
-    else if(mode == 2)
-    {
-        const date lastWeek = date(lastDay.year(), lastDay.month(), 1);
-        for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += boost::gregorian::weeks(1))
-            counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, 0);
-    }
-
-    BOOST_FOREACH(shared_ptr<flb::Flight> fl, flightDb_->flights())
-    {
-        if(mode == 0)
-        {
-            const string key(FormatStr() << fl->date().year());
-            counts[key].first++;
-            counts[key].second += fl->duration();
-        }
-        else if(mode == 1)
-        {
-            const string key(FormatStr() << fl->date().year() << "." << fl->date().month());
-            counts[key].first++;
-            counts[key].second += fl->duration();
-        }
-        else if(mode == 2)
-        {
-            const string key(FormatStr() << fl->date().year() << "." << fl->date().week_number());
-            counts[key].first++;
-            counts[key].second += fl->duration();
-        }
-    }
-
-    Wt::WStandardItemModel *model = new  Wt::WStandardItemModel(counts.size(), 3);
-
-    int i = 0;
-    for(map<string, pair<int, int> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
-    {
-        model->setData(i, 0, any(it->first));
-        model->setData(i, 1, any(it->second.first));
-        model->setData(i, 2, any(it->second.second));
-    }
-
-
-    cartchart->setModel(model);
+    cartchart->setModel(flp[mode].model(flightDb_->flights()).release());
     cartchart->setXSeriesColumn(0);
     Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
     Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
