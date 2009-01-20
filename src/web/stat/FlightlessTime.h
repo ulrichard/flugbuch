@@ -7,6 +7,7 @@
 #include "FormatStr.h"
 // witty
 #include <Wt/WStandardItemModel>
+#include <Wt/Chart/WCartesianChart>
 // boost
 #include <boost/foreach.hpp>
 // standard library
@@ -22,9 +23,9 @@ public:
     FlightlessTime(const shared_ptr<flb::FlightDatabase> flightDb) : StatBase(flightDb) {}
     virtual ~FlightlessTime() {}
 
-    virtual std::string name() { return "Fluglose Zeit"; }
-    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights);
-    virtual bool pie() { return false; }
+    virtual std::string name() const { return "Fluglose Zeit"; }
+    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const;
+    virtual void draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const;
 
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -36,8 +37,8 @@ public:
     FlightsPerPeriod(const shared_ptr<flb::FlightDatabase> flightDb) : StatBase(flightDb) {}
     virtual ~FlightsPerPeriod() {}
 
-    virtual std::string name() { return "Fluege pro " + std::string(interval == FLP_YEAR ? "Jahr" : (interval == FLP_MONTH ? "Monat" : "Woche")); }
-    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights)
+    virtual std::string name() const { return "Fluege pro " + std::string(interval == FLP_YEAR ? "Jahr" : (interval == FLP_MONTH ? "Monat" : "Woche")); }
+    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const
     {
         assert(flights.size());
         const boost::gregorian::date firstDay = (*flights.begin())->date();
@@ -98,7 +99,21 @@ public:
         return model;
     }
 
-    virtual bool pie() { return false; }
+    virtual void draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+    {
+        Wt::Chart::WCartesianChart *cartchart = new Wt::Chart::WCartesianChart(parent);
+
+        cartchart->setModel(model.release());
+        cartchart->setXSeriesColumn(0);
+        Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
+        Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
+        data1.setLegendEnabled(true);
+        data2.setLegendEnabled(true);
+        cartchart->addSeries(data1);
+        cartchart->addSeries(data2);
+        cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
+        cartchart->setLegendEnabled(true);
+    }
 
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -108,9 +123,9 @@ public:
     FlightsPerGlider(const shared_ptr<flb::FlightDatabase> flightDb) : StatBase(flightDb) {}
     virtual ~FlightsPerGlider() {}
 
-    virtual std::string name() { return "Fluege pro Schirm"; }
-    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights);
-    virtual bool pie() { return true; }
+    virtual std::string name() const { return "Fluege pro Schirm"; }
+    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const;
+    virtual void draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const;
 
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

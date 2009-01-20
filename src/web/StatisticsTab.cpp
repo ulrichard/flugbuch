@@ -29,6 +29,7 @@ using std::pair;
 using std::make_pair;
 using std::for_each;
 using std::max;
+using std::auto_ptr;
 using boost::shared_ptr;
 using boost::any;
 using boost::gregorian::date;
@@ -41,7 +42,13 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
-    chart_= NULL;
+
+    // add new statistics classes here
+    addStatistic(auto_ptr<StatBase>(new FlightsPerGlider(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new FlightlessTime(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod<FLP_YEAR>(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod<FLP_MONTH>(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod<FLP_WEEK>(flightDb_)));
 
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
@@ -52,76 +59,44 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     cbStatSel_ = new Wt::Ext::ComboBox();
     cbStatSel_->activated.connect(SLOT(this, StatisticsPanel::load));
 
-    cbStatSel_->addItem("Fluege pro Schirm");
-    cbStatSel_->addItem("Flugzeit pro Schirm");
-    cbStatSel_->addItem("Fluege pro Jahr");
-    cbStatSel_->addItem("Fluege pro Monat");
-    cbStatSel_->addItem("Fluege pro Woche");
-    cbStatSel_->addItem("Fluglose Zeit pro Jahr");
-    cbStatSel_->addItem("Fluege pro Fluggebiet");
-    cbStatSel_->addItem("Flugzeit pro Fluggebiet");
+    for(boost::ptr_map<std::string, StatBase>::iterator it = stats_.begin(); it != stats_.end(); ++it)
+        cbStatSel_->addItem(it->first);
+
+    //for_each(stats_.begin(), stats_.end(), bind(&Wt::Ext::ComboBox::addItem, cbStatSel_, bind(pair<string, StatBase*>::first)));
 
     topBar->layout()->addWidget(wtStat);
     topBar->layout()->addWidget(cbStatSel_);
     topBar->resize(topBar->width(), 40);
     cbStatSel_->resize(150, cbStatSel_->height());
 
-    blayout_ = new Wt::WBorderLayout();
-    impl_->setLayout(blayout_);
-    blayout_->addWidget(topBar, Wt::WBorderLayout::North);
+    // body
+    report_ = new Wt::WContainerWidget();
+
+    Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
+    impl_->setLayout(blayout);
+    blayout->addWidget(topBar, Wt::WBorderLayout::North);
+    blayout->addWidget(report_, Wt::WBorderLayout::Center);
 
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::load(int ind)
 {
-    switch(ind)
+    const string statname = cbStatSel_->text().narrow();
+
+    boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
+    if(fit != stats_.end())
     {
-    case 0:
-        FlightsPerGliderF(false);
-        break;
-    case 1:
-        FlightsPerGliderF(true);
-        break;
-    case 2:
-        FlightsPerTimePeriod(0);
-        break;
-    case 3:
-        FlightsPerTimePeriod(1);
-        break;
-    case 4:
-        FlightsPerTimePeriod(2);
-        break;
-    case 5:
-        FlightlessTimeStat();
-        break;
-    case 6:
-        FlightAreas(false);
-        break;
-    case 7:
-        FlightAreas(true);
-        break;
+        const StatBase *stat = fit->second;
+        stat->draw(report_, stat->model(flightDb_->flights()));
     }
+
+//    StatBase &stat = stats_[statname];
+
+//    stat.draw(report_, stat.model(flightDb_->flights()));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void StatisticsPanel::FlightsPerGliderF(bool airtime)
-{
-    blayout_->removeWidget(chart_);
- //   delete chart_;
-    Wt::Chart::WPieChart *pie = new Wt::Chart::WPieChart();
-    blayout_->addWidget(pie, Wt::WBorderLayout::Center);
-    chart_ = pie;
-
-    FlightsPerGlider flg(flightDb_);
-
-    pie->setModel(flg.model(flightDb_->flights()).release());
-    pie->setLabelsColumn(0);
-    pie->setDataColumn(airtime ? 2 : 1);
-    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
-    pie->setPerspectiveEnabled(true, 0.3);
-
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/*
 void StatisticsPanel::FlightsPerTimePeriod(int mode)
 {
     blayout_->removeWidget(chart_);
@@ -147,30 +122,9 @@ void StatisticsPanel::FlightsPerTimePeriod(int mode)
     cartchart->setLegendEnabled(true);
 
 }
+*/
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void StatisticsPanel::FlightlessTimeStat()
-{
-    blayout_->removeWidget(chart_);
- //   delete chart_;
-    Wt::Chart::WCartesianChart *cartchart = new Wt::Chart::WCartesianChart();
-    blayout_->addWidget(cartchart, Wt::WBorderLayout::Center);
-    chart_ = cartchart;
-
-    FlightlessTime flt(flightDb_);
-
-    cartchart->setModel(flt.model(flightDb_->flights()).release());
-    cartchart->setXSeriesColumn(0);
-    Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
-    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
-    data1.setLegendEnabled(true);
-    data2.setLegendEnabled(true);
-    cartchart->addSeries(data1);
-    cartchart->addSeries(data2);
-    cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
-    cartchart->setLegendEnabled(true);
-
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/*
 void StatisticsPanel::FlightAreas(bool airtime)
 {
     blayout_->removeWidget(chart_);
@@ -205,4 +159,5 @@ void StatisticsPanel::FlightAreas(bool airtime)
     pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
     pie->setPerspectiveEnabled(true, 0.3);
 }
+*/
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

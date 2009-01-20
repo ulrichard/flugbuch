@@ -2,24 +2,21 @@
 #define STATISTICSTAB_H
 // flugbuch
 #include "FlightDatabase.h"
+#include "StatBase.h"
 // witty
 #include <Wt/WCompositeWidget>
 // boost
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // forward declarations
 namespace Wt
 {
     class WContainerWidget;
-    class WBorderLayout;
     namespace Ext
     {
         class ComboBox;
-    }
-    namespace Chart
-    {
-        class WAbstractChart;
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -32,18 +29,16 @@ public:
     StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent = 0);
     virtual ~StatisticsPanel() { }
 
+    void addStatistic(std::auto_ptr<StatBase> stat) { std::string nam = stat->name(); stats_.insert(nam, stat.release()); }
+
     void load(int ind);
 
-    void FlightsPerGliderF(bool airtime);
-    void FlightsPerTimePeriod(int mode);
-    void FlightlessTimeStat();
-    void FlightAreas(bool airtime);
 private:
     const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     Wt::WContainerWidget      *impl_;
     Wt::Ext::ComboBox         *cbStatSel_;
-    Wt::Chart::WAbstractChart *chart_;
-    Wt::WBorderLayout         *blayout_;
+    Wt::WContainerWidget      *report_;
+    boost::ptr_map<std::string, StatBase> stats_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 } // namespace flbwt

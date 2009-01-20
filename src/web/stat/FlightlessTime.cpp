@@ -3,6 +3,8 @@
 #include "FormatStr.h"
 // witty
 #include <Wt/WStandardItemModel>
+#include <Wt/Chart/WCartesianChart>
+#include <Wt/Chart/WPieChart>
 // boost
 #include <boost/foreach.hpp>
 // standard library
@@ -10,6 +12,8 @@
 
 using namespace flbwt;
 using Wt::WStandardItemModel;
+using Wt::Chart::WCartesianChart;
+using Wt::Chart::WPieChart;
 using boost::gregorian::date;
 using boost::shared_ptr;
 using boost::any;
@@ -21,7 +25,7 @@ using std::make_pair;
 using std::auto_ptr;
 using std::max;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::SeqFlights &flights)
+auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
     assert(flights.size());
     const date firstDay = (*flights.begin())->date();
@@ -71,12 +75,27 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
     return model;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightlessTime::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+{
+    WCartesianChart *cartchart = new WCartesianChart(parent);
+
+    cartchart->setModel(model.release());
+    cartchart->setXSeriesColumn(0);
+    Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
+    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
+    data1.setLegendEnabled(true);
+    data2.setLegendEnabled(true);
+    cartchart->addSeries(data1);
+    cartchart->addSeries(data2);
+    cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
+    cartchart->setLegendEnabled(true);
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::SeqFlights &flights)
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
     auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
-
 
     int i = 0;
     for(flb::FlightDatabase::SeqGliders::iterator it = flightDb_->gliders().begin(); it != flightDb_->gliders().end(); ++it, ++i)
@@ -100,6 +119,16 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
     }
 
     return model;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightsPerGlider::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+{
+    WPieChart *pie = new WPieChart(parent);
+    pie->setModel(model.release());
+    pie->setLabelsColumn(0);
+    pie->setDataColumn(/*airtime ? 2 :*/ 1);
+    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie->setPerspectiveEnabled(true, 0.3);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

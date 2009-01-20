@@ -14,18 +14,7 @@
 namespace Wt
 {
     class WStandardItemModel;
-/*
     class WContainerWidget;
-    class WBorderLayout;
-    namespace Ext
-    {
-        class ComboBox;
-    }
-    namespace Chart
-    {
-        class WAbstractChart;
-    }
-*/
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 namespace flbwt
@@ -38,9 +27,9 @@ protected:
 public:
     virtual ~StatBase() {}
 
-    virtual std::string name() = 0;
-    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) = 0;
-    virtual bool pie() = 0; // or cartesian
+    virtual std::string name() const = 0;
+    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const = 0;
+    virtual void draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const = 0;
 
 protected:
     const shared_ptr<flb::FlightDatabase> flightDb_;
