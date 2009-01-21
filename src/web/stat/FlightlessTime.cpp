@@ -133,7 +133,120 @@ void FlightsPerGlider::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WSta
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::SeqFlights &flights) const
+{
+    assert(flights.size());
+    const date firstDay = (*flights.begin())->date();
+    const date lastDay  = (*flights.rbegin())->date();
+
+    map<string, pair<int, int> > counts;
+
+    if(interval_ == FLP_YEAR)
+    {
+        for(int yy = firstDay.year(); yy <= lastDay.year(); ++yy)
+            counts[FormatStr() << yy] = make_pair(0, 0);
+    }
+    else if(interval_ == FLP_MONTH)
+    {
+        const date lastMonth = date(lastDay.year(), lastDay.month(), 1);
+        for(boost::gregorian::date mm = date(firstDay.year(), firstDay.month(), 1); mm < lastMonth; mm += months(1))
+            counts[FormatStr() << mm.year() << "." << mm.month()] = make_pair(0, 0);
+    }
+    else if(interval_ == FLP_WEEK)
+    {
+        const date lastWeek = bdate(lastDay.year(), lastDay.month(), 1);
+        for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += weeks(1))
+            counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, 0);
+    }
+    else
+        assert(!"unknown interval");
+
+    BOOST_FOREACH(shared_ptr<flb::Flight> fl, flights)
+    {
+        if(interval_ == FLP_YEAR)
+        {
+            const string key(FormatStr() << fl->date().year());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+        else if(interval_ == FLP_MONTH)
+        {
+            const string key(FormatStr() << fl->date().year() << "." << fl->date().month());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+        else if(interval == FLP_WEEK)
+        {
+            const string key(FormatStr() << fl->date().year() << "." << fl->date().week_number());
+            counts[key].first++;
+            counts[key].second += fl->duration();
+        }
+    }
+
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(counts.size(), 3));
+
+    int i = 0;
+    for(map<std::string, pair<int, int> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
+    {
+        model->setData(i, 0, boost::any(it->first));
+        model->setData(i, 1, boost::any(it->second.first));
+        model->setData(i, 2, boost::any(it->second.second));
+    }
+
+    return model;
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightsPerPeriod::draw(WContainerWidget *parent, auto_ptr<WStandardItemModel> model) const
+{
+    WCartesianChart *cartchart = new WCartesianChart(parent);
+
+    cartchart->setModel(model.release());
+    cartchart->setXSeriesColumn(0);
+    Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
+    Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
+    data1.setLegendEnabled(true);
+    data2.setLegendEnabled(true);
+    cartchart->addSeries(data1);
+    cartchart->addSeries(data2);
+    cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
+    cartchart->setLegendEnabled(true);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::SeqFlights &flights) const
+{
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+
+    int i = 0;
+    for(flb::FlightDatabase::SeqFlightAreas::iterator it = flightDb_->flightAreas().begin(); it != flightDb_->flightAreas().end(); ++it, ++i)
+    {
+        string nam = (*it)->name();
+        int cnt = 0, dur = 0;
+        for(flb::FlightDatabase::SeqFlights::iterator itf = flightDb_->flights().begin(); itf != flightDb_->flights().end(); ++itf)
+            if((*itf)->takeoff()->area() == *it)
+            {
+                cnt++;
+                dur += (*itf)->duration();
+            }
+
+        model->setData(i, 0, any(nam));
+        model->setData(i, 1, any(cnt));
+        model->setData(i, 2, any(dur));
+    }
+
+    return model;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightsPerArea::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+{
+    WPieChart *pie = new WPieChart(parent);
+    pie->setModel(model.release());
+    pie->setLabelsColumn(0);
+    pie->setDataColumn(/*airtime ? 2 :*/ 1);
+    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie->setPerspectiveEnabled(true, 0.3);
+ }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
