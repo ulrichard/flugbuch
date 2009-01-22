@@ -1,6 +1,5 @@
-#ifndef FLIGHTLESSTIME_H_INCLUDED
-#define FLIGHTLESSTIME_H_INCLUDED
-
+#ifndef STATSTANDARD_H_INCLUDED
+#define STATSTANDARD_H_INCLUDED
 
 // flugbuch
 #include "StatBase.h"
@@ -8,7 +7,6 @@
 #include <Wt/WStandardItemModel>
 // boost
 // standard library
-
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 namespace flbwt
@@ -67,4 +65,4 @@ public:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-#endif // FLIGHTLESSTIME_H_INCLUDED
+#endif // STATSTANDARD_H_INCLUDED

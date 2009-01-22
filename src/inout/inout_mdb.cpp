@@ -238,6 +238,7 @@ void inout_mdb::readFlight(const vector<string> &tokens)
                                           gliders_[lexical_cast<unsigned int>(tokens[3])],  // glider
                                           takeoffs_[lexical_cast<unsigned int>(tokens[4])], // takeoff
                                           landings_[lexical_cast<unsigned int>(tokens[5])], // landing
+                                          tokens[7],
                                           wpts));                                           // waypoints
         flights_[lexical_cast<unsigned int>(tokens[0])] = flt;
     }

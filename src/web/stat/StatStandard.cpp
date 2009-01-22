@@ -1,5 +1,5 @@
 // flugbuch
-#include "FlightlessTime.h"
+#include "StatStandard.h"
 #include "FormatStr.h"
 // witty
 #include <Wt/WStandardItemModel>
@@ -12,9 +12,12 @@
 
 using namespace flbwt;
 using Wt::WStandardItemModel;
+using Wt::WContainerWidget;
 using Wt::Chart::WCartesianChart;
 using Wt::Chart::WPieChart;
 using boost::gregorian::date;
+using boost::gregorian::months;
+using boost::gregorian::weeks;
 using boost::shared_ptr;
 using boost::any;
 using std::string;
@@ -154,7 +157,7 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     }
     else if(interval_ == FLP_WEEK)
     {
-        const date lastWeek = bdate(lastDay.year(), lastDay.month(), 1);
+        const date lastWeek = date(lastDay.year(), lastDay.month(), 1);
         for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += weeks(1))
             counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, 0);
     }
@@ -175,7 +178,7 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
             counts[key].first++;
             counts[key].second += fl->duration();
         }
-        else if(interval == FLP_WEEK)
+        else if(interval_ == FLP_WEEK)
         {
             const string key(FormatStr() << fl->date().year() << "." << fl->date().week_number());
             counts[key].first++;

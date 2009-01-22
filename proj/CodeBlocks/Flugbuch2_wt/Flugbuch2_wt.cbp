@@ -183,9 +183,9 @@
 		<Unit filename="../../../src/web/WelcomeScreen.h" />
 		<Unit filename="../../../src/web/main.cpp" />
 		<Unit filename="../../../src/web/main.h" />
-		<Unit filename="../../../src/web/stat/FlightlessTime.cpp" />
-		<Unit filename="../../../src/web/stat/FlightlessTime.h" />
 		<Unit filename="../../../src/web/stat/StatBase.h" />
+		<Unit filename="../../../src/web/stat/StatStandard.cpp" />
+		<Unit filename="../../../src/web/stat/StatStandard.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

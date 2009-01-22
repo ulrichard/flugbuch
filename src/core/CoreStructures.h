@@ -187,13 +187,13 @@ public:
 public:
 	Flight(unsigned int number, const dateT &date, unsigned int airtime,
 			boost::shared_ptr<Glider> glider, boost::shared_ptr<Location> takeoff,
-            boost::shared_ptr<Location> landing, const SeqWaypoints &waypoints =
-			std::vector<boost::shared_ptr<Location> >()):
+            boost::shared_ptr<Location> landing, const std::string story = "",
+            const SeqWaypoints &waypoints = std::vector<boost::shared_ptr<Location> >()):
 			number_(number), date_(date), airtime_(airtime), glider_(glider), takeoff_(takeoff),
-			landing_(landing), waypoints_(waypoints), distance_(0) {}
+			landing_(landing), story_(story), waypoints_(waypoints), distance_(0) {}
 	Flight(const Flight &cpy) : number_(cpy.number_), date_(cpy.date_), airtime_(cpy.airtime_),
-			glider_(cpy.glider_), takeoff_(cpy.takeoff_), landing_(cpy.landing_), waypoints_(cpy.waypoints_),
-			distance_(cpy.distance_)	{}
+			glider_(cpy.glider_), takeoff_(cpy.takeoff_), landing_(cpy.landing_), story_(cpy.story_),
+			waypoints_(cpy.waypoints_), distance_(cpy.distance_)	{}
 	~Flight() {}
 	// operators
 	const Flight & operator=(const Flight &flt) { Flight cpy(flt); std::swap(*this, cpy); return *this; }
@@ -209,6 +209,7 @@ public:
 		ar & BOOST_SERIALIZATION_NVP(takeoff_);
 		ar & BOOST_SERIALIZATION_NVP(landing_);
 		ar & BOOST_SERIALIZATION_NVP(waypoints_);
+		ar & BOOST_SERIALIZATION_NVP(story_);
 	}
 	// getters
 	unsigned int					  number()	  const { return number_; }
@@ -219,6 +220,7 @@ public:
 	const boost::shared_ptr<Glider>   glider()	  const { return glider_; }
 	const unsigned int &			  duration()  const { return airtime_; }
 	double							  distance()  const { return distance_; }
+	const std::string &               story()     const { return story_; }
 	bool							  hasTrack()  const { return false; }
 	// setters
 	void setNumber(unsigned int nbr)                { number_  = nbr; }
@@ -228,6 +230,7 @@ public:
     void setLanding(boost::shared_ptr<Location> la) { landing_ = la; }
     void setDuration(unsigned int dur)              { airtime_ = dur; }
     void setDistance(double dist)                   { distance_ = dist; }
+    void setStory(const std::string &story)         { story_   = story; }
     // waypoints
     void clearWaypoints()                               { waypoints_.clear(); }
     void addWaypoint(boost::shared_ptr<Location> wpt)   { waypoints_.push_back(wpt); }
@@ -244,6 +247,7 @@ public:
 	boost::shared_ptr<Location> landing_;
 	SeqWaypoints   				waypoints_;
 	double						distance_;
+	std::string                 story_;
 };
 BOOST_SERIALIZATION_SHARED_PTR(Flight);
 static bool operator<(const boost::shared_ptr<Flight> lhs, const boost::shared_ptr<Flight> rhs) { return *lhs < *rhs; }
