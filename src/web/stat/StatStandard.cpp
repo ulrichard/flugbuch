@@ -5,6 +5,7 @@
 #include <Wt/WStandardItemModel>
 #include <Wt/Chart/WCartesianChart>
 #include <Wt/Chart/WPieChart>
+#include <Wt/Ext/TableView>
 // boost
 #include <boost/foreach.hpp>
 // standard library
@@ -15,6 +16,7 @@ using Wt::WStandardItemModel;
 using Wt::WContainerWidget;
 using Wt::Chart::WCartesianChart;
 using Wt::Chart::WPieChart;
+using Wt::Ext::TableView;
 using boost::gregorian::date;
 using boost::gregorian::months;
 using boost::gregorian::weeks;
@@ -65,7 +67,7 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
         flightlessWeeks[yy] = flcount;
     }
 
-    auto_ptr<WStandardItemModel> model(new  Wt::WStandardItemModel(flightlessWeeks.size(), 3));
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightlessWeeks.size(), 3));
 
     int i = 0;
     for(map<int, int>::iterator it=flightlessWeeks.begin(); it!=flightlessWeeks.end(); ++it, ++i)
@@ -80,9 +82,10 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightlessTime::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
 {
-    WCartesianChart *cartchart = new WCartesianChart(parent);
+    Wt::WStandardItemModel *modelrel = model.release();
 
-    cartchart->setModel(model.release());
+    WCartesianChart *cartchart = new WCartesianChart(parent);
+    cartchart->setModel(modelrel);
     cartchart->setXSeriesColumn(0);
     Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
     Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
@@ -92,6 +95,13 @@ void FlightlessTime::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStand
     cartchart->addSeries(data2);
     cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
     cartchart->setLegendEnabled(true);
+
+    TableView *tabview = new TableView(parent);
+    tabview->setModel(modelrel);
+    tabview->setColumnSortable(0, true);
+    tabview->setColumnSortable(1, true);
+    tabview->setColumnSortable(2, true);
+//    tabview->setRenderer(2, "function change(val) { return (val / 60.0;) + 'h' }");
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -126,12 +136,28 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightsPerGlider::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
 {
-    WPieChart *pie = new WPieChart(parent);
-    pie->setModel(model.release());
-    pie->setLabelsColumn(0);
-    pie->setDataColumn(/*airtime ? 2 :*/ 1);
-    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
-    pie->setPerspectiveEnabled(true, 0.3);
+    Wt::WStandardItemModel *modelrel = model.release();
+
+    WPieChart *pie1 = new WPieChart(parent);
+    pie1->setModel(modelrel);
+    pie1->setLabelsColumn(0);
+    pie1->setDataColumn(1);
+    pie1->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie1->setPerspectiveEnabled(true, 0.3);
+
+    WPieChart *pie2 = new WPieChart(parent);
+    pie2->setModel(modelrel);
+    pie2->setLabelsColumn(0);
+    pie2->setDataColumn(2);
+    pie2->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie2->setPerspectiveEnabled(true, 0.3);
+
+    TableView *tabview = new TableView(parent);
+    tabview->setModel(modelrel);
+    tabview->setColumnSortable(0, true);
+    tabview->setColumnSortable(1, true);
+    tabview->setColumnSortable(2, true);
+//    tabview->setRenderer(2, "function change(val) { return (val / 60.0;) + 'h' }");
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -201,9 +227,10 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightsPerPeriod::draw(WContainerWidget *parent, auto_ptr<WStandardItemModel> model) const
 {
-    WCartesianChart *cartchart = new WCartesianChart(parent);
+    Wt::WStandardItemModel *modelrel = model.release();
 
-    cartchart->setModel(model.release());
+    WCartesianChart *cartchart = new WCartesianChart(parent);
+    cartchart->setModel(modelrel);
     cartchart->setXSeriesColumn(0);
     Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
     Wt::Chart::WDataSeries data2(Wt::Chart::WDataSeries(2, Wt::Chart::LineSeries, Wt::Chart::Y2Axis));
@@ -213,6 +240,13 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, auto_ptr<WStandardItemMode
     cartchart->addSeries(data2);
     cartchart->axis(Wt::Chart::Y2Axis).setVisible(true);
     cartchart->setLegendEnabled(true);
+
+    TableView *tabview = new TableView(parent);
+    tabview->setModel(modelrel);
+    tabview->setColumnSortable(0, true);
+    tabview->setColumnSortable(1, true);
+    tabview->setColumnSortable(2, true);
+//    tabview->setRenderer(2, "function change(val) { return (val / 60.0;) + 'h' }");
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -243,12 +277,28 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightsPerArea::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
 {
-    WPieChart *pie = new WPieChart(parent);
-    pie->setModel(model.release());
-    pie->setLabelsColumn(0);
-    pie->setDataColumn(/*airtime ? 2 :*/ 1);
-    pie->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
-    pie->setPerspectiveEnabled(true, 0.3);
+    Wt::WStandardItemModel *modelrel = model.release();
+
+    WPieChart *pie1 = new WPieChart(parent);
+    pie1->setModel(modelrel);
+    pie1->setLabelsColumn(0);
+    pie1->setDataColumn(1);
+    pie1->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie1->setPerspectiveEnabled(true, 0.3);
+
+    WPieChart *pie2 = new WPieChart(parent);
+    pie2->setModel(modelrel);
+    pie2->setLabelsColumn(0);
+    pie2->setDataColumn(2);
+    pie2->setDisplayLabels(Wt::Chart::Outside | Wt::Chart::TextLabel | Wt::Chart::TextPercentage);
+    pie2->setPerspectiveEnabled(true, 0.3);
+
+    TableView *tabview = new TableView(parent);
+    tabview->setModel(modelrel);
+    tabview->setColumnSortable(0, true);
+    tabview->setColumnSortable(1, true);
+    tabview->setColumnSortable(2, true);
+ //   tabview->setRenderer(2, "function change(val) { return (val / 60.0;) + 'h'; }");
  }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
