@@ -44,7 +44,7 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
     for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += boost::gregorian::weeks(1))
         counts[FormatStr() << ww.year() << "." << ww.week_number()] = 0;
 
-    for(flb::FlightDatabase::SeqFlights::iterator it = flights.begin(), itn = it; it != flights.end(); ++it, itn = it)
+    for(flb::FlightDatabase::SeqFlights::const_iterator it = flights.begin(), itn = it; it != flights.end(); ++it, itn = it)
     {
         const int year = (*it)->date().year();
         const string key(FormatStr() << year << "." << (*it)->date().week_number());
@@ -119,7 +119,7 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
             *it == boost::bind(&flb::Flight::glider, ::_1));
 */
         int cnt = 0, dur = 0;
-        for(flb::FlightDatabase::SeqFlights::iterator itf = flights.begin(); itf != flights.end(); ++itf)
+        for(flb::FlightDatabase::SeqFlights::const_iterator itf = flights.begin(); itf != flights.end(); ++itf)
             if((*itf)->glider() == *it)
             {
                 cnt++;
