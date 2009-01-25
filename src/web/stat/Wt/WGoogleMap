@@ -1,0 +1,28 @@
+#ifndef WGOOGLEMAP_H_INCLUDED
+#define WGOOGLEMAP_H_INCLUDED
+
+// witty
+#include <Wt/WPanel>
+// standard library
+#include <string>
+
+namespace Wt
+{
+    class WText;
+
+
+class WGoogleMap : public WPanel
+{
+public:
+    WGoogleMap(Wt::WContainerWidget *parent, const std::string &key);
+    virtual ~WGoogleMap() { }
+
+private:
+    WText *htmltext_;
+
+};
+
+
+}
+
+#endif // WGOOGLEMAP_H_INCLUDED

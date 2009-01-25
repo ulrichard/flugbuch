@@ -2,6 +2,7 @@
 #include "StatisticsTab.h"
 #include "FormatStr.h"
 #include "StatStandard.h"
+#include "StatMap.h"
 // witty
 #include <Wt/Ext/ComboBox>
 #include <Wt/WContainerWidget>
@@ -50,6 +51,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_YEAR)));
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_MONTH)));
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_WEEK)));
+    addStatistic(auto_ptr<StatBase>(new StatMap(flightDb_)));
 
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
@@ -88,7 +90,7 @@ void StatisticsPanel::load(int ind)
     if(fit != stats_.end())
     {
         const StatBase *stat = fit->second;
-        stat->draw(report_, stat->model(flightDb_->flights()));
+        stat->draw(report_, flightDb_->flights());
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

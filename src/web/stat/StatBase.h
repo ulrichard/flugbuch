@@ -28,14 +28,23 @@ public:
     virtual ~StatBase() {}
 
     virtual std::string name() const = 0;
-    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const = 0;
-    virtual void draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const = 0;
+    virtual void draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const = 0;
 
 protected:
     const shared_ptr<flb::FlightDatabase> flightDb_;
 };
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+class StatChartBase : public StatBase
+{
+protected:
+    StatChartBase(const shared_ptr<flb::FlightDatabase> flightDb) : StatBase(flightDb) {}
+public:
+    virtual ~StatChartBase() {}
 
+    virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const = 0;
 
+protected:
+};
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

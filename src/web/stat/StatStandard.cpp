@@ -80,9 +80,9 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
     return model;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightlessTime::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+void FlightlessTime::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
-    Wt::WStandardItemModel *modelrel = model.release();
+    Wt::WStandardItemModel *modelrel = model(flights).release();
 
     WCartesianChart *cartchart = new WCartesianChart(parent);
     cartchart->setModel(modelrel);
@@ -134,9 +134,9 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
     return model;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightsPerGlider::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+void FlightsPerGlider::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
-    Wt::WStandardItemModel *modelrel = model.release();
+    Wt::WStandardItemModel *modelrel = model(flights).release();
 
     WPieChart *pie1 = new WPieChart(parent);
     pie1->setModel(modelrel);
@@ -225,9 +225,9 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     return model;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightsPerPeriod::draw(WContainerWidget *parent, auto_ptr<WStandardItemModel> model) const
+void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
-    Wt::WStandardItemModel *modelrel = model.release();
+    Wt::WStandardItemModel *modelrel = model(flights).release();
 
     WCartesianChart *cartchart = new WCartesianChart(parent);
     cartchart->setModel(modelrel);
@@ -275,9 +275,9 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
     return model;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightsPerArea::draw(Wt::WContainerWidget *parent, std::auto_ptr<Wt::WStandardItemModel> model) const
+void FlightsPerArea::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
-    Wt::WStandardItemModel *modelrel = model.release();
+    Wt::WStandardItemModel *modelrel = model(flights).release();
 
     WPieChart *pie1 = new WPieChart(parent);
     pie1->setModel(modelrel);

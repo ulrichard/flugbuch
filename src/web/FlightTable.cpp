@@ -76,7 +76,7 @@ void LocationField::fillLocations(int idx)
     while(cbLocation_->count())
         cbLocation_->removeItem(0);
 
-    const string area = cbArea_->itemText(idx).narrow();
+    const string area = cbArea_->text().narrow();
     FlightDatabase::SeqLocations locations = flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_);
     for_each(locations.begin(), locations.end(), bind(&Wt::Ext::ComboBox::addItem, cbLocation_,
         bind(&Location::name, *boost::lambda::_1)));
