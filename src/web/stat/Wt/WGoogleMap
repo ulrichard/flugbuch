@@ -2,19 +2,19 @@
 #define WGOOGLEMAP_H_INCLUDED
 
 // witty
-#include <Wt/WPanel>
+#include <Wt/WContainerWidget>
 // standard library
-#include <string>
+
 
 namespace Wt
 {
     class WText;
 
 
-class WGoogleMap : public WPanel
+class WGoogleMap : public WContainerWidget
 {
 public:
-    WGoogleMap(Wt::WContainerWidget *parent, const std::string &key);
+    WGoogleMap(WContainerWidget *parent);
     virtual ~WGoogleMap() { }
 
 private:

@@ -78,7 +78,6 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     impl_->setLayout(blayout);
     blayout->addWidget(topBar, Wt::WBorderLayout::North);
     blayout->addWidget(report_, Wt::WBorderLayout::Center);
-
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::load(int ind)
@@ -88,9 +87,6 @@ void StatisticsPanel::load(int ind)
     const string statname = cbStatSel_->text().narrow();
     boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
     if(fit != stats_.end())
-    {
-        const StatBase *stat = fit->second;
-        stat->draw(report_, flightDb_->flights());
-    }
+        fit->second->draw(report_, flightDb_->flights());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

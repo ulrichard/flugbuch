@@ -151,6 +151,8 @@
 		<Unit filename="../../../src/core/FlightDatabase.h" />
 		<Unit filename="../../../src/core/MainExternalIncludes.h" />
 		<Unit filename="../../../src/inout/inout.h" />
+		<Unit filename="../../../src/inout/inout_flyhigh.cpp" />
+		<Unit filename="../../../src/inout/inout_flyhigh.h" />
 		<Unit filename="../../../src/inout/inout_mdb.cpp" />
 		<Unit filename="../../../src/inout/inout_mdb.h" />
 		<Unit filename="../../../src/inout/inout_xml.cpp" />
