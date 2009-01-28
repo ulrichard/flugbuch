@@ -1,0 +1,23 @@
+<html>
+<head><title>GoogleMaps Testpage</head></title>
+<body>
+<h1>GoogleMaps TestPage</h1>
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAWqrN5o4-ISwj0Up_depYvhT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSouA5KgEkm2jGSwacYYhScv7w6AQ"></script>
+<script type="text/javascript">
+  google.load("maps", "2.x", {"other_params":"sensor=false"});
+   
+  // Call this function when the page has been loaded
+  function initialize() 
+  {
+    var map = new google.maps.Map2(document.getElementById("map"));
+    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);
+    map.enableScrollWheelZoom();
+    map.addControl(new google.maps.HierarchicalMapTypeControl()); 
+  }
+  google.setOnLoadCallback(initialize);
+</script>
+
+<div id="map" style="width:500px;height:300px"></div>
+
+</body>
+</html>

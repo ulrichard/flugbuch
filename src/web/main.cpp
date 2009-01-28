@@ -17,6 +17,8 @@
 #include <Wt/WText>
 #include <Wt/WStackedWidget>
 #include <Wt/WEnvironment>
+
+#include <Wt/WGoogleMap>
 // boost
 #include <boost/foreach.hpp>
 // std lib
@@ -56,19 +58,9 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
     tabCtrl_       = NULL;
     doLogin();
 
-/*
-#ifdef __DEBUG
-	flb::inout_mdb iomdb;
-	string fileni = "/home/richi/Flugbuch.mdb";
-	boost::shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(fileni)));
+    // only for testing
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(root());
 
-   	flb::inout_xml ioxml;
-	string fileno = "/home/richi/Flugbuch2RichardUlrich.xml";
-	ioxml.write(*fldb, fileno);
-#else
-    shared_ptr<flb::FlightDatabase> fldb = flb::FlightDatabase::makeTestDb();
-#endif
-*/
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::finalize()
