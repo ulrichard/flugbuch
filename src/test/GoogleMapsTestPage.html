@@ -13,6 +13,19 @@
     map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);
     map.enableScrollWheelZoom();
     map.addControl(new google.maps.HierarchicalMapTypeControl()); 
+
+    // add a marker
+    var marker = new google.maps.Marker(new google.maps.LatLng(47.01887777, 8.651888));
+    map.addOverlay(marker);
+
+    // draw a polyline for a flight course
+    var waypoints = [];
+    waypoints[0] = new google.maps.LatLng(47.018, 8.651);
+    waypoints[1] = new google.maps.LatLng(47.019, 8.651);
+    waypoints[2] = new google.maps.LatLng(47.019, 8.652);
+    waypoints[3] = new google.maps.LatLng(47.013, 8.656);
+    var poly = new google.maps.Polyline(waypoints, "#FF0000", 2, 0.9);
+    map.addOverlay(poly);
   }
   google.setOnLoadCallback(initialize);
 </script>

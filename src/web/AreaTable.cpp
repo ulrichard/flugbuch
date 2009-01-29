@@ -200,10 +200,10 @@ void AreaTable::filter(const std::string &country)
     areas_.clear();
 
     if(country == "alle")
-        std::copy(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), back_inserter(areas_));
+        std::copy(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areas_));
     else
     {
-        std::remove_copy_if(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), back_inserter(areas_),
+        std::remove_copy_if(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areas_),
             country != bind(&FlightArea::country, *boost::lambda::_1));
 
 //        BOOST_FOREACH(shared_ptr<FlightArea> flar, flightDb_->flightAreas())
@@ -275,7 +275,7 @@ void AreaPanel::load()
     cbCountry_->clear();
     cbCountry_->addItem("alle");
     std::set<string> countries;
-    transform(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), inserter(countries, countries.begin()),
+    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.begin()),
         bind(&FlightArea::country, *boost::lambda::_1));
 //    for_each(countries.begin(), countries.end(), bind(&Wt::Ext::ComboBox::addItem, cbCountry_, *boost::lambda::_1));
     BOOST_FOREACH(string str, countries)

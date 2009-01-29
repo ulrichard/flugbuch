@@ -37,11 +37,13 @@ WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(parent)
          << "}"
          << "google.setOnLoadCallback(initialize);"
             ;
-    WApplication::instance()->doJavaScript(strm.str(), true);
+//    WApplication::instance()->doJavaScript(strm.str(), true);
 
     // then display the map
 //    const string mapstr = "<div id=\"map\" style=\"width:500px;height:300px\"></div>";
 //    htmltext_ = new Wt::WText(mapstr, this);
 //    htmltext_->setFormatting(Wt::WText::XHTMLUnsafeFormatting);
 
+    htmltext_ = new Wt::WText("<script type=\"text/javascript\">" + strm.str() + "</script>", this);
+    htmltext_->setFormatting(Wt::WText::XHTMLUnsafeFormatting);
 }

@@ -31,6 +31,7 @@ using std::string;
 using std::vector;
 //using boost::bind;
 using namespace boost::lambda;
+namespace bll = boost::lambda;
 using boost::shared_ptr;
 
 
@@ -56,7 +57,7 @@ void LocationField::fillAreas()
         cbArea_->removeItem(0);
 
     FlightDatabase::SeqFlightAreas areas = flightDb_->getFlightAreasEx(useAs_);
-    for_each(areas.begin(), areas.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *boost::lambda::_1)));
+    for_each(areas.begin(), areas.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *bll::_1)));
     cbArea_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -481,7 +482,7 @@ void FlightPanel::load()
     cbArea_->clear();
     cbArea_->addItem("alle");
     vector<string> areaNames;
-    std::transform(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
+    std::transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
     std::sort(areaNames.begin(), areaNames.end());
     for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, boost::lambda::_1));
     cbArea_->setCurrentIndex(0);

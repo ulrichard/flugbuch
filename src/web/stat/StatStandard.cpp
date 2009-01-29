@@ -68,6 +68,9 @@ auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::Se
     }
 
     auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightlessWeeks.size(), 3));
+    model->setHeaderData(0, Wt::Horizontal, any(string("Jahr")));
+    model->setHeaderData(1, Wt::Horizontal, any(string("Fluglose Wochen")));
+    model->setHeaderData(2, Wt::Horizontal, any(string("Laengste Pause [Tage]")));
 
     int i = 0;
     for(map<int, int>::iterator it=flightlessWeeks.begin(); it!=flightlessWeeks.end(); ++it, ++i)
@@ -97,6 +100,7 @@ void FlightlessTime::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
     cartchart->setLegendEnabled(true);
 
     TableView *tabview = new TableView(parent);
+    tabview->resize(800, 300);
     tabview->setModel(modelrel);
     tabview->setColumnSortable(0, true);
     tabview->setColumnSortable(1, true);
@@ -109,6 +113,10 @@ void FlightlessTime::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
 auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
     auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+    model->setHeaderData(0, Wt::Horizontal, any(string("Gleitschirm")));
+    model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
+    model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
+
 
     int i = 0;
     for(flb::FlightDatabase::SeqGliders::iterator it = flightDb_->gliders().begin(); it != flightDb_->gliders().end(); ++it, ++i)
@@ -153,6 +161,7 @@ void FlightsPerGlider::draw(Wt::WContainerWidget *parent, const flb::FlightDatab
     pie2->setPerspectiveEnabled(true, 0.3);
 
     TableView *tabview = new TableView(parent);
+    tabview->resize(800, 300);
     tabview->setModel(modelrel);
     tabview->setColumnSortable(0, true);
     tabview->setColumnSortable(1, true);
@@ -213,6 +222,9 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     }
 
     auto_ptr<WStandardItemModel> model(new WStandardItemModel(counts.size(), 3));
+    model->setHeaderData(0, Wt::Horizontal, any(string(std::string(interval_ == FLP_YEAR ? "Jahr" : (interval_ == FLP_MONTH ? "Monat" : "Woche")))));
+    model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
+    model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
 
     int i = 0;
     for(map<std::string, pair<int, int> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
@@ -242,6 +254,7 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase:
     cartchart->setLegendEnabled(true);
 
     TableView *tabview = new TableView(parent);
+    tabview->resize(800, 300);
     tabview->setModel(modelrel);
     tabview->setColumnSortable(0, true);
     tabview->setColumnSortable(1, true);
@@ -254,9 +267,12 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase:
 auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
     auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+    model->setHeaderData(0, Wt::Horizontal, any(string("Fluggebiet")));
+    model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
+    model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
 
     int i = 0;
-    for(flb::FlightDatabase::SeqFlightAreas::iterator it = flightDb_->flightAreas().begin(); it != flightDb_->flightAreas().end(); ++it, ++i)
+    for(flb::FlightDatabase::FlightAreas::const_iterator it = flightDb_->FlightAreas.begin(); it != flightDb_->FlightAreas.end(); ++it, ++i)
     {
         string nam = (*it)->name();
         int cnt = 0, dur = 0;
@@ -294,6 +310,7 @@ void FlightsPerArea::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
     pie2->setPerspectiveEnabled(true, 0.3);
 
     TableView *tabview = new TableView(parent);
+    tabview->resize(800, 300);
     tabview->setModel(modelrel);
     tabview->setColumnSortable(0, true);
     tabview->setColumnSortable(1, true);

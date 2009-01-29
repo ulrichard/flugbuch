@@ -37,6 +37,8 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 using std::fabs;
+using std::sort;
+using std::transform;
 //using boost::bind;
 using namespace boost::lambda;
 using boost::shared_ptr;
@@ -358,7 +360,7 @@ void LocationTableRow::edit()
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
-    for_each(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *boost::lambda::_1)));
+    for_each(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *boost::lambda::_1)));
     for(int i=0; i<cbArea_->count(); ++i)
         if(location_->area()->name() == cbArea_->itemText(i).narrow())
             cbArea_->setCurrentIndex(i);
@@ -482,12 +484,12 @@ LocationTableRow* LocationTable::addLocation(shared_ptr<Location> loc, size_t ro
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationTable::addNewLocation()
 {
-    if(!flightDb_->flightAreas().size())
+    if(!flightDb_->FlightAreas.size())
     {
         Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggebiet.", Wt::Warning, true);
         return;
     }
-    shared_ptr<FlightArea> area = *flightDb_->flightAreas().begin();
+    shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
 
     shared_ptr<Location> newLocation(new Location(area, "", 0, 0.0, 0.0, Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
@@ -620,8 +622,8 @@ void LocationPanel::load()
     cbArea_->clear();
     cbArea_->addItem("alle");
     vector<string> areaNames;
-    std::transform(flightDb_->flightAreas().begin(), flightDb_->flightAreas().end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
-    std::sort(areaNames.begin(), areaNames.end());
+    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
+    sort(areaNames.begin(), areaNames.end());
     for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, boost::lambda::_1));
     cbArea_->setCurrentIndex(0);
 }
