@@ -1,3 +1,5 @@
-The main development environment for Flugbuch2 is CodeBlocks. 
+CodeBlocks is the main development environment for Flugbuch2. 
+
 MSVC is also maintained, but always leaks behind. 
-The others are not maintained, and for sure won't work out of the box. 
+
+The others were not maintained, and got removed. If you insist on working in KDevelop or NetBeans, you can grab a project file from an old revision and use it as a starting point. 

@@ -1,12 +1,16 @@
 // flugbuch
 #include "main.h"
 #include "inout_xml.h"
-#include "inout_mdb.h"
 #include "TabControl.h"
 #include "WelcomeScreen.h"
 #include "FormatStr.h"
 #include "MainMenu.h"
 #include "SystemInformation.h"
+#ifdef WIN32
+  #include "inout_mdb_win.h"
+#else
+  #include "inout_mdb.h"
+#endif
 // witty
 #include <Wt/WBorderLayout>
 #include <Wt/Ext/Dialog>
@@ -59,7 +63,7 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
     doLogin();
 
     // only for testing
-    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(root());
+//    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(root());
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

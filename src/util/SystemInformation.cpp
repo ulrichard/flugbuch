@@ -18,7 +18,7 @@ bfs::path SystemInformation::homeDir()
 {
 #ifdef WIN32
     char tmp[MAX_PATH];
-    if(!SHGetSpecialFolder(NULL, tmp, CSIDL_MYDOCUMENTS, TRUE))
+    if(!SHGetSpecialFolderPath(NULL, tmp, CSIDL_MYDOCUMENTS, TRUE))
         throw std::runtime_error("Home directory not found");
     return bfs::path(tmp);
 #else
