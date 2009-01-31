@@ -153,18 +153,24 @@
 		<Unit filename="../../../src/inout/inout.h" />
 		<Unit filename="../../../src/inout/inout_flyhigh.cpp" />
 		<Unit filename="../../../src/inout/inout_flyhigh.h" />
-		<Unit filename="../../../src/inout/inout_mdb.cpp" />
-		<Unit filename="../../../src/inout/inout_mdb.h" />
+		<Unit filename="../../../src/inout/inout_mdb.cpp">
+			<Option target="Debug"/>
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../../../src/inout/inout_mdb.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="../../../src/inout/inout_mdb_win.cpp">
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
+		<Unit filename="../../../src/inout/inout_mdb_win.h">
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
 		<Unit filename="../../../src/inout/inout_xml.cpp" />
 		<Unit filename="../../../src/inout/inout_xml.h" />
-		<Unit filename="../../../src/inout/odbc_wrapper.cpp">
-			<Option target="Debug_MSVC" />
-			<Option target="Release_MSVC" />
-		</Unit>
-		<Unit filename="../../../src/inout/odbc_wrapper.h">
-			<Option target="Debug_MSVC" />
-			<Option target="Release_MSVC" />
-		</Unit>
 		<Unit filename="../../../src/util/FormatStr.h" />
 		<Unit filename="../../../src/util/LocaleFormatting.h" />
 		<Unit filename="../../../src/util/SystemInformation.cpp" />
