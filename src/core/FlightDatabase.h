@@ -19,15 +19,15 @@ namespace flb
 class FlightDatabase
 {
 	friend class boost::serialization::access;
+	typedef std::vector<boost::shared_ptr<Glider> >		SeqGliders;
+	typedef std::vector<boost::shared_ptr<Location> >   SeqLocations;
 public:
 	// typedefs
-	typedef std::vector<boost::shared_ptr<FlightArea> > SeqFlightAreas;
-	typedef std::vector<boost::shared_ptr<Location> >   SeqLocations;
-	typedef std::vector<boost::shared_ptr<Glider> >		SeqGliders;
 	typedef std::set   <boost::shared_ptr<Flight> >		SeqFlights;
+	typedef std::vector<boost::shared_ptr<FlightArea> > SeqFlightAreas;
 public:
 	FlightDatabase(const std::string &PilotName, const std::string &pwd = "")
-	  : PilotName_(PilotName), Password_(encryptPassword(pwd)), FlightAreas(*this)  {}
+	  : PilotName_(PilotName), Password_(encryptPassword(pwd)), FlightAreas(*this), Gliders(*this), Locations(*this)  {}
 	~FlightDatabase() {}
 	static shared_ptr<FlightDatabase> makeTestDb(void);
 	bool checkPassword(const std::string &pwd) { return (encryptPassword(pwd) == Password_); }
@@ -39,13 +39,7 @@ public:
 	void addFlight(boost::shared_ptr<Flight> fl);
 	// getters
 	const std::string    & pilotName(void)   const { return PilotName_; }
-//	const SeqFlightAreas & flightAreas(void) const { return FlightAreas_; }
-	const SeqLocations   & locations(void)   const { return Locations_; }
-	const SeqGliders     & gliders(void)     const { return Gliders_; }
 	const SeqFlights     & flights(void)     const { return Flights_; }
-//    SeqFlightAreas & flightAreas(void) { return FlightAreas_; }
-	SeqLocations   & locations(void)   { return Locations_; }
-	SeqGliders     & gliders(void)     { return Gliders_; }
 	SeqFlights     & flights(void)     { return Flights_; }
 
 	// setters
@@ -89,12 +83,12 @@ public:
 // memberspaces for accessing the contents
 	struct FlightAreas
 	{
-	    typedef SeqFlightAreas::iterator       iterator;
+	    typedef SeqFlightAreas::const_iterator       iterator;
 	    typedef SeqFlightAreas::const_iterator const_iterator;
 
-//        iterator       begin()        { return flb_.FlightAreas_.begin(); }
+        iterator       begin()        { return flb_.FlightAreas_.begin(); }
         const_iterator begin() const  { return flb_.FlightAreas_.begin(); }
-//        iterator       end()          { return flb_.FlightAreas_.end(); }
+        iterator       end()          { return flb_.FlightAreas_.end(); }
         const_iterator end()   const  { return flb_.FlightAreas_.end(); }
 
         size_t size() const { return flb_.FlightAreas_.size(); }
@@ -103,6 +97,40 @@ public:
         FlightAreas(const FlightDatabase &flb) : flb_(flb) { }
         const FlightDatabase &flb_;
     }FlightAreas;
+
+	struct Locations
+	{
+	    typedef SeqLocations::const_iterator       iterator;
+	    typedef SeqLocations::const_iterator const_iterator;
+
+        iterator       begin()        { return flb_.Locations_.begin(); }
+        const_iterator begin() const  { return flb_.Locations_.begin(); }
+        iterator       end()          { return flb_.Locations_.end(); }
+        const_iterator end()   const  { return flb_.Locations_.end(); }
+
+        size_t size() const { return flb_.Locations_.size(); }
+    private:
+        friend class FlightDatabase;
+        Locations(const FlightDatabase &flb) : flb_(flb) { }
+        const FlightDatabase &flb_;
+    }Locations;
+
+    struct Gliders
+	{
+	    typedef SeqGliders::const_iterator       iterator;
+	    typedef SeqGliders::const_iterator const_iterator;
+
+        iterator       begin()        { return flb_.Gliders_.begin(); }
+        const_iterator begin() const  { return flb_.Gliders_.begin(); }
+        iterator       end()          { return flb_.Gliders_.end(); }
+        const_iterator end()   const  { return flb_.Gliders_.end(); }
+
+        size_t size() const { return flb_.Gliders_.size(); }
+    private:
+        friend class FlightDatabase;
+        Gliders(const FlightDatabase &flb) : flb_(flb) { }
+        const FlightDatabase &flb_;
+    }Gliders;
 };
 
 

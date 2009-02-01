@@ -503,13 +503,13 @@ void LocationTable::filter(const std::string &area, bool takeoff, bool landing, 
     locations_.clear();
 
     if(area == "alle")
-        std::copy(flightDb_->locations().begin(), flightDb_->locations().end(), back_inserter(locations_));
+        std::copy(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(locations_));
     else
     {
 //        std::remove_copy_if(flightDb_->locations().begin(), flightDb_->locations().end(), back_inserter(locations_),
 //            area != bind(&FlightArea::name, *(bind(&Location::area, *boost::lambda::_1))));
 
-        BOOST_FOREACH(shared_ptr<Location> loc, flightDb_->locations())
+        BOOST_FOREACH(shared_ptr<Location> loc, flightDb_->Locations)
             if(loc->area()->name() == area)
                 locations_.push_back(loc);
     }

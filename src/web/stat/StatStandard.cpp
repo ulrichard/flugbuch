@@ -112,14 +112,14 @@ void FlightlessTime::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
-    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->Gliders.size(), 3));
     model->setHeaderData(0, Wt::Horizontal, any(string("Gleitschirm")));
     model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
     model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
 
 
     int i = 0;
-    for(flb::FlightDatabase::SeqGliders::iterator it = flightDb_->gliders().begin(); it != flightDb_->gliders().end(); ++it, ++i)
+    for(flb::FlightDatabase::Gliders::iterator it = flightDb_->Gliders.begin(); it != flightDb_->Gliders.end(); ++it, ++i)
     {
         string nam = (*it)->identity();
 /*
@@ -266,7 +266,7 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
-    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->gliders().size(), 3));
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->Gliders.size(), 3));
     model->setHeaderData(0, Wt::Horizontal, any(string("Fluggebiet")));
     model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
     model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));

@@ -78,7 +78,7 @@ void LocationField::fillLocations(int idx)
         cbLocation_->removeItem(0);
 
     const string area = cbArea_->text().narrow();
-    FlightDatabase::SeqLocations locations = flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_);
+    vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_);
     for_each(locations.begin(), locations.end(), bind(&Wt::Ext::ComboBox::addItem, cbLocation_,
         bind(&Location::name, *boost::lambda::_1)));
     cbLocation_->setCurrentIndex(0);
@@ -98,8 +98,8 @@ size_t LocationField::selectLocation(const string &loc)
 const boost::shared_ptr<flb::Location> LocationField::getLocation() const
 {
     shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
-    FlightDatabase::SeqLocations locations = flightDb_->getLocationsEx(area, useAs_);
-    FlightDatabase::SeqLocations::iterator fit = find_if(locations.begin(), locations.end(),
+    vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(area, useAs_);
+    FlightDatabase::Locations::iterator fit = find_if(locations.begin(), locations.end(),
                 cbLocation_->currentText() == bind(&Location::name, *boost::lambda::_1));
     if(fit == locations.end())
         throw std::invalid_argument("Unknown location");
@@ -213,7 +213,7 @@ void FlightTableRow::edit()
 	// glider
 	cbGlider_ = new Wt::Ext::ComboBox();
 	idx = 0;
-	BOOST_FOREACH(boost::shared_ptr<Glider> gld, flightDb_->gliders())
+	BOOST_FOREACH(const boost::shared_ptr<Glider> gld, flightDb_->Gliders)
 	{
         cbGlider_->insertItem(idx, gld->identity());
         if(gld == flight_->glider())
@@ -274,7 +274,7 @@ void FlightTableRow::save()
 //            throw std::invalid_argument("Unknown glider");
 //        flight_->setGlider(*fitGld);
 
-        BOOST_FOREACH(boost::shared_ptr<Glider> gld, flightDb_->gliders())
+        BOOST_FOREACH(boost::shared_ptr<Glider> gld, flightDb_->Gliders)
             if(cbGlider_->text() == gld.get()->identity())
                 flight_->setGlider(gld);
         // takeoff
@@ -406,23 +406,22 @@ void FlightTable::addNewFlight()
     else
     {
         // first make sure, we have gliders and locations defined
-        if(!flightDb_->gliders().size())
+        if(!flightDb_->Gliders.size())
         {
             Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggeraet.", Wt::Warning, true);
             return;
         }
         // find the first takeoff and the first landing place
-        const FlightDatabase::SeqLocations &locations = flightDb_->locations();
-        FlightDatabase::SeqLocations::const_iterator itTo = find_if(locations.begin(), locations.end(),
+        FlightDatabase::Locations::const_iterator itTo = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
                             bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_TAKEOFF));
-        FlightDatabase::SeqLocations::const_iterator itLa = find_if(locations.begin(), locations.end(),
+        FlightDatabase::Locations::const_iterator itLa = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
                             bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_LANDING));
-        if(itTo == locations.end())
+        if(itTo == flightDb_->Locations.end())
         {
             Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::Warning, true);
             return;
         }
-        if(itLa == locations.end())
+        if(itLa == flightDb_->Locations.end())
         {
             Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Landeplatz.", Wt::Warning, true);
             return;
@@ -431,7 +430,7 @@ void FlightTable::addNewFlight()
         shared_ptr<Flight> newFlight(new Flight(1,                              // number
                                                 boost::gregorian::day_clock::local_day(), // date
                                                 0,                              // airtime
-                                                flightDb_->gliders().back(),    // glider
+                                                *flightDb_->Gliders.begin(),    // glider
                                                 *itTo,                          // takeoff
                                                 *itLa));                        // landing
         flightDb_->addFlight(newFlight);

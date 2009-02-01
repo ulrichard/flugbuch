@@ -253,10 +253,10 @@ void GliderTable::filter(const std::string &brand, const std::string &classifica
     gliders_.clear();
 
     if(brand == "alle")
-        std::copy(flightDb_->gliders().begin(), flightDb_->gliders().end(), back_inserter(gliders_));
+        std::copy(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), back_inserter(gliders_));
     else
     {
-        std::remove_copy_if(flightDb_->gliders().begin(), flightDb_->gliders().end(), std::back_inserter(gliders_),
+        std::remove_copy_if(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::back_inserter(gliders_),
             brand != bind(&Glider::brand, *boost::lambda::_1));
 
 //        BOOST_FOREACH(shared_ptr<FlightArea> flar, flightDb_->flightAreas())
@@ -337,7 +337,7 @@ void GliderPanel::load()
     cbBrand_->clear();
     cbBrand_->addItem("alle");
     std::set<string> brands;
-    transform(flightDb_->gliders().begin(), flightDb_->gliders().end(), std::inserter(brands, brands.begin()),
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::inserter(brands, brands.begin()),
         bind(&Glider::brand, *boost::lambda::_1));
 //    for_each(brands.begin(), brands.end(), bind(&Wt::Ext::ComboBox::addItem, cbBrand_, *boost::lambda::_1));
     BOOST_FOREACH(string str, brands)
@@ -347,7 +347,7 @@ void GliderPanel::load()
     cbClassi_->clear();
     cbClassi_->addItem("alle");
     std::set<string> classis;
-    transform(flightDb_->gliders().begin(), flightDb_->gliders().end(), inserter(classis, classis.begin()),
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classis, classis.begin()),
         bind(&Glider::classification, *boost::lambda::_1));
 //    for_each(classis.begin(), classis.end(), bind(&Wt::Ext::ComboBox::addItem, cbClassi_, *boost::lambda::_1));
     BOOST_FOREACH(string str, classis)

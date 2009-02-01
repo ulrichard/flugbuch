@@ -259,12 +259,12 @@ void inout_mdb::readWptLink(const vector<string> &tokens)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)
 {
-    FlightDatabase::SeqLocations::const_iterator fit = find_if(fldb.locations().begin(), fldb.locations().end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
-    if(fit == fldb.locations().end())
+    FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
+    if(fit == fldb.Locations.end())
     {
         // we didn't find an equivalent location, but there might still exist one with the same name
         bool found = false;
-        BOOST_FOREACH(shared_ptr<Location> los, fldb.locations())
+        BOOST_FOREACH(shared_ptr<Location> los, fldb.Locations)
             if(*locp.second == *los)
                 found = true;
         if(found)
