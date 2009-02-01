@@ -27,7 +27,7 @@ public:
 	typedef std::vector<boost::shared_ptr<FlightArea> > SeqFlightAreas;
 public:
 	FlightDatabase(const std::string &PilotName, const std::string &pwd = "")
-	  : PilotName_(PilotName), Password_(encryptPassword(pwd)), FlightAreas(*this), Gliders(*this), Locations(*this)  {}
+	  : PilotName_(PilotName), Password_(encryptPassword(pwd)), FlightAreas(*this), Locations(*this), Gliders(*this)  {}
 	~FlightDatabase() {}
 	static shared_ptr<FlightDatabase> makeTestDb(void);
 	bool checkPassword(const std::string &pwd) { return (encryptPassword(pwd) == Password_); }

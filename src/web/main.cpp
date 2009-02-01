@@ -40,6 +40,9 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
    // whether the user has permission to start a new application
     FlightLogApp *flapp = new FlightLogApp(env);
 
+    // only for testing
+//    flapp->root()->addWidget(new Wt::WGoogleMap());
+
 	return flapp;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -61,10 +64,6 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
     mainScreen_    = NULL;
     tabCtrl_       = NULL;
     doLogin();
-
-    // only for testing
-//    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(root());
-
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::finalize()

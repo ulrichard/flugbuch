@@ -8,21 +8,29 @@
 
 namespace Wt
 {
-    class WText;
 
-
+/*! \class WGoogleMap Wt/WGoogleMap Wt/WGoogleMap
+ *  \brief A widget that displays a google map.
+ *
+ */
 class WGoogleMap : public WContainerWidget
 {
 public:
-    WGoogleMap(WContainerWidget *parent);
+    /*! \brief Create a map widget with optional parent.
+     */
+    WGoogleMap(WContainerWidget *parent = 0);
+
+    /*! \brief Destruct a %WGoogleMap
+     */
     virtual ~WGoogleMap() { }
 
+    virtual void load();
+    virtual void refresh();
 private:
-    WText *htmltext_;
 
 };
 
 
-}
+} //  namespace Wt
 
 #endif // WGOOGLEMAP_H_INCLUDED

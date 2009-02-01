@@ -26,6 +26,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
 {
 
     Wt::WGoogleMap *gmap = new Wt::WGoogleMap(parent);
+    gmap->resize(700, 500);
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

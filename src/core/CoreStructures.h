@@ -190,10 +190,10 @@ public:
             boost::shared_ptr<Location> landing, const std::string story = "",
             const SeqWaypoints &waypoints = std::vector<boost::shared_ptr<Location> >()):
 			number_(number), date_(date), airtime_(airtime), glider_(glider), takeoff_(takeoff),
-			landing_(landing), story_(story), waypoints_(waypoints), distance_(0) {}
+			landing_(landing), waypoints_(waypoints), distance_(0), story_(story)    { }
 	Flight(const Flight &cpy) : number_(cpy.number_), date_(cpy.date_), airtime_(cpy.airtime_),
-			glider_(cpy.glider_), takeoff_(cpy.takeoff_), landing_(cpy.landing_), story_(cpy.story_),
-			waypoints_(cpy.waypoints_), distance_(cpy.distance_)	{}
+			glider_(cpy.glider_), takeoff_(cpy.takeoff_), landing_(cpy.landing_),
+			waypoints_(cpy.waypoints_), distance_(cpy.distance_), story_(cpy.story_) { }
 	~Flight() {}
 	// operators
 	const Flight & operator=(const Flight &flt) { Flight cpy(flt); std::swap(*this, cpy); return *this; }
@@ -250,7 +250,7 @@ public:
 	std::string                 story_;
 };
 BOOST_SERIALIZATION_SHARED_PTR(Flight);
-static bool operator<(const boost::shared_ptr<Flight> lhs, const boost::shared_ptr<Flight> rhs) { return *lhs < *rhs; }
+//static bool operator<(const boost::shared_ptr<Flight> lhs, const boost::shared_ptr<Flight> rhs) { return *lhs < *rhs; }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 enum PositionFormat
 {
