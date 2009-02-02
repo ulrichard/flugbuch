@@ -40,8 +40,18 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
    // whether the user has permission to start a new application
     FlightLogApp *flapp = new FlightLogApp(env);
 
+/*
     // only for testing
-//    flapp->root()->addWidget(new Wt::WGoogleMap());
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(flapp->root());
+    gmap->resize(700, 500);
+
+    gmap->addMarker(std::make_pair(47.01887777, 8.651888));
+
+    std::vector<std::pair<double, double> > points;
+    points.push_back(std::make_pair(47.06354722, 8.647369)); // Engelstock
+    points.push_back(std::make_pair(47.01887777, 8.651888)); // Steisteg
+    gmap->addPolyline(points, "#FF0000", 2, 0.9);
+*/
 
 	return flapp;
 }

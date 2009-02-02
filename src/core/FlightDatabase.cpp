@@ -87,7 +87,7 @@ void FlightDatabase::deleteLocation(FlightDatabase::SeqLocations::iterator itdel
 			throw runtime_error(FormatStr() << errmsg << flt->number() << " als Startplatz");
 		if(*flt->landing() == **itdel)
 			throw runtime_error(FormatStr() << errmsg << flt->number() << " als Landeplatz");
-		BOOST_FOREACH(boost::shared_ptr<Location> wpt, flt->waypoints())
+		BOOST_FOREACH(boost::shared_ptr<Location> wpt, flt->Waypoints)
 			if(*wpt == **itdel)
 				throw runtime_error(FormatStr() << errmsg << flt->number() << " als Wegpunkt");
 	}
@@ -183,23 +183,23 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	shared_ptr<flb::FlightArea> arEngelstock(new flb::FlightArea("Engelstock", "Schweiz", "Schwyz"));
 	fldb->addFlightArea(arEngelstock);
 	// locations
-	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1600, 47.987, 8.7865823, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1540, 47.018337296086003, 8.7019931164065607, flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locWeststart);
-	shared_ptr<flb::Location> locSteisteg(new flb::Location(arSchwyz, "Steisteg", 480, 47.987, 8.863, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locSteisteg(new flb::Location(arSchwyz, "Steisteg", 485, 47.018877777788397, 8.6518888889418708, flb::Location::UA_LANDING));
 	fldb->addLocation(locSteisteg);
-	shared_ptr<flb::Location> locFronalpstock(new flb::Location(arFronalpstock, "Fronalpstock", 1920, 47.987, 8.863, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locFronalpstock(new flb::Location(arFronalpstock, "Fronalpstock", 1920, 46.9650366568072, 8.6389761374447307, flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locFronalpstock);
-	shared_ptr<flb::Location> locBietstoeckli(new flb::Location(arFronalpstock, "Bietstoeckli", 1900, 47.987, 8.863, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locBietstoeckli(new flb::Location(arFronalpstock, "Bietstoeckli", 1860, 46.9650366568072, 8.6389761374447307, flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locBietstoeckli);
-	shared_ptr<flb::Location> locStoosSki(new flb::Location(arStoos, "Skischule", 1100, 47.987, 8.863, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locStoosSki(new flb::Location(arStoos, "Skischule", 1325, 46.977499999999999, 8.6627777777777801, flb::Location::UA_LANDING));
 	fldb->addLocation(locStoosSki);
-	shared_ptr<flb::Location> locFrauholz(new flb::Location(arSteinen, "Frauholz", 460, 47.987, 8.863, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locFrauholz(new flb::Location(arSteinen, "Frauholz", 465, 47.045461111068697, 8.6064027775658491, flb::Location::UA_LANDING));
 	fldb->addLocation(locFrauholz);
-	shared_ptr<flb::Location> locKlMythen(new flb::Location(arRothenflue, "kleiner Mythen", 1760, 47.987, 8.863, flb::Location::UA_TAKEOFF | flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locKlMythen(new flb::Location(arRothenflue, "kleiner Mythen", 1811, 47.041024816277201, 8.6839721295372101, flb::Location::UA_TAKEOFF | flb::Location::UA_WAYPNT));
 	fldb->addLocation(locKlMythen);
-	shared_ptr<flb::Location> locZwMythen(new flb::Location(arRothenflue, "Zwischenmythen", 1550, 47.987, 8.863, flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locZwMythen(new flb::Location(arRothenflue, "Zwischenmythen", 1375, 47.034203693080499, 8.68249797236105, flb::Location::UA_WAYPNT));
 	fldb->addLocation(locZwMythen);
-	shared_ptr<flb::Location> locEngelstock(new flb::Location(arEngelstock, "Engelstock", 1400, 47.987, 8.863, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locEngelstock(new flb::Location(arEngelstock, "Engelstock", 1210, 47.063547222349399, 8.6473694441053599, flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locEngelstock);
 	shared_ptr<flb::Location> locBormPoint(new flb::Location(arSchwyz, "Borm Point", 600, 47.987, 8.863, flb::Location::UA_LANDING));
 	fldb->addLocation(locBormPoint);

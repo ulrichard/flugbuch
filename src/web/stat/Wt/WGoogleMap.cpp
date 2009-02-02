@@ -1,17 +1,22 @@
 // witty
 #include <Wt/WGoogleMap>
 #include <Wt/WApplication>
+// boost
+#include <boost/bind.hpp>
 // standard library
 #include <string>
 #include <sstream>
+#include <iostream>
 
 using namespace Wt;
 using std::string;
+using std::vector;
+using std::pair;
 
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(parent)
+WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0)
 {
     WApplication *app = WApplication::instance();
 
@@ -24,6 +29,9 @@ WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(parent)
     // init the google javascript api
     const string gmuri = "http://www.google.com/jsapi?key=" + googlekey;
     app->require(gmuri, "GoogleMapsJavaScriptAPI");
+
+    if(parent)
+        parent->addWidget(this);
 }
 
 void WGoogleMap::load()
@@ -40,8 +48,49 @@ void WGoogleMap::refresh()
          << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
          << "    map.enableScrollWheelZoom();"
          << "    map.addControl(new google.maps.HierarchicalMapTypeControl());"
-         << "}";
+         <<      jsRef() << ".map = map;";
+    copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
+    strm << "}";
     strm << "google.load(\"maps\", \"2\", {other_params:\"sensor=false\", callback: initialize});";
 
     WApplication::instance()->doJavaScript(strm.str());
+
+    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
 }
+
+void WGoogleMap::addMarker(const pair<double, double> &pos)
+{
+    std::ostringstream strm;
+    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(47.01887777, 8.651888));"
+         <<  jsRef() << ".map.addOverlay(marker);";
+
+    const string jsstr = strm.str();
+
+    additions_.push_back(jsstr);
+
+    WApplication::instance()->doJavaScript(jsstr);
+
+    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+}
+
+void WGoogleMap::addPolyline(const vector<pair<double, double> > &points, const string &color, int width, double opacity)
+{
+    opacity = std::max(std::min(opacity, 1.0), 0.0); // opacity has to be between 0.0 and 1.0
+
+    std::ostringstream strm;
+    strm << "var waypoints = [];";
+    for(size_t i=0; i<points.size(); ++i)
+        strm << "waypoints[" << i << "] = new google.maps.LatLng(" << points[i].first << ", " << points[i].second << ");";
+    strm << "var poly = new google.maps.Polyline(waypoints, \"" << color << "\", " << width << ", " << opacity << ");";
+    strm << jsRef() << ".map.addOverlay(poly);";
+
+    const string jsstr = "if(true){" + strm.str() + "}"; // to keep the variables inside a scope where they don't interfere
+
+    additions_.push_back(jsstr);
+
+    WApplication::instance()->doJavaScript(jsstr);
+
+    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+}
+
+

@@ -4,10 +4,12 @@
 // witty
 #include <Wt/WContainerWidget>
 // standard library
-
+#include <vector>
 
 namespace Wt
 {
+// forward declarations
+class WColor;
 
 /*! \class WGoogleMap Wt/WGoogleMap Wt/WGoogleMap
  *  \brief A widget that displays a google map.
@@ -26,8 +28,19 @@ public:
 
     virtual void load();
     virtual void refresh();
-private:
 
+    /*! \brief Add a marker overlay to the map.
+     */
+    void addMarker(const std::pair<double, double> &pos);
+
+    /*! \brief Add a polyline overlay to the map.
+     *
+     *  specify a vaue between 0.0 and 1.0 for the opacity.
+     */
+    void addPolyline(const std::vector<std::pair<double, double> > &points,
+                     const std::string &color = "#FF0000", int width = 2, double opacity = 1.0);
+private:
+    std::vector<std::string> additions_;
 };
 
 

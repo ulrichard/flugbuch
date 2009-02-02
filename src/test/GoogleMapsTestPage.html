@@ -13,10 +13,7 @@
     map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);
     map.enableScrollWheelZoom();
     map.addControl(new google.maps.HierarchicalMapTypeControl()); 
-
-    // add a marker
-    var marker = new google.maps.Marker(new google.maps.LatLng(47.01887777, 8.651888));
-    map.addOverlay(marker);
+    document.getElementById("map").map = map;
 
     // draw a polyline for a flight course
     var waypoints = [];
@@ -31,6 +28,13 @@
 </script>
 
 <div id="map" style="width:500px;height:300px"></div>
+
+<script type="text/javascript">
+    // add a marker
+    var marker = new google.maps.Marker(new google.maps.LatLng(47.01887777, 8.651888));
+    document.getElementById("map").map.addOverlay(marker);
+</script>
+
 
 </body>
 </html>

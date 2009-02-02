@@ -221,7 +221,7 @@ void inout_mdb::readFlight(const vector<string> &tokens)
     {
         const unsigned int flNr = lexical_cast<unsigned int>(tokens[1]);
 
-        Flight::SeqWaypoints wpts;
+        vector<shared_ptr<Location> > wpts;
         for(map<unsigned int, pair<unsigned int, unsigned int> >::iterator it = wptlinks_.begin(); it != wptlinks_.end(); ++it)
         {
             if(it->second.first == flNr)
