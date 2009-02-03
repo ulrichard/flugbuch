@@ -127,8 +127,8 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
         for(dtl::DynamicDBView<>::select_iterator it = viewCountry.begin(); it != viewCountry.end(); ++it)
             countries_[(*it)["LandId"]] = string((*it)["Name"]); // we omit the description of the country
 
-        // the flieght areas can be used as is
-        dtl::DynamicDBView<> viewArea("Laender", "*");
+        // the flight areas can be used as is
+        dtl::DynamicDBView<> viewArea("Fluggebiete", "*");
         transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.begin()), bind(&inout_mdb::GetArea, this, _1));
 
         // the gliders can be used as is
@@ -209,37 +209,40 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::v
 {
     const unsigned int flNr = row["FlugNr"];
 
-        Flight::SeqWaypoints wpts;
-        for(map<unsigned int, pair<unsigned int, unsigned int> >::iterator it = wptlinks_.begin(); it != wptlinks_.end(); ++it)
+	vector<shared_ptr<Location> > wpts;
+    for(map<unsigned int, pair<unsigned int, unsigned int> >::iterator it = wptlinks_.begin(); it != wptlinks_.end(); ++it)
+    {
+        if(it->second.first == flNr)
         {
-            if(it->second.first == flNr)
-            {
-                shared_ptr<Location> loc = waypoints_[it->second.second];
-                loc->addUsage(Location::UA_WAYPNT);
-                wpts.push_back(loc);
-            }
+            shared_ptr<Location> loc = waypoints_[it->second.second];
+            loc->addUsage(Location::UA_WAYPNT);
+            wpts.push_back(loc);
         }
+    }
 
-        shared_ptr<Flight> flt(new Flight(flNr,                           // flight number
-                                          boost::gregorian::from_string(string(row["Datum"])), // date
-                                          row["Flugminuten"],             // airtime
-                                          gliders_[row["GleitschirmId"]], // glider
-                                          takeoffs_[row["StartplatzId"]], // takeoff
-                                          landings_[row["LandeplatzId"]], // landing
-                                          row["Bemerkungen"],             // story
-                                          wpts));                         // waypoints
+	tagTIMESTAMP_STRUCT tms = row["Datum"];
+ 	boost::gregorian::date bgdate(tms.year, tms.month, tms.day);
+
+    shared_ptr<Flight> flt(new Flight(flNr,                           // flight number
+                                      bgdate,						  // date
+                                      row["Flugminuten"],             // airtime
+                                      gliders_[row["GleitschirmId"]], // glider
+                                      takeoffs_[row["StartplatzId"]], // takeoff
+                                      landings_[row["LandeplatzId"]], // landing
+                                      row["Bemerkungen"],             // story
+                                      wpts));                         // waypoints
 
     return make_pair(row["FlugId"], flt);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)
 {
-    FlightDatabase::SeqLocations::const_iterator fit = find_if(fldb.locations().begin(), fldb.locations().end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
-    if(fit == fldb.locations().end())
+    FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
+    if(fit == fldb.Locations.end())
     {
         // we didn't find an equivalent location, but there might still exist one with the same name
         bool found = false;
-        BOOST_FOREACH(shared_ptr<Location> los, fldb.locations())
+        BOOST_FOREACH(shared_ptr<Location> los, fldb.Locations)
             if(*locp.second == *los)
                 found = true;
         if(found)

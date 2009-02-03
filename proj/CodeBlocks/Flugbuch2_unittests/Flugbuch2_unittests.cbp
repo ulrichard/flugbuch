@@ -42,34 +42,62 @@
 					<Add library="boost_filesystem-mt" />
 				</Linker>
 			</Target>
+			<Target title="Debug_MSVC">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug_MSVC\Flugbuch2_unittests" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug_MSVC\" />
+				<Option type="1" />
+				<Option compiler="msvc8" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/EHs" />
+					<Add option="/GR" />
+					<Add option="/Od" />
+					<Add option="/W2" />
+					<Add option="/Zc:forScope" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option="/DWIN32" />
+					<Add option="/D_DEBUG" />
+					<Add option="/D_CONSOLE" />
+					<Add directory="..\..\..\src\core" />
+					<Add directory="..\..\..\src\inout" />
+					<Add directory="..\..\..\src\util" />
+				</Compiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add library="Advapi32.lib" />
+					<Add library="Winmm.lib" />
+					<Add library="shell32.lib" />
+					<Add library="DTL_d.lib" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../../../src/core/CoreStructures.cpp" />
-		<Unit filename="../../../src/core/CoreStructures.h" />
-		<Unit filename="../../../src/core/FlightDatabase.cpp" />
-		<Unit filename="../../../src/core/FlightDatabase.h" />
-		<Unit filename="../../../src/core/FormatStr.h" />
-		<Unit filename="../../../src/core/MainExternalIncludes.h" />
-		<Unit filename="../../../src/inout/inout.h" />
-		<Unit filename="../../../src/inout/inout_mdb.cpp" />
-		<Unit filename="../../../src/inout/inout_mdb.h" />
-		<Unit filename="../../../src/inout/inout_xml.cpp" />
-		<Unit filename="../../../src/inout/inout_xml.h" />
-		<Unit filename="../../../src/test/FlugbuchMain.cpp" />
-		<Unit filename="../../../src/util/SystemInformation.cpp" />
+		<Unit filename="..\..\..\src\core\CoreStructures.cpp" />
+		<Unit filename="..\..\..\src\core\CoreStructures.h" />
+		<Unit filename="..\..\..\src\core\FlightDatabase.cpp" />
+		<Unit filename="..\..\..\src\core\FlightDatabase.h" />
+		<Unit filename="..\..\..\src\core\MainExternalIncludes.h" />
+		<Unit filename="..\..\..\src\inout\inout.h" />
+		<Unit filename="..\..\..\src\inout\inout_mdb.cpp" />
+		<Unit filename="..\..\..\src\inout\inout_mdb.h" />
+		<Unit filename="..\..\..\src\inout\inout_xml.cpp" />
+		<Unit filename="..\..\..\src\inout\inout_xml.h" />
+		<Unit filename="..\..\..\src\test\FlugbuchMain.cpp" />
+		<Unit filename="..\..\..\src\util\FormatStr.h" />
+		<Unit filename="..\..\..\src\util\LocaleFormatting.h" />
+		<Unit filename="..\..\..\src\util\SystemInformation.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion>
 				<search_path add="../../../src/core" />
 				<search_path add="../../../src/inout" />
 			</code_completion>
-			<lib_finder disable_auto="1">
-				<lib name="boost_serialization-mt-d" />
-				<lib name="boost_date_time-mt-d" />
-				<lib name="boost_unit_test_framework-mt-d" />
-			</lib_finder>
+			<lib_finder disable_auto="1" />
 			<debugger />
 		</Extensions>
 	</Project>

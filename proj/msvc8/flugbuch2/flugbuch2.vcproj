@@ -20,7 +20,9 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -39,15 +41,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm250 "
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web"
+				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				RuntimeTypeInfo="true"
+				PrecompiledHeaderFile=".\example___Win32_Debug_STLPort/example.pch"
+				AssemblerListingLocation=".\example___Win32_Debug_STLPort/"
+				ObjectFile=".\example___Win32_Debug_STLPort/"
+				ProgramDataBaseFileName=".\example___Win32_Debug_STLPort/"
+				BrowseInformation="1"
+				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -55,14 +62,17 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wtd.lib wtextd.lib wthttpd.lib Advapi32.lib Winmm.lib"
+				AdditionalDependencies="wtd.lib wtextd.lib wthttpd.lib Advapi32.lib Winmm.lib DTL_d.lib"
 				LinkIncremental="2"
+				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -97,6 +107,8 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -117,13 +129,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				Optimization="2"
+				InlineFunctionExpansion="2"
+				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat"
+				PreprocessorDefinitions="WIN32;_CONSOLE;NDEBUG"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
+				EnableFunctionLevelLinking="true"
+				RuntimeTypeInfo="true"
+				PrecompiledHeaderFile=".\Release/example.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -136,12 +155,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wt.lib wtext.lib wthttp.lib Advapi32.lib Winmm.lib"
+				AdditionalDependencies="wt.lib wtext.lib wthttp.lib Advapi32.lib Winmm.lib DTL.lib"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				IgnoreAllDefaultLibraries="false"
 				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -203,7 +220,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inout\inout_mdb.cpp"
+				RelativePath="..\..\..\src\inout\inout_flyhigh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inout\inout_mdb_win.cpp"
 				>
 			</File>
 			<File
@@ -223,11 +244,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inout\odbc_wrapper.cpp"
+				RelativePath="..\..\..\src\web\StatisticsTab.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\web\StatisticsTab.cpp"
+				RelativePath="..\..\..\src\web\stat\StatMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\web\stat\StatStandard.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\util\SystemInformation.cpp"
 				>
 			</File>
 			<File
@@ -236,6 +265,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\WelcomeScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\web\stat\Wt\WGoogleMap.cpp"
 				>
 			</File>
 		</Filter>
@@ -294,10 +327,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\MainMenu.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\inout\odbc_wrapper.h"
 				>
 			</File>
 			<File
