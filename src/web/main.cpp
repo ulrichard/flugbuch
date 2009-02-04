@@ -23,6 +23,8 @@
 #include <Wt/WEnvironment>
 
 #include <Wt/WGoogleMap>
+#include <Wt/WContainerWidget>
+#include <Wt/WBorderLayout>
 // boost
 #include <boost/foreach.hpp>
 // std lib
@@ -30,6 +32,9 @@
 
 
 using std::string;
+using std::vector;
+using std::pair;
+using std::make_pair;
 using namespace flbwt;
 namespace bfs = boost::filesystem;
 
@@ -42,15 +47,27 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 
 /*
     // only for testing
-    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(flapp->root());
+    Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
+    flapp->root()->setLayout(blayout);
+    Wt::WContainerWidget *contw = new Wt::WContainerWidget();
+    blayout->addWidget(contw, Wt::WBorderLayout::Center);
+
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(contw);
     gmap->resize(700, 500);
 
     gmap->addMarker(std::make_pair(47.01887777, 8.651888));
 
-    std::vector<std::pair<double, double> > points;
-    points.push_back(std::make_pair(47.06354722, 8.647369)); // Engelstock
-    points.push_back(std::make_pair(47.01887777, 8.651888)); // Steisteg
+    vector<pair<double, double> > points;
+    points.push_back(make_pair(47.06354722, 8.647369)); // Engelstock
+    points.push_back(make_pair(47.01887777, 8.651888)); // Steisteg
     gmap->addPolyline(points, "#FF0000", 2, 0.9);
+
+    points.clear();
+    points.push_back(make_pair(47.063, 8.647)); // Engelstock
+    points.push_back(make_pair(47.018, 8.651)); // Steisteg
+    gmap->addPolyline(points, "#FFF000", 2, 0.9);
+
+    gmap->zoomWindow(make_pair(make_pair(47.063, 8.647), make_pair(47.018, 8.651)));
 */
 
 	return flapp;

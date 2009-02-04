@@ -5,6 +5,8 @@
 #include <Wt/WContainerWidget>
 // standard library
 #include <vector>
+#include <utility>
+#include <string>
 
 namespace Wt
 {
@@ -26,7 +28,6 @@ public:
      */
     virtual ~WGoogleMap() { }
 
-    virtual void load();
     virtual void refresh();
 
     /*! \brief Add a marker overlay to the map.
@@ -39,7 +40,16 @@ public:
      */
     void addPolyline(const std::vector<std::pair<double, double> > &points,
                      const std::string &color = "#FF0000", int width = 2, double opacity = 1.0);
+
+    /*! \brief Zoom the map to a region defined by a bounding box of lat/lon coordinates.
+     */
+    void zoomWindow(std::pair<std::pair<double, double>, std::pair<double, double> > bbox);
+
+protected:
+    virtual void prepareRerender();
+
 private:
+    bool rendered_;
     std::vector<std::string> additions_;
 };
 

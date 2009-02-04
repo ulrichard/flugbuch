@@ -12,11 +12,13 @@ using namespace Wt;
 using std::string;
 using std::vector;
 using std::pair;
+using std::make_pair;
+using std::swap;
 
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0)
+WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), rendered_(false)
 {
     WApplication *app = WApplication::instance();
 
@@ -34,43 +36,50 @@ WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0)
         parent->addWidget(this);
 }
 
-void WGoogleMap::load()
-{
-    refresh();
-}
-
 void WGoogleMap::refresh()
 {
-    // initialize the map
-    std::ostringstream strm;
-    strm << "function initialize() {"
-         << "    var map = new google.maps.Map2(" << jsRef() << ");"
-         << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
-         << "    map.enableScrollWheelZoom();"
-         << "    map.addControl(new google.maps.HierarchicalMapTypeControl());"
-         <<      jsRef() << ".map = map;";
-    copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
-    strm << "}";
-    strm << "google.load(\"maps\", \"2\", {other_params:\"sensor=false\", callback: initialize});";
+    rendered_ = false;
+}
 
-    WApplication::instance()->doJavaScript(strm.str());
+void WGoogleMap::prepareRerender()
+{
+    if(!rendered_)
+    {
+        // initialize the map
+        std::ostringstream strm;
+        strm << "function initialize() {"
+             << "    var map = new google.maps.Map2(" << jsRef() << ");"
+             << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
+             << "    map.enableScrollWheelZoom();"
+             << "    map.addControl(new google.maps.HierarchicalMapTypeControl());"
+             <<      jsRef() << ".map = map;";
+        copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
+        strm << "}";
+        strm << "google.load(\"maps\", \"2\", {other_params:\"sensor=false\", callback: initialize});";
 
-    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+        additions_.clear();
+
+        WApplication::instance()->doJavaScript(strm.str());
+
+        WContainerWidget::prepareRerender();
+        rendered_ = true;
+
+        std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+    }
 }
 
 void WGoogleMap::addMarker(const pair<double, double> &pos)
 {
     std::ostringstream strm;
-    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(47.01887777, 8.651888));"
+    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(" << pos.first << ", " << pos.second << "));"
          <<  jsRef() << ".map.addOverlay(marker);";
 
     const string jsstr = strm.str();
 
-    additions_.push_back(jsstr);
-
-    WApplication::instance()->doJavaScript(jsstr);
-
-    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+    if(rendered_)
+        WApplication::instance()->doJavaScript(jsstr);
+    else
+        additions_.push_back(jsstr);
 }
 
 void WGoogleMap::addPolyline(const vector<pair<double, double> > &points, const string &color, int width, double opacity)
@@ -86,11 +95,32 @@ void WGoogleMap::addPolyline(const vector<pair<double, double> > &points, const 
 
     const string jsstr = "if(true){" + strm.str() + "}"; // to keep the variables inside a scope where they don't interfere
 
-    additions_.push_back(jsstr);
-
-    WApplication::instance()->doJavaScript(jsstr);
-
-    std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+    if(rendered_)
+        WApplication::instance()->doJavaScript(jsstr);
+    else
+        additions_.push_back(jsstr);
 }
+
+void WGoogleMap::zoomWindow(pair<pair<double, double>, pair<double, double> > bbox)
+{
+    pair<double, double> center = make_pair((bbox.first.first  + bbox.second.first)  / 2.0,
+                                            (bbox.first.second + bbox.second.second) / 2.0);
+    if(bbox.first.first > bbox.second.first)
+        swap(bbox.first.first, bbox.second.first);
+    if(bbox.first.second > bbox.second.second)
+        swap(bbox.first.second, bbox.second.second);
+
+    std::ostringstream strm;
+    strm << "var bbox = new google.maps.LatLngBounds(new google.maps.LatLng(" << bbox.first.first  << ", " << bbox.first.second  << "), "
+         <<                                         "new google.maps.LatLng(" << bbox.second.first << ", " << bbox.second.second << "));"
+         << "var zooml = " << jsRef() << ".map.getBoundsZoomLevel(bbox);"
+         << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.first << ", " << center.second << "), zooml);";
+
+    if(rendered_)
+        WApplication::instance()->doJavaScript(strm.str());
+    else
+        additions_.push_back(strm.str());
+}
+
 
 

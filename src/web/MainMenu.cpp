@@ -62,6 +62,7 @@ void MainMenu::info(void)
                      << "<br>www.webtoolkit.eu  " << Wt::WEnvironment::libraryVersion()
                      << "<br>www.boost.org " << BOOST_VERSION / 100000 << "." << (BOOST_VERSION / 100) % 1000 << "." << BOOST_VERSION % 100
                      << "<br>www.extjs.com"
+                     << "<br>dtemplatelib.sourceforge.net"
                      << "<br>mdbtools.sourceforge.net");
 
     Wt::Ext::MessageBox::show("Informationen zum Flugbuch2", msg, Wt::Information, true);
