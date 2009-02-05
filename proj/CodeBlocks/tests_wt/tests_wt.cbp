@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="tests_wt" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/tests_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--docroot ../../../res --http-address 0.0.0.0 --http-port 8080 --config /etc/wt/wt_config.xml" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../../src/web/stat" />
+				</Compiler>
+				<Linker>
+					<Add library="wt" />
+					<Add library="wthttp" />
+					<Add library="wtext" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="main.cpp" />
+		<Unit filename="../../../src/web/stat/Wt/WGoogleMap" />
+		<Unit filename="../../../src/web/stat/Wt/WGoogleMap.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<lib_finder disable_auto="1" />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
