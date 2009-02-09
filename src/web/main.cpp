@@ -191,8 +191,10 @@ void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string 
 
     loadFlights(fldb);
 
+#ifndef WIN32
     if(del)
         bfs::remove(file);
+#endif
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::saveDb()

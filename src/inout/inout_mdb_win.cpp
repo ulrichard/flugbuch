@@ -207,12 +207,12 @@ pair<unsigned int, boost::shared_ptr<Location> > inout_mdb::GetLocation(const dt
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::variant_row &row)
 {
-    const unsigned int flNr = row["FlugNr"];
+	const unsigned int flId = row["FlugId"];
 
 	vector<shared_ptr<Location> > wpts;
     for(map<unsigned int, pair<unsigned int, unsigned int> >::iterator it = wptlinks_.begin(); it != wptlinks_.end(); ++it)
     {
-        if(it->second.first == flNr)
+        if(it->second.first == flId)
         {
             shared_ptr<Location> loc = waypoints_[it->second.second];
             loc->addUsage(Location::UA_WAYPNT);
@@ -223,7 +223,7 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::v
 	tagTIMESTAMP_STRUCT tms = row["Datum"];
  	boost::gregorian::date bgdate(tms.year, tms.month, tms.day);
 
-    shared_ptr<Flight> flt(new Flight(flNr,                           // flight number
+    shared_ptr<Flight> flt(new Flight(row["FlugNr"],                  // flight number
                                       bgdate,						  // date
                                       row["Flugminuten"],             // airtime
                                       gliders_[row["GleitschirmId"]], // glider
@@ -232,7 +232,7 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::v
                                       row["Bemerkungen"],             // story
                                       wpts));                         // waypoints
 
-    return make_pair(row["FlugId"], flt);
+    return make_pair(flId, flt);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)

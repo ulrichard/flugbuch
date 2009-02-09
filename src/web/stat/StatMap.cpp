@@ -49,7 +49,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
             bbox.second.second = max(bbox.second.second, itb->second);
         }
 
-        gmap->addPolyline(points, "#FF0000", 2, 0.9);
+        gmap->addPolyline(points, "#FF0000", 2, 0.7);
     }
 
     gmap->zoomWindow(bbox);
