@@ -35,14 +35,21 @@ public:
     void load();
 
 private:
-    bool filter(const flb::Flight &fl);
+    void initFilter();
+    bool filter(const flb::Flight &fl) const;
 
     const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     Wt::WContainerWidget      *impl_;
     Wt::Ext::ComboBox         *cbStatSel_;
     Wt::WSelectionBox         *sbCountry_;
+    Wt::WSelectionBox         *sbYear_;
+    Wt::WSelectionBox         *sbClassi_;
     Wt::WContainerWidget      *report_;
     boost::ptr_map<std::string, StatBase> stats_;
+
+    std::set<std::string> filtCountries_;
+    std::set<int>         filtYears_;
+    std::set<std::string> filtClassi_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 } // namespace flbwt

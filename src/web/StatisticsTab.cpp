@@ -3,6 +3,7 @@
 #include "FormatStr.h"
 #include "StatStandard.h"
 #include "StatMap.h"
+#include "StatFlightReport.h"
 // witty
 #include <Wt/Ext/ComboBox>
 #include <Wt/WContainerWidget>
@@ -20,6 +21,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/lexical_cast.hpp>
 // standard library
 #include <algorithm>
 #include <map>
@@ -38,6 +40,7 @@ using boost::shared_ptr;
 using boost::any;
 using boost::gregorian::date;
 using boost::ptr_vector;
+using boost::lexical_cast;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
 using namespace flbwt;
@@ -56,6 +59,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_MONTH)));
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_WEEK)));
     addStatistic(auto_ptr<StatBase>(new StatMap(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new StatFlightReport(flightDb_)));
 
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
@@ -72,11 +76,10 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     Wt::WText *wtCountry = new Wt::WText("Land");
     wtCountry->setStyleClass("FilterSubTitle");
     sbCountry_ = new Wt::WSelectionBox();
-    sbCountry_->setVerticalSize(5);
     sbCountry_->setSelectionMode(Wt::ExtendedSelection);
     set<string> countries;
     transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.begin()),
-        bind(&flb::FlightArea::country, *boost::lambda::_1));
+        bind(&flb::FlightArea::country, *bll::_1));
     BOOST_FOREACH(string str, countries)
         sbCountry_->addItem(str);
     std::set<int> selind;
@@ -85,12 +88,48 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbCountry_->setSelectedIndexes(selind);
     sbCountry_->setVerticalSize(5);
     sbCountry_->clicked.connect(SLOT(this, StatisticsPanel::load));
+    // years
+    Wt::WText *wtYear = new Wt::WText("Jahr");
+    wtYear->setStyleClass("FilterSubTitle");
+    sbYear_ = new Wt::WSelectionBox();
+    sbYear_->setSelectionMode(Wt::ExtendedSelection);
+    set<int> years;
+    BOOST_FOREACH(shared_ptr<flb::Flight> flt, flightDb_->flights())
+        years.insert(flt->date().year());
+    BOOST_FOREACH(int yyy, years)
+        sbYear_->addItem(lexical_cast<string>(yyy));
+    selind.clear();
+    for(int i=0; i<years.size(); ++i)
+        selind.insert(i);
+    sbYear_->setSelectedIndexes(selind);
+    sbYear_->setVerticalSize(5);
+    sbYear_->clicked.connect(SLOT(this, StatisticsPanel::load));
+    // glider class
+    Wt::WText *wtClassi = new Wt::WText("Schirmklasse");
+    wtClassi->setStyleClass("FilterSubTitle");
+    sbClassi_ = new Wt::WSelectionBox();
+    sbClassi_->setSelectionMode(Wt::ExtendedSelection);
+    set<string> classes;
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classes, classes.begin()),
+        bind(&flb::Glider::classification, *bll::_1));
+    BOOST_FOREACH(string str, classes)
+        sbClassi_->addItem(str);
+    selind.clear();
+    for(int i=0; i<classes.size(); ++i)
+        selind.insert(i);
+    sbClassi_->setSelectedIndexes(selind);
+    sbClassi_->setVerticalSize(5);
+    sbClassi_->clicked.connect(SLOT(this, StatisticsPanel::load));
 
 
     topBar->layout()->addWidget(wtStat);
     topBar->layout()->addWidget(cbStatSel_);
     topBar->layout()->addWidget(wtCountry);
     topBar->layout()->addWidget(sbCountry_);
+    topBar->layout()->addWidget(wtYear);
+    topBar->layout()->addWidget(sbYear_);
+    topBar->layout()->addWidget(wtClassi);
+    topBar->layout()->addWidget(sbClassi_);
     topBar->resize(topBar->width(), 100);
     cbStatSel_->resize(150, cbStatSel_->height());
 
@@ -107,8 +146,8 @@ void StatisticsPanel::load()
 {
     report_->clear();
 
+    initFilter();
     set<shared_ptr<flb::Flight> > flights;
-
     remove_copy_if(flightDb_->flights().begin(), flightDb_->flights().end(), inserter(flights, flights.end()),
         !bll::bind(&StatisticsPanel::filter, this, *bll::_1));
 
@@ -118,15 +157,36 @@ void StatisticsPanel::load()
         fit->second->draw(report_, flights);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-bool StatisticsPanel::filter(const flb::Flight &fl)
+void StatisticsPanel::initFilter()
 {
-    set<string> countries;
+    filtCountries_.clear();
     const set<int> &countrysel = sbCountry_->selectedIndexes();
-    transform(countrysel.begin(), countrysel.end(), inserter(countries, countries.end()),
+    transform(countrysel.begin(), countrysel.end(), inserter(filtCountries_, filtCountries_.end()),
         bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbCountry_, ::_1)));
 
-    if(find(countries.begin(), countries.end(), fl.takeoff()->area()->country()) == countries.end())
+    filtYears_.clear();
+    BOOST_FOREACH(int idx, sbYear_->selectedIndexes())
+        filtYears_.insert(lexical_cast<int>(sbYear_->itemText(idx).narrow()));
+
+    filtClassi_.clear();
+    const set<int> &classisel = sbClassi_->selectedIndexes();
+    transform(classisel.begin(), classisel.end(), inserter(filtClassi_, filtClassi_.end()),
+        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbClassi_, ::_1)));
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+bool StatisticsPanel::filter(const flb::Flight &fl) const
+{
+    if(filtCountries_.find(fl.takeoff()->area()->country()) == filtCountries_.end())
+        return false;
+
+    if(filtYears_.find(fl.date().year()) == filtYears_.end())
+        return false;
+
+    if(filtClassi_.find(fl.glider()->classification()) == filtClassi_.end())
         return false;
 
     return true;
 }
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+
