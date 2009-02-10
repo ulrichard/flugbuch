@@ -20,6 +20,15 @@ class WColor;
 class WGoogleMap : public WContainerWidget
 {
 public:
+    // local types
+    struct LatLng
+    {
+        LatLng(double lat, double lon) : lat_(lat), lon_(lon) { }
+        LatLng(std::pair<double, double> lalo) : lat_(lalo.first), lon_(lalo.second) { }
+
+        double lat_, lon_;
+    };
+public:
     /*! \brief Create a map widget with optional parent.
      */
     WGoogleMap(WContainerWidget *parent = 0);
@@ -32,21 +41,106 @@ public:
 
     /*! \brief Add a marker overlay to the map.
      */
-    void addMarker(const std::pair<double, double> &pos);
+    void addMarker(const LatLng &pos);
 
     /*! \brief Add a polyline overlay to the map.
      *
      *  specify a vaue between 0.0 and 1.0 for the opacity.
      */
-    void addPolyline(const std::vector<std::pair<double, double> > &points,
+    void addPolyline(const std::vector<LatLng> &points,
                      const std::string &color = "#FF0000", int width = 2, double opacity = 1.0);
+
+    /*! \brief Removes all overlays from the map.
+     */
+    void clearOverlays() { doGmJavaScript(jsRef() + ".map.clearOverlays();", false); }
+
+    /*! \brief Sets the map view to the given center and zoom level.
+     */
+    void setCenter(const LatLng &center, int zoom);
+
+    /*! \brief Changes the center point of the map to the given point. If the point is already visible
+     *   in the current map view, change the center in a smooth animation.
+     */
+    void panTo(const LatLng &center);
 
     /*! \brief Zoom the map to a region defined by a bounding box of lat/lon coordinates.
      */
-    void zoomWindow(std::pair<std::pair<double, double>, std::pair<double, double> > bbox);
+    void zoomWindow(std::pair<LatLng, LatLng> bbox);
+
+    /*! \brief Sets the zoom level to the given new value.
+     */
+    void setZoom(int level);
+
+    /*! \brief Increments zoom level by one.
+     */
+    void zoomIn() { doGmJavaScript(jsRef() + ".map.zoomIn();", false); }
+
+    /*! \brief Decrements zoom level by one.
+     */
+    void zoomOut() { doGmJavaScript(jsRef() + ".map.zoomOut();", false); }
+
+    /*! \brief Stores the current map position and zoom level for later recall by returnToSavedPosition().
+     */
+    void savePosition() { doGmJavaScript(jsRef() + ".map.savePosition();", false); }
+
+    /*! \brief Restores the map view that was saved by savePosition().
+     */
+    void returnToSavedPosition() { doGmJavaScript(jsRef() + ".map.returnToSavedPosition();", false); }
+
+    /*! \brief Notifies the map of a change of the size of its container. Call this method after the size of
+     *   the container DOM object has changed, so that the map can adjust itself to fit the new size.
+     */
+    void checkResize() { doGmJavaScript(jsRef() + ".map.checkResize();", false); }
+
+    /*! \brief Enables the dragging of the map (enabled by default).
+     */
+    void enableDragging(void) { doGmJavaScript(jsRef() + ".map.enableDragging();", false); }
+
+    /*! \brief Disables the dragging of the map.
+     */
+    void disableDragging(void) { doGmJavaScript(jsRef() + ".map.disableDragging();", false); }
+
+    /*! \brief Enables double click to zoom in and out (enabled by default).
+     */
+    void enableDoubleClickZoom() { doGmJavaScript(jsRef() + ".map.enableDoubleClickZoom();", false); }
+
+    /*! \brief Disables double click to zoom in and out.
+     */
+    void disableDoubleClickZoom() { doGmJavaScript(jsRef() + ".map.disableDoubleClickZoom();", false); }
+
+    /*! \brief Enables the GoogleBar, an integrated search control, to the map. When enabled, this control
+     *  takes the place of the default Powered By Google  logo. Note that this control is not enabled by default.
+     */
+    void enableGoogleBar() { doGmJavaScript(jsRef() + ".map.enableGoogleBar();", false); }
+
+    /*! \brief Disables the GoogleBar integrated search control. When disabled, the default Powered by Google logo
+     *   occupies the position formerly containing this control. Note that this control is already disabled by default.
+     */
+    void disableGoogleBar() { doGmJavaScript(jsRef() + ".map.disableGoogleBar();", false); }
+
+    /*! \brief Enables zooming using a mouse's scroll wheel. Note: scroll wheel zoom is disabled by default.
+     */
+    void enableScrollWheelZoom() { doGmJavaScript(jsRef() + ".map.enableScrollWheelZoom();", false); }
+
+    /*! \brief Disables zooming using a mouse's scroll wheel. Note: scroll wheel zoom is disabled by default.
+     */
+    void disableScrollWheelZoom() { doGmJavaScript(jsRef() + ".map.disableScrollWheelZoom();", false); }
+
+    /*! \brief Adds a standard map type control for selecting and switching between supported map types via buttons.
+     */
+    void addMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.MapTypeControl());", false); }
+
+    /*! \brief Adds a "nested" map type control for selecting and switching between supported map types via buttons and nested checkboxes.
+     */
+    void addHierarchicalMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.HierarchicalMapTypeControl());", false); }
+
+    /*! \brief Adds a drop-down map type control for switching between supported map types.
+     */
+    void addMenuMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.MenuMapTypeControl());", false); }
 
 protected:
     virtual void prepareRerender();
+    virtual void doGmJavaScript(std::string jscode, bool sepScope);
 
 private:
     bool rendered_;

@@ -182,6 +182,8 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addFlightArea(arStoos);
 	shared_ptr<flb::FlightArea> arEngelstock(new flb::FlightArea("Engelstock", "Schweiz", "Schwyz"));
 	fldb->addFlightArea(arEngelstock);
+	shared_ptr<flb::FlightArea> arFamatina(new flb::FlightArea("Famatina", "Argentinien", "vor-Anden"));
+	fldb->addFlightArea(arFamatina);
 	// locations
 	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1540, 47.018337296086003, 8.7019931164065607, flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locWeststart);
@@ -211,7 +213,13 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addLocation(locBrunni);
 	shared_ptr<flb::Location> locOchsenmatte(new flb::Location(arEngelberg, "Ochsenmatte", 1100, 47.987, 8.863, flb::Location::UA_LANDING));
 	fldb->addLocation(locOchsenmatte);
+	shared_ptr<flb::Location> locFamatina(new flb::Location(arFamatina, "Famatina", 1685, -28.9034, -67.4960, flb::Location::UA_LANDING));
+	fldb->addLocation(locFamatina);
+	shared_ptr<flb::Location> locFamaLande(new flb::Location(arFamatina, "CHA154", 1100, -28.5819, -67.5928, flb::Location::UA_LANDING));
+	fldb->addLocation(locFamaLande);
 	// gliders
+	shared_ptr<flb::Glider> glMagus4(new flb::Glider("MacPara", "Magus 4", "25", "yellow", 2006, "comp") );
+	fldb->addGlider(glMagus4);
 	shared_ptr<flb::Glider> glMagus5(new flb::Glider("MacPara", "Magus 5", "26", "grey orange", 2007, "comp") );
 	fldb->addGlider(glMagus5);
 	shared_ptr<flb::Glider> glHellracer(new flb::Glider("JN", "Hellracer", "15", "black red yellow", 2008, "speed") );
@@ -223,17 +231,18 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	shared_ptr<flb::Glider> glBiGolden(new flb::Glider("Gradient", "Bi Golden", "42", "blue", 2004, "DHV 1-2 Bi") );
 	fldb->addGlider(glBiGolden);
 	// flights
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2008,  9, 10), 15, glMagus5, locWeststart, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(2,  date(2008,  9, 26),  5, glHellracer, locBietstoeckli, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(3,  date(2008,  9, 27), 25, glMagus5, locBietstoeckli, locFrauholz)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(4,  date(2008, 10, 12),  5, glHellracer, locKlMythen, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(5,  date(2008, 10, 20), 30, glU4Sport, locWeststart, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(6,  date(2008, 12,  7),  5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(7,  date(2008, 12,  7),  5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(8,  date(2008, 12,  7),  5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(9,  date(2009,  1, 10), 15, glBiGolden,  locBrunni, locOchsenmatte)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 11),  5, glAspen, locFronalpstock, locStoosSki)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 15), 10, glMagus5, locEngelstock, locBormPoint)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2007,  3, 22), 120, glMagus4, locFamatina, locFamaLande)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(2,  date(2008,  9, 10),  15, glMagus5, locWeststart, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(3,  date(2008,  9, 26),   5, glHellracer, locBietstoeckli, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(4,  date(2008,  9, 27),  25, glMagus5, locBietstoeckli, locFrauholz)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(5,  date(2008, 10, 12),   5, glHellracer, locKlMythen, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(6,  date(2008, 10, 20),  30, glU4Sport, locWeststart, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(7,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(8,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(9,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 10),  15, glBiGolden,  locBrunni, locOchsenmatte)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 11),   5, glAspen, locFronalpstock, locStoosSki)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(12, date(2009,  1, 15),  10, glMagus5, locEngelstock, locBormPoint)));
 
 	return fldb;
 }

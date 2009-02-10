@@ -14,6 +14,7 @@
 namespace Wt
 {
     class WContainerWidget;
+    class WSelectionBox;
     namespace Ext
     {
         class ComboBox;
@@ -31,12 +32,15 @@ public:
 
     void addStatistic(std::auto_ptr<StatBase> stat) { std::string nam = stat->name(); stats_.insert(nam, stat.release()); }
 
-    void load(int ind);
+    void load();
 
 private:
+    bool filter(const flb::Flight &fl);
+
     const boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     Wt::WContainerWidget      *impl_;
     Wt::Ext::ComboBox         *cbStatSel_;
+    Wt::WSelectionBox         *sbCountry_;
     Wt::WContainerWidget      *report_;
     boost::ptr_map<std::string, StatBase> stats_;
 };

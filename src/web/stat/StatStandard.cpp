@@ -276,7 +276,7 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
     {
         string nam = (*it)->name();
         int cnt = 0, dur = 0;
-        for(flb::FlightDatabase::SeqFlights::iterator itf = flightDb_->flights().begin(); itf != flightDb_->flights().end(); ++itf)
+        for(flb::FlightDatabase::SeqFlights::iterator itf = flights.begin(); itf != flights.end(); ++itf)
             if((*itf)->takeoff()->area() == *it)
             {
                 cnt++;

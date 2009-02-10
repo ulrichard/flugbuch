@@ -3,6 +3,7 @@
 #include <Wt/WApplication>
 // boost
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
 // standard library
 #include <string>
 #include <sstream>
@@ -50,8 +51,6 @@ void WGoogleMap::prepareRerender()
         strm << "function initialize() {"
              << "    var map = new google.maps.Map2(" << jsRef() << ");"
              << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
-             << "    map.enableScrollWheelZoom();"
-             << "    map.addControl(new google.maps.HierarchicalMapTypeControl());"
              <<      jsRef() << ".map = map;";
         copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
         strm << "}";
@@ -64,62 +63,82 @@ void WGoogleMap::prepareRerender()
         WContainerWidget::prepareRerender();
         rendered_ = true;
 
-        std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
+//        std::cout << std::endl << std::endl << strm.str() << std::endl << std::endl;
     }
 }
 
-void WGoogleMap::addMarker(const pair<double, double> &pos)
+void WGoogleMap::doGmJavaScript(std::string jscode, bool sepScope)
 {
-    std::ostringstream strm;
-    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(" << pos.first << ", " << pos.second << "));"
-         <<  jsRef() << ".map.addOverlay(marker);";
-
-    const string jsstr = strm.str();
+    if(sepScope)
+        jscode = "if(true){" + jscode + "}"; // to keep the variables inside a scope where they don't interfere
 
     if(rendered_)
-        WApplication::instance()->doJavaScript(jsstr);
+        WApplication::instance()->doJavaScript(jscode);
     else
-        additions_.push_back(jsstr);
+        additions_.push_back(jscode);
 }
 
-void WGoogleMap::addPolyline(const vector<pair<double, double> > &points, const string &color, int width, double opacity)
+void WGoogleMap::addMarker(const WGoogleMap::LatLng &pos)
+{
+    std::ostringstream strm;
+    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(" << pos.lat_ << ", " << pos.lon_ << "));"
+         <<  jsRef() << ".map.addOverlay(marker);";
+
+    doGmJavaScript(strm.str(), false);
+}
+
+void WGoogleMap::addPolyline(const vector<WGoogleMap::LatLng> &points, const string &color, int width, double opacity)
 {
     opacity = std::max(std::min(opacity, 1.0), 0.0); // opacity has to be between 0.0 and 1.0
 
     std::ostringstream strm;
     strm << "var waypoints = [];";
     for(size_t i=0; i<points.size(); ++i)
-        strm << "waypoints[" << i << "] = new google.maps.LatLng(" << points[i].first << ", " << points[i].second << ");";
+        strm << "waypoints[" << i << "] = new google.maps.LatLng(" << points[i].lat_ << ", " << points[i].lon_ << ");";
     strm << "var poly = new google.maps.Polyline(waypoints, \"" << color << "\", " << width << ", " << opacity << ");";
     strm << jsRef() << ".map.addOverlay(poly);";
 
-    const string jsstr = "if(true){" + strm.str() + "}"; // to keep the variables inside a scope where they don't interfere
-
-    if(rendered_)
-        WApplication::instance()->doJavaScript(jsstr);
-    else
-        additions_.push_back(jsstr);
+    doGmJavaScript(strm.str(), true);
 }
 
-void WGoogleMap::zoomWindow(pair<pair<double, double>, pair<double, double> > bbox)
+void WGoogleMap::setCenter(const WGoogleMap::LatLng &center, int zoom)
 {
-    pair<double, double> center = make_pair((bbox.first.first  + bbox.second.first)  / 2.0,
-                                            (bbox.first.second + bbox.second.second) / 2.0);
-    if(bbox.first.first > bbox.second.first)
-        swap(bbox.first.first, bbox.second.first);
-    if(bbox.first.second > bbox.second.second)
-        swap(bbox.first.second, bbox.second.second);
+    std::ostringstream strm;
+    strm << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "), " << zoom << ");";
+
+    doGmJavaScript(strm.str(), false);
+}
+
+void WGoogleMap::panTo(const WGoogleMap::LatLng &center)
+{
+    std::ostringstream strm;
+    strm << jsRef() << ".map.panTo(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "));";
+
+    doGmJavaScript(strm.str(), false);
+}
+
+void WGoogleMap::setZoom(int level)
+{
+    doGmJavaScript(jsRef() + ".map.setZoom(" + boost::lexical_cast<std::string>(level) + ");", false);
+}
+
+
+void WGoogleMap::zoomWindow(pair<WGoogleMap::LatLng, WGoogleMap::LatLng > bbox)
+{
+    LatLng center((bbox.first.lat_ + bbox.second.lat_) / 2.0,
+                  (bbox.first.lon_ + bbox.second.lon_) / 2.0);
+    if(bbox.first.lat_ > bbox.second.lat_)
+        swap(bbox.first.lat_, bbox.second.lat_);
+    if(bbox.first.lon_ > bbox.second.lon_)
+        swap(bbox.first.lon_, bbox.second.lon_);
 
     std::ostringstream strm;
-    strm << "var bbox = new google.maps.LatLngBounds(new google.maps.LatLng(" << bbox.first.first  << ", " << bbox.first.second  << "), "
-         <<                                         "new google.maps.LatLng(" << bbox.second.first << ", " << bbox.second.second << "));"
+    strm << "var bbox = new google.maps.LatLngBounds(new google.maps.LatLng(" << bbox.first.lat_  << ", " << bbox.first.lon_  << "), "
+         <<                                         "new google.maps.LatLng(" << bbox.second.lat_ << ", " << bbox.second.lon_ << "));"
          << "var zooml = " << jsRef() << ".map.getBoundsZoomLevel(bbox);"
-         << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.first << ", " << center.second << "), zooml);";
+         << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "), zooml);";
 
-    if(rendered_)
-        WApplication::instance()->doJavaScript(strm.str());
-    else
-        additions_.push_back(strm.str());
+    doGmJavaScript(strm.str(), true);
 }
 
 
