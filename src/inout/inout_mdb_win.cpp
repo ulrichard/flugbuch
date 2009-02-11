@@ -129,21 +129,21 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 
         // the flight areas can be used as is
         dtl::DynamicDBView<> viewArea("Fluggebiete", "*");
-        transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.begin()), bind(&inout_mdb::GetArea, this, _1));
+        transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.end()), bind(&inout_mdb::GetArea, this, _1));
 
         // the gliders can be used as is
         dtl::DynamicDBView<> viewGlider("Gleitschirme", "*");
-        transform(viewGlider.begin(), viewGlider.end(), inserter(gliders_, gliders_.begin()), bind(&inout_mdb::GetGlider, this, _1));
+        transform(viewGlider.begin(), viewGlider.end(), inserter(gliders_, gliders_.end()), bind(&inout_mdb::GetGlider, this, _1));
         for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
             fldb.addGlider(it->second);
 
         // we have to consolidate the locations
         dtl::DynamicDBView<> viewTakeoff("Startplaetze", "*");
-        transform(viewTakeoff.begin(), viewTakeoff.end(), inserter(takeoffs_, takeoffs_.begin()), bind(&inout_mdb::GetLocation, this, _1, "StartplatzId"));
+        transform(viewTakeoff.begin(), viewTakeoff.end(), inserter(takeoffs_, takeoffs_.end()), bind(&inout_mdb::GetLocation, this, _1, "StartplatzId"));
         dtl::DynamicDBView<> viewLanding("Landeplaetze", "*");
-        transform(viewLanding.begin(), viewLanding.end(), inserter(landings_, landings_.begin()), bind(&inout_mdb::GetLocation, this, _1, "LandeplatzId"));
+        transform(viewLanding.begin(), viewLanding.end(), inserter(landings_, landings_.end()), bind(&inout_mdb::GetLocation, this, _1, "LandeplatzId"));
         dtl::DynamicDBView<> viewWaypnt("Wegpunkte", "*");
-        transform(viewWaypnt.begin(), viewWaypnt.end(), inserter(waypoints_, waypoints_.begin()), bind(&inout_mdb::GetLocation, this, _1, "WegpunktId"));
+        transform(viewWaypnt.begin(), viewWaypnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_mdb::GetLocation, this, _1, "WegpunktId"));
         dtl::DynamicDBView<> viewLink("lnkWegpFluege", "*");
         for(dtl::DynamicDBView<>::select_iterator it = viewLink.begin(); it != viewLink.end(); ++it)
             wptlinks_[(*it)["LnkId"]] = make_pair((*it)["FlugId"], (*it)["WegpunktId"]);
@@ -153,7 +153,7 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 
         // flights
         dtl::DynamicDBView<> viewFlight("Fluege", "*");
-        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.begin()), bind(&inout_mdb::GetFlight, this, _1));
+        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_mdb::GetFlight, this, _1));
         for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
             fldb.addFlight(it->second);
 

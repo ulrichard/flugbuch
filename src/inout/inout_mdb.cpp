@@ -219,12 +219,12 @@ void inout_mdb::readFlight(const vector<string> &tokens)
 {
     if(tokens.size() == 8)
     {
-        const unsigned int flNr = lexical_cast<unsigned int>(tokens[1]);
+        const unsigned int flId = lexical_cast<unsigned int>(tokens[0]);
 
         vector<shared_ptr<Location> > wpts;
         for(map<unsigned int, pair<unsigned int, unsigned int> >::iterator it = wptlinks_.begin(); it != wptlinks_.end(); ++it)
         {
-            if(it->second.first == flNr)
+            if(it->second.first == flId)
             {
                 shared_ptr<Location> loc = waypoints_[it->second.second];
                 loc->addUsage(Location::UA_WAYPNT);
@@ -232,15 +232,15 @@ void inout_mdb::readFlight(const vector<string> &tokens)
             }
         }
 
-        shared_ptr<Flight> flt(new Flight(flNr,                                             // flight number
+        shared_ptr<Flight> flt(new Flight(lexical_cast<unsigned int>(tokens[1]),            // flight number
                                           boost::gregorian::from_string(tokens[2]),         // date
                                           lexical_cast<unsigned int>(tokens[6]),            // airtime
                                           gliders_[lexical_cast<unsigned int>(tokens[3])],  // glider
                                           takeoffs_[lexical_cast<unsigned int>(tokens[4])], // takeoff
                                           landings_[lexical_cast<unsigned int>(tokens[5])], // landing
-                                          tokens[7],
+                                          tokens[7],                                        // story
                                           wpts));                                           // waypoints
-        flights_[lexical_cast<unsigned int>(tokens[0])] = flt;
+        flights_[lexical_cast<unsigned int>(flId)] = flt;
     }
     else
         assert(!"wrong number of tokens for Flight");

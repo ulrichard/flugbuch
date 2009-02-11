@@ -8,8 +8,11 @@
 #include <Wt/Ext/TableView>
 // boost
 #include <boost/foreach.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 // standard library
 #include <algorithm>
+#include <iterator>
 
 using namespace flbwt;
 using Wt::WStandardItemModel;
@@ -22,6 +25,8 @@ using boost::gregorian::months;
 using boost::gregorian::weeks;
 using boost::shared_ptr;
 using boost::any;
+using namespace boost::lambda;
+namespace bll = boost::lambda;
 using std::string;
 using std::map;
 using std::vector;
@@ -266,26 +271,51 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
-    auto_ptr<WStandardItemModel> model(new WStandardItemModel(flightDb_->Gliders.size(), 3));
+    typedef pair<int, int> PairIntT;
+    typedef vector<pair<shared_ptr<flb::FlightArea>, PairIntT> > AreaVectorT;
+    AreaVectorT areas;
+
+    for(flb::FlightDatabase::FlightAreas::const_iterator it = flightDb_->FlightAreas.begin(); it != flightDb_->FlightAreas.end(); ++it)
+    {
+        AreaVectorT::value_type  flarInfo = make_pair(*it, make_pair(0, 0));
+
+        for(flb::FlightDatabase::SeqFlights::const_iterator itf = flights.begin(); itf != flights.end(); ++itf)
+            if((*itf)->takeoff()->area() == *it)
+            {
+                flarInfo.second.first++;
+                flarInfo.second.second += (*itf)->duration();
+            }
+        areas.push_back(flarInfo);
+    }
+
+    // select the aread with the most flights
+    sort(areas.begin(), areas.end(), bind<int>(&PairIntT::first, bind<PairIntT>(&AreaVectorT::value_type::second, bll::_1)) >
+                                     bind<int>(&PairIntT::first, bind<PairIntT>(&AreaVectorT::value_type::second, bll::_2)));
+    AreaVectorT::iterator endit = areas.begin();
+    std::advance(endit, std::min(areas.size(), numArea_));
+
+    // collect the remaining date in a special entry and then delete them
+    AreaVectorT::value_type  flarRest = make_pair(shared_ptr<flb::FlightArea>(new flb::FlightArea("Rest", "", "")), make_pair(0, 0));
+    for(AreaVectorT::const_iterator it = areas.begin(); it != endit; ++it)
+    {
+        flarRest.second.first  += it->second.first;
+        flarRest.second.second += it->second.second;
+    }
+    areas.erase(endit, areas.end());
+    areas.push_back(flarRest);
+
+    // put them into the wt data model
+    auto_ptr<WStandardItemModel> model(new WStandardItemModel(areas.size(), 3));
     model->setHeaderData(0, Wt::Horizontal, any(string("Fluggebiet")));
     model->setHeaderData(1, Wt::Horizontal, any(string("Fluege")));
     model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
 
-    int i = 0;
-    for(flb::FlightDatabase::FlightAreas::const_iterator it = flightDb_->FlightAreas.begin(); it != flightDb_->FlightAreas.end(); ++it, ++i)
+    int i=0;
+    for(AreaVectorT::const_iterator it = areas.begin(); it != areas.end(); ++it, ++i)
     {
-        string nam = (*it)->name();
-        int cnt = 0, dur = 0;
-        for(flb::FlightDatabase::SeqFlights::iterator itf = flights.begin(); itf != flights.end(); ++itf)
-            if((*itf)->takeoff()->area() == *it)
-            {
-                cnt++;
-                dur += (*itf)->duration();
-            }
-
-        model->setData(i, 0, any(nam));
-        model->setData(i, 1, any(cnt));
-        model->setData(i, 2, any(dur));
+        model->setData(i, 0, any(it->first->name()));
+        model->setData(i, 1, any(it->second.first));
+        model->setData(i, 2, any(it->second.second));
     }
 
     return model;

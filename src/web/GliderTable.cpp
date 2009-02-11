@@ -337,7 +337,7 @@ void GliderPanel::load()
     cbBrand_->clear();
     cbBrand_->addItem("alle");
     std::set<string> brands;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::inserter(brands, brands.begin()),
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::inserter(brands, brands.end()),
         bind(&Glider::brand, *boost::lambda::_1));
 //    for_each(brands.begin(), brands.end(), bind(&Wt::Ext::ComboBox::addItem, cbBrand_, *boost::lambda::_1));
     BOOST_FOREACH(string str, brands)
@@ -347,7 +347,7 @@ void GliderPanel::load()
     cbClassi_->clear();
     cbClassi_->addItem("alle");
     std::set<string> classis;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classis, classis.begin()),
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classis, classis.end()),
         bind(&Glider::classification, *boost::lambda::_1));
 //    for_each(classis.begin(), classis.end(), bind(&Wt::Ext::ComboBox::addItem, cbClassi_, *boost::lambda::_1));
     BOOST_FOREACH(string str, classis)

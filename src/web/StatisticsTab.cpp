@@ -78,7 +78,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbCountry_ = new Wt::WSelectionBox();
     sbCountry_->setSelectionMode(Wt::ExtendedSelection);
     set<string> countries;
-    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.begin()),
+    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.end()),
         bind(&flb::FlightArea::country, *bll::_1));
     BOOST_FOREACH(string str, countries)
         sbCountry_->addItem(str);
@@ -110,7 +110,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbClassi_ = new Wt::WSelectionBox();
     sbClassi_->setSelectionMode(Wt::ExtendedSelection);
     set<string> classes;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classes, classes.begin()),
+    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classes, classes.end()),
         bind(&flb::Glider::classification, *bll::_1));
     BOOST_FOREACH(string str, classes)
         sbClassi_->addItem(str);

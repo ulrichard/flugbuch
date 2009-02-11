@@ -53,13 +53,17 @@ public:
 class FlightsPerArea : public StatChartBase
 {
 public:
-    FlightsPerArea(const shared_ptr<flb::FlightDatabase> flightDb) : StatChartBase(flightDb) {}
+    FlightsPerArea(const shared_ptr<flb::FlightDatabase> flightDb, size_t numArea = 20) : StatChartBase(flightDb), numArea_(numArea) {}
     virtual ~FlightsPerArea() {}
 
     virtual std::string name() const { return "Fluege pro Fluggebiet"; }
     virtual std::auto_ptr<Wt::WStandardItemModel> model(const flb::FlightDatabase::SeqFlights &flights) const;
     virtual void draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const;
 
+    void setNumArea(size_t val) { numArea_ = std::min<size_t>(val, 50); }
+    size_t numArea() const      { return numArea_;}
+private:
+    size_t numArea_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 }

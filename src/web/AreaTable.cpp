@@ -275,7 +275,7 @@ void AreaPanel::load()
     cbCountry_->clear();
     cbCountry_->addItem("alle");
     std::set<string> countries;
-    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.begin()),
+    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.end()),
         bind(&FlightArea::country, *boost::lambda::_1));
 //    for_each(countries.begin(), countries.end(), bind(&Wt::Ext::ComboBox::addItem, cbCountry_, *boost::lambda::_1));
     BOOST_FOREACH(string str, countries)
