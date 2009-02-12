@@ -56,6 +56,31 @@
 					<Add library="libfcgi" />
 				</Linker>
 			</Target>
+			<Target title="Release_http">
+				<Option output="bin/Release/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--docroot ../../../res --http-address 0.0.0.0 --http-port 8080 --config ../../../inst/wt_config.xml" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
+					<Add directory="../../../src/web/stat" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="boost_date_time-mt" />
+					<Add library="boost_serialization-mt" />
+					<Add library="boost_signals-mt" />
+					<Add library="boost_filesystem-mt" />
+					<Add library="wt" />
+					<Add library="wtext" />
+					<Add library="wthttp" />
+				</Linker>
+			</Target>
 			<Target title="Debug_MSVC">
 				<Option platforms="Windows;" />
 				<Option output="bin/Debug_MSVC/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
@@ -156,10 +181,12 @@
 		<Unit filename="../../../src/inout/inout_mdb.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
+			<Option target="Release_http" />
 		</Unit>
 		<Unit filename="../../../src/inout/inout_mdb.h">
 			<Option target="Debug" />
 			<Option target="Release" />
+			<Option target="Release_http" />
 		</Unit>
 		<Unit filename="../../../src/inout/inout_mdb_win.cpp">
 			<Option target="Debug_MSVC" />
