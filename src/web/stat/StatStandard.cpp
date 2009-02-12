@@ -296,7 +296,7 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
 
     // collect the remaining date in a special entry and then delete them
     AreaVectorT::value_type  flarRest = make_pair(shared_ptr<flb::FlightArea>(new flb::FlightArea("Rest", "", "")), make_pair(0, 0));
-    for(AreaVectorT::const_iterator it = areas.begin(); it != endit; ++it)
+    for(AreaVectorT::const_iterator it = endit; it != areas.end(); ++it)
     {
         flarRest.second.first  += it->second.first;
         flarRest.second.second += it->second.second;
