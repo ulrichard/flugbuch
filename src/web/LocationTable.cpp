@@ -564,9 +564,12 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
     pglist_ = new PagesList(table_);
     // signals
     cbArea_->activated.connect(SLOT(this, LocationPanel::filter));
-    cbTakeoff_->dataChanged.connect(SLOT(this, LocationPanel::filter));
-    cbLanding_->dataChanged.connect(SLOT(this, LocationPanel::filter));
-    cbWayPnt_->dataChanged.connect(SLOT(this, LocationPanel::filter));
+    cbTakeoff_->checked.connect(SLOT(this, LocationPanel::filter));
+    cbLanding_->checked.connect(SLOT(this, LocationPanel::filter));
+    cbWayPnt_->checked.connect(SLOT(this, LocationPanel::filter));
+    cbTakeoff_->unChecked.connect(SLOT(this, LocationPanel::filter));
+    cbLanding_->unChecked.connect(SLOT(this, LocationPanel::filter));
+    cbWayPnt_->unChecked.connect(SLOT(this, LocationPanel::filter));
 
 /*
     cbTakeoff_->checked.connect(SLOT(this, LocationPanel::filter));

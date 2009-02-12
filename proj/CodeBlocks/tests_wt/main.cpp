@@ -33,16 +33,31 @@ public:
         gmap_  = NULL;
         blayout->addWidget(contw_, Wt::WBorderLayout::Center);
 
-//        Wt::WComboBox *cbStatSel = new Wt::WComboBox();
         Wt::WContainerWidget *conth = new Wt::WContainerWidget();
         blayout->addWidget(conth, Wt::WBorderLayout::North);
+
         Wt::Ext::ComboBox *cbStatSel = new Wt::Ext::ComboBox(conth);
         cbStatSel->activated.connect(SLOT(this, Testapp::drawMap));
         cbStatSel->addItem("Marker");
         cbStatSel->addItem("Polyline");
 
-        cbScrollZoom_ = new Wt::Ext::CheckBox(conth);
-        cbScrollZoom_->dataChanged.connect(SLOT(this, Testapp::scrollZoom));
+        cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom", conth);
+        cbScrollZoom_->checked.connect(SLOT(this, Testapp::scrollZoom));
+        cbScrollZoom_->unChecked.connect(SLOT(this, Testapp::scrollZoom));
+
+        cbDragging_ = new Wt::Ext::CheckBox("Dragging", conth);
+        cbDragging_->checked.connect(SLOT(this, Testapp::dragging));
+        cbDragging_->unChecked.connect(SLOT(this, Testapp::dragging));
+
+        cbGooBar_ = new Wt::Ext::CheckBox("GoogleBar", conth);
+        cbGooBar_->checked.connect(SLOT(this, Testapp::gooBar));
+        cbGooBar_->unChecked.connect(SLOT(this, Testapp::gooBar));
+
+        Wt::Ext::ComboBox *cbMapType = new Wt::Ext::ComboBox(conth);
+        cbMapType->activated.connect(SLOT(this, Testapp::mapType));
+        cbMapType->addItem("Normal");
+        cbMapType->addItem("Hierarchical");
+        cbMapType->addItem("Menu");
 
         drawMap(0);
     }
@@ -73,6 +88,25 @@ public:
             gmap_->addMarker(Wt::WGoogleMap::LatLng(47.01887777, 8.651888));
     }
 
+    void mapType(int ind)
+    {
+        if(gmap_)
+        {
+            switch(ind)
+            {
+            case 0:
+                gmap_->addMapTypeControl();
+                break;
+            case 1:
+                gmap_->addHierarchicalMapTypeControl();
+                break;
+            case 2:
+                gmap_->addMenuMapTypeControl();
+                break;
+            }
+        }
+    }
+
     void scrollZoom()
     {
         if(gmap_)
@@ -84,10 +118,32 @@ public:
         }
     }
 
+    void dragging()
+    {
+        if(gmap_)
+        {
+            if(cbDragging_->isChecked())
+                gmap_->enableDragging();
+            else
+                gmap_->disableDragging();
+        }
+    }
+
+   void gooBar()
+    {
+        if(gmap_)
+        {
+            if(cbGooBar_->isChecked())
+                gmap_->enableGoogleBar();
+            else
+                gmap_->disableGoogleBar();
+        }
+    }
+
 private:
     Wt::WContainerWidget *contw_;
     Wt::WGoogleMap       *gmap_;
-    Wt::Ext::CheckBox    *cbScrollZoom_;
+    Wt::Ext::CheckBox    *cbScrollZoom_, *cbDragging_, *cbGooBar_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
