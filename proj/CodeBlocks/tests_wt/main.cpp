@@ -149,14 +149,11 @@ private:
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 {
-   // You could read information from the environment to decide
-   // whether the user has permission to start a new application
     Testapp *app = new Testapp(env);
 
 	return app;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-// main entry point of the application
 int main(int argc, char *argv[])
 {
 	return Wt::WRun(argc, argv, &createApplication);
