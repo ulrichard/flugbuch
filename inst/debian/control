@@ -7,7 +7,7 @@ Architecture: i386
 Essential: no
 standards-Version: 3.8.0
 Homepage: http://sourceforge.net/projects/flugbuch2
-Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl
+Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl, witty
 Recommends: mozilla | netscape | firefox  
 Installed-Size: 1024
 Maintainer: Richard Ulrich <richi@paraeasy.ch>

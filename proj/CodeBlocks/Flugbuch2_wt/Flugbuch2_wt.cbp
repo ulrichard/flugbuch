@@ -46,6 +46,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-static" />
 					<Add library="boost_date_time-mt" />
 					<Add library="boost_serialization-mt" />
 					<Add library="boost_signals-mt" />
