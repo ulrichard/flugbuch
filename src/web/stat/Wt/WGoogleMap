@@ -128,15 +128,15 @@ public:
 
     /*! \brief Adds a standard map type control for selecting and switching between supported map types via buttons.
      */
-    void addMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.MapTypeControl());", false); }
+    void addMapTypeControl();
 
     /*! \brief Adds a "nested" map type control for selecting and switching between supported map types via buttons and nested checkboxes.
      */
-    void addHierarchicalMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.HierarchicalMapTypeControl());", false); }
+    void addHierarchicalMapTypeControl();
 
     /*! \brief Adds a drop-down map type control for switching between supported map types.
      */
-    void addMenuMapTypeControl() { doGmJavaScript(jsRef() + ".map.addControl(new google.maps.MenuMapTypeControl());", false); }
+    void addMenuMapTypeControl();
 
 protected:
     virtual void prepareRerender();

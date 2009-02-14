@@ -9,6 +9,7 @@
 #include <Wt/WBorderLayout>
 #include <Wt/WApplication>
 #include <Wt/Ext/CheckBox>
+#include <Wt/WHBoxLayout>
 // std lib
 #include <string>
 #include <vector>
@@ -34,30 +35,37 @@ public:
         blayout->addWidget(contw_, Wt::WBorderLayout::Center);
 
         Wt::WContainerWidget *conth = new Wt::WContainerWidget();
+        conth->setLayout(new Wt::WHBoxLayout());
         blayout->addWidget(conth, Wt::WBorderLayout::North);
 
-        Wt::Ext::ComboBox *cbStatSel = new Wt::Ext::ComboBox(conth);
+        Wt::Ext::ComboBox *cbStatSel = new Wt::Ext::ComboBox();
         cbStatSel->activated.connect(SLOT(this, Testapp::drawMap));
         cbStatSel->addItem("Marker");
         cbStatSel->addItem("Polyline");
+        conth->layout()->addWidget(cbStatSel);
 
-        cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom", conth);
+        cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom");
         cbScrollZoom_->checked.connect(SLOT(this, Testapp::scrollZoom));
         cbScrollZoom_->unChecked.connect(SLOT(this, Testapp::scrollZoom));
+        conth->layout()->addWidget(cbScrollZoom_);
 
-        cbDragging_ = new Wt::Ext::CheckBox("Dragging", conth);
+        cbDragging_ = new Wt::Ext::CheckBox("Dragging");
+        cbDragging_->setChecked(true);
         cbDragging_->checked.connect(SLOT(this, Testapp::dragging));
         cbDragging_->unChecked.connect(SLOT(this, Testapp::dragging));
+        conth->layout()->addWidget(cbDragging_);
 
-        cbGooBar_ = new Wt::Ext::CheckBox("GoogleBar", conth);
+        cbGooBar_ = new Wt::Ext::CheckBox("GoogleBar");
         cbGooBar_->checked.connect(SLOT(this, Testapp::gooBar));
         cbGooBar_->unChecked.connect(SLOT(this, Testapp::gooBar));
+        conth->layout()->addWidget(cbGooBar_);
 
-        Wt::Ext::ComboBox *cbMapType = new Wt::Ext::ComboBox(conth);
+        Wt::Ext::ComboBox *cbMapType = new Wt::Ext::ComboBox();
         cbMapType->activated.connect(SLOT(this, Testapp::mapType));
         cbMapType->addItem("Normal");
         cbMapType->addItem("Hierarchical");
         cbMapType->addItem("Menu");
+        conth->layout()->addWidget(cbMapType);
 
         drawMap(0);
     }

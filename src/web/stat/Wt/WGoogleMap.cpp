@@ -141,5 +141,34 @@ void WGoogleMap::zoomWindow(pair<WGoogleMap::LatLng, WGoogleMap::LatLng > bbox)
     doGmJavaScript(strm.str(), true);
 }
 
+void WGoogleMap::addMapTypeControl()
+{
+    std::ostringstream strm;
+    strm << "var mtc = new google.maps.MapTypeControl();"
+         << jsRef() << ".map.removeControl(" << jsRef() << ".mtc);"
+         << jsRef() << ".mtc = mtc;"
+         << jsRef() << ".map.addControl(mtc);";
+    doGmJavaScript(strm.str(), false);
+}
+
+void WGoogleMap::addHierarchicalMapTypeControl()
+{
+    std::ostringstream strm;
+    strm << "var mtc = new google.maps.HierarchicalMapTypeControl();"
+         << jsRef() << ".map.removeControl(" << jsRef() << ".mtc);"
+         << jsRef() << ".mtc = mtc;"
+         << jsRef() << ".map.addControl(mtc);";
+    doGmJavaScript(strm.str(), false);
+}
+
+void WGoogleMap::addMenuMapTypeControl()
+{
+    std::ostringstream strm;
+    strm << "var mtc = new google.maps.MenuMapTypeControl();"
+         << jsRef() << ".map.removeControl(" << jsRef() << ".mtc);"
+         << jsRef() << ".mtc = mtc;"
+         << jsRef() << ".map.addControl(mtc);";
+    doGmJavaScript(strm.str(), false);
+}
 
 
