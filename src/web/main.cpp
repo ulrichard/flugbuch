@@ -21,6 +21,7 @@
 #include <Wt/WText>
 #include <Wt/WStackedWidget>
 #include <Wt/WEnvironment>
+#include <Wt/Ext/MessageBox>
 
 #include <Wt/WGoogleMap>
 #include <Wt/WContainerWidget>
@@ -117,10 +118,10 @@ void FlightLogApp::doLogin()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
 {
-    const bfs::path filename = getPersistFileName(usr);
-
     try
     {
+        const bfs::path filename = getPersistFileName(usr);
+
         flb::inout_xml ioxml;
         shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
         if(!fldb->checkPassword(pwd))
@@ -180,42 +181,70 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadTestDb()
 {
-    loadFlights(flb::FlightDatabase::makeTestDb());
+    try
+    {
+        loadFlights(flb::FlightDatabase::makeTestDb());
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::Warning, true);
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string &usr, const string &pwd)
 {
-    flb::inout_mdb iomdb;
-	shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(file)));
-	fldb->setPilotNameAndPwd(usr, pwd);
+    try
+    {
+        flb::inout_mdb iomdb;
+        shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(file)));
+        fldb->setPilotNameAndPwd(usr, pwd);
 
-    loadFlights(fldb);
+        loadFlights(fldb);
 
 #ifndef WIN32
-    if(del)
-        bfs::remove(file);
+        if(del)
+            bfs::remove(file);
 #endif
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::Warning, true);
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::saveDb()
 {
-    const bfs::path filename = getPersistFileName(flightDb_->pilotName());
+    try
+    {
+        const bfs::path filename = getPersistFileName(flightDb_->pilotName());
 
-    flb::inout_xml ioxml;
-	ioxml.write(*flightDb_, filename);
+        flb::inout_xml ioxml;
+        ioxml.write(*flightDb_, filename);
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error saving flight db", ex.what(), Wt::Warning, true);
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::reload()
 {
-    if(flightDb_->pilotName() == "*testdb*")
-        loadTestDb();
-    else
+    try
     {
-        const bfs::path filename = getPersistFileName(flightDb_->pilotName());
-        flb::inout_xml ioxml;
-        shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
-        // no password checking this time
-        loadFlights(fldb);
+        if(flightDb_->pilotName() == "*testdb*")
+            loadTestDb();
+        else
+        {
+            const bfs::path filename = getPersistFileName(flightDb_->pilotName());
+            flb::inout_xml ioxml;
+            shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
+            // no password checking this time
+            loadFlights(fldb);
+        }
+    }
+    catch(std::exception &ex)
+    {
+        Wt::Ext::MessageBox::show("Error reloading flight db", ex.what(), Wt::Warning, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

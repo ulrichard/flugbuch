@@ -38,7 +38,6 @@ MainMenu::MainMenu(Wt::WContainerWidget *parent)
     item->activated.connect(SLOT(app, FlightLogApp::doLogin));
 
 
-
     // create the help menu
     menu = new Wt::Ext::Menu();
     btn = addButton("Hilfe", menu);

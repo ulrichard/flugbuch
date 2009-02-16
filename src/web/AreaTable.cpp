@@ -132,7 +132,6 @@ void AreaTableRow::save()
     catch(std::exception &ex)
     {
 		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
-
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
