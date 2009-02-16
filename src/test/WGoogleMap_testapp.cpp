@@ -104,9 +104,9 @@ public:
             gmap_->addMarker(Wt::WGoogleMap::LatLng(47.01887777, 8.651888));
     }
 
-    void positionPopup(double lat, double lon)
+    void positionPopup(Wt::WGoogleMap::LatLng lalo)
     {
-        string latlonstr = lexical_cast<string>(lat) + ", " + lexical_cast<string>(lon);
+        string latlonstr = lexical_cast<string>(lalo.lat_) + ", " + lexical_cast<string>(lalo.lon_);
         Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::Warning, true);
     }
 

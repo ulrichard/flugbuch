@@ -19,7 +19,7 @@ using std::swap;
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), click(this, "click"), rendered_(false)
+WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), click(this), click_js(this, "click"), rendered_(false)
 {
     WApplication *app = WApplication::instance();
 
@@ -35,6 +35,8 @@ WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), click(th
 
     if(parent)
         parent->addWidget(this);
+
+    click_js.connect(SLOT(this, WGoogleMap::click_relay));
 }
 
 void WGoogleMap::refresh()
@@ -57,7 +59,7 @@ void WGoogleMap::prepareRerender()
              << "    {"
              << "        if(latlng)"
              << "        {"
-             << "            Wt.emit(\"" << id() << "\", \"" << click.name() << "\", latlng.lat(), latlng.lng());"
+             << "            Wt.emit(\"" << id() << "\", \"" << click_js.name() << "\", latlng.lat(), latlng.lng());"
              << "        }"
              << "    }";
 
@@ -181,4 +183,8 @@ void WGoogleMap::addMenuMapTypeControl()
     doGmJavaScript(strm.str(), false);
 }
 
+void WGoogleMap::click_relay(double lat, double lon)
+{
+    click.emit(LatLng(lat, lon));
+}
 

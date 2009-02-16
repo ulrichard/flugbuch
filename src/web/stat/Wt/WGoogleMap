@@ -4,6 +4,7 @@
 // witty
 #include <Wt/WContainerWidget>
 #include <Wt/WJavaScript>
+#include <Wt/WSignal>
 // standard library
 #include <vector>
 #include <utility>
@@ -150,7 +151,7 @@ public:
      *         while the overlaylatlng argument contains the coordinates of the clicked overlay. In addition, a click event
      *         is then also fired on the overlay itself.
      */
-    JSignal<double, double> click;
+    Signal<LatLng> click;
 
      /*! \brief This event is fired when a double click is done on the map. Notice that this event will not be fired if the
      *          double click was on a marker or other clickable overlay. The geographical coordinates of the point that was
@@ -161,6 +162,11 @@ public:
     /*! \brief This event is fired when the user moves the mouse inside the map.
      */
 //    JSignal<LatLng> mousemove;
+
+private:
+    JSignal<double, double> click_js;
+
+    void click_relay(double lat, double lon);
 
 
 protected:
