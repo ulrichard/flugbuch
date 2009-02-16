@@ -31,7 +31,7 @@
 					<Add library="wthttp" />
 				</Linker>
 			</Target>
-			<Target title="Release">
+			<Target title="Release_fcgi_static">
 				<Option output="../../../res/flugbuch2.fcgi" prefix_auto="0" extension_auto="0" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
@@ -184,12 +184,12 @@
 		<Unit filename="../../../src/inout/inout_flyhigh.h" />
 		<Unit filename="../../../src/inout/inout_mdb.cpp">
 			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Release_fcgi_static" />
 			<Option target="Release_http" />
 		</Unit>
 		<Unit filename="../../../src/inout/inout_mdb.h">
 			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Release_fcgi_static" />
 			<Option target="Release_http" />
 		</Unit>
 		<Unit filename="../../../src/inout/inout_mdb_win.cpp">

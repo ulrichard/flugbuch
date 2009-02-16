@@ -3,6 +3,7 @@
 
 // witty
 #include <Wt/WContainerWidget>
+#include <Wt/WJavaScript>
 // standard library
 #include <vector>
 #include <utility>
@@ -137,6 +138,30 @@ public:
     /*! \brief Adds a drop-down map type control for switching between supported map types.
      */
     void addMenuMapTypeControl();
+
+public:
+    // signals
+
+    /*! \brief This event is fired when the user clicks on the map with the mouse. A click  event passes different arguments
+     *         based on the context of the click, and whether or not the click occured on a clickable overlay. If the click
+     *         does not occur on a clickable overlay, the overlay argument is null and the latlng argument contains the
+     *         geographical coordinates of the point that was clicked. If the user clicks on an overlay that is clickable
+     *         (such as a GMarker, GPolygon, GPolyline, or GInfoWindow), the overlay argument contains the overlay object,
+     *         while the overlaylatlng argument contains the coordinates of the clicked overlay. In addition, a click event
+     *         is then also fired on the overlay itself.
+     */
+    JSignal<double, double> click;
+
+     /*! \brief This event is fired when a double click is done on the map. Notice that this event will not be fired if the
+     *          double click was on a marker or other clickable overlay. The geographical coordinates of the point that was
+     *          double clicked are passed in the latlng argument. The overlay argument is always set to null.
+     */
+//    JSignal<LatLng> dbclick;
+
+    /*! \brief This event is fired when the user moves the mouse inside the map.
+     */
+//    JSignal<LatLng> mousemove;
+
 
 protected:
     virtual void prepareRerender();

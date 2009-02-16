@@ -20,6 +20,7 @@
 					<Add library="wt" />
 					<Add library="wthttp" />
 					<Add library="wtext" />
+					<Add library="boost_signals-mt-d" />
 				</Linker>
 			</Target>
 		</Build>
@@ -27,7 +28,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="main.cpp" />
+		<Unit filename="../../../src/test/WGoogleMap_testapp.cpp" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap.cpp" />
 		<Extensions>

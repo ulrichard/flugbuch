@@ -19,7 +19,7 @@ using std::swap;
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), rendered_(false)
+WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), click(this, "click"), rendered_(false)
 {
     WApplication *app = WApplication::instance();
 
@@ -52,6 +52,16 @@ void WGoogleMap::prepareRerender()
              << "    var map = new google.maps.Map2(" << jsRef() << ");"
              << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
              <<      jsRef() << ".map = map;";
+        // eventhandling
+        strm << "    google.maps.Event.addListener(map, \"click\", function(overlay, latlng) "
+             << "    {"
+             << "        if(latlng)"
+             << "        {"
+             << "            Wt.emit(\"" << id() << "\", \"" << click.name() << "\", latlng.lat(), latlng.lng());"
+             << "        }"
+             << "    }";
+
+        // additional things
         copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
         strm << "}";
         strm << "google.load(\"maps\", \"2\", {other_params:\"sensor=false\", callback: initialize});";

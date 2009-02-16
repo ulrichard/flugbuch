@@ -10,11 +10,15 @@
 #include <Wt/WApplication>
 #include <Wt/Ext/CheckBox>
 #include <Wt/WHBoxLayout>
+#include <Wt/Ext/MessageBox>
+// boost
+#include <boost/lexical_cast.hpp>
 // std lib
 #include <string>
 #include <vector>
 #include <utility>
 
+using boost::lexical_cast;
 using std::string;
 using std::vector;
 using std::pair;
@@ -28,8 +32,9 @@ public:
     Testapp(const Wt::WEnvironment& env) : Wt::WApplication(env)
     {
         // only for testing
+        Wt::WContainerWidget *contall = new Wt::WContainerWidget(root());
         Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
-        root()->setLayout(blayout);
+        contall->setLayout(blayout);
         contw_ = new Wt::WContainerWidget();
         gmap_  = NULL;
         blayout->addWidget(contw_, Wt::WBorderLayout::Center);
@@ -67,7 +72,7 @@ public:
         cbMapType->addItem("Menu");
         conth->layout()->addWidget(cbMapType);
 
-        drawMap(0);
+ //       drawMap(0);
     }
 
     virtual ~Testapp() { }
@@ -76,7 +81,10 @@ public:
     {
         contw_->clear();
         gmap_ = new Wt::WGoogleMap(contw_);
+        gmap_->setCenter(Wt::WGoogleMap::LatLng(47.01887777, 8.651888), 13);
         gmap_->resize(700, 500);
+
+        gmap_->click.connect(SLOT(this, Testapp::positionPopup));
 
         if(ind)
         {
@@ -94,6 +102,12 @@ public:
         }
         else
             gmap_->addMarker(Wt::WGoogleMap::LatLng(47.01887777, 8.651888));
+    }
+
+    void positionPopup(double lat, double lon)
+    {
+        string latlonstr = lexical_cast<string>(lat) + ", " + lexical_cast<string>(lon);
+        Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::Warning, true);
     }
 
     void mapType(int ind)
