@@ -151,23 +151,26 @@ public:
      *         while the overlaylatlng argument contains the coordinates of the clicked overlay. In addition, a click event
      *         is then also fired on the overlay itself.
      */
-    Signal<LatLng> click;
+    Signal<LatLng> clicked;
 
      /*! \brief This event is fired when a double click is done on the map. Notice that this event will not be fired if the
      *          double click was on a marker or other clickable overlay. The geographical coordinates of the point that was
      *          double clicked are passed in the latlng argument. The overlay argument is always set to null.
      */
-//    JSignal<LatLng> dbclick;
+    Signal<LatLng> dblclicked;
 
     /*! \brief This event is fired when the user moves the mouse inside the map.
      */
-//    JSignal<LatLng> mousemove;
+    Signal<LatLng> mousemove;
 
 private:
     JSignal<double, double> click_js;
+    JSignal<double, double> dbclick_js;
+    JSignal<double, double> mousemove_js;
 
     void click_relay(double lat, double lon);
-
+    void dbclick_relay(double lat, double lon);
+    void mousemove_relay(double lat, double lon);
 
 protected:
     virtual void prepareRerender();

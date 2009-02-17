@@ -19,7 +19,9 @@ using std::swap;
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMap::WGoogleMap(WContainerWidget *parent) : WContainerWidget(0), click(this), click_js(this, "click"), rendered_(false)
+WGoogleMap::WGoogleMap(WContainerWidget *parent)
+ : WContainerWidget(0), clicked(this), click_js(this, "click"), dblclicked(this), dbclick_js(this, "dbclick"),
+   mousemove(this), mousemove_js(this, "mousemove"), rendered_(false)
 {
     WApplication *app = WApplication::instance();
 
@@ -60,6 +62,20 @@ void WGoogleMap::prepareRerender()
              << "        if(latlng)"
              << "        {"
              << "            Wt.emit(\"" << id() << "\", \"" << click_js.name() << "\", latlng.lat(), latlng.lng());"
+             << "        }"
+             << "    }";
+        strm << "    google.maps.Event.addListener(map, \"dbclick\", function(overlay, latlng) "
+             << "    {"
+             << "        if(latlng)"
+             << "        {"
+             << "            Wt.emit(\"" << id() << "\", \"" << dbclick_js.name() << "\", latlng.lat(), latlng.lng());"
+             << "        }"
+             << "    }";
+        strm << "    google.maps.Event.addListener(map, \"mousemove\", function(latlng) "
+             << "    {"
+             << "        if(latlng)"
+             << "        {"
+             << "            Wt.emit(\"" << id() << "\", \"" << mousemove_js.name() << "\", latlng.lat(), latlng.lng());"
              << "        }"
              << "    }";
 
@@ -185,6 +201,15 @@ void WGoogleMap::addMenuMapTypeControl()
 
 void WGoogleMap::click_relay(double lat, double lon)
 {
-    click.emit(LatLng(lat, lon));
+    clicked.emit(LatLng(lat, lon));
 }
 
+void WGoogleMap::dbclick_relay(double lat, double lon)
+{
+    dblclicked.emit(LatLng(lat, lon));
+}
+
+void WGoogleMap::mousemove_relay(double lat, double lon)
+{
+    mousemove.emit(LatLng(lat, lon));
+}
