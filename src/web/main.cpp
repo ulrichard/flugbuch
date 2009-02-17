@@ -22,6 +22,7 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WEnvironment>
 #include <Wt/Ext/MessageBox>
+#include <Wt/WLength>
 // boost
 #include <boost/foreach.hpp>
 // std lib
@@ -130,22 +131,17 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
         delete mainScreen_;
     }
 
-//    if(!mainScreen_)
-//    {
-        flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
+	mainScreen_ = new Wt::WContainerWidget(mainStack_);
+	Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
+	mainScreen_->setLayout(borderLayout);
 
-        tabCtrl_ = new flbwt::TabControl(fldb);
+    flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
+	borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);
 
-        mainScreen_ = new Wt::WContainerWidget(mainStack_);
-        Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
-        mainScreen_->setLayout(borderLayout);
-        borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);
-        borderLayout->addWidget(tabCtrl_,  Wt::WBorderLayout::Center);
-//    }
-//    else
-//    {
-//        tabCtrl_->reload(fldb);
-//    }
+    tabCtrl_ = new flbwt::TabControl(fldb);
+	borderLayout->addWidget(tabCtrl_,  Wt::WBorderLayout::Center);
+	// an attempt to make M$ internet exploder render the page correctly
+	tabCtrl_->resize(Wt::WLength(100, Wt::WLength::Percentage), Wt::WLength(100, Wt::WLength::Percentage));
 
     mainStack_->setCurrentWidget(mainScreen_);
 }

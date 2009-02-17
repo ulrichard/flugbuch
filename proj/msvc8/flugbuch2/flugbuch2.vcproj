@@ -244,6 +244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\web\stat\StatFlightReport.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\web\StatisticsTab.cpp"
 				>
 			</File>

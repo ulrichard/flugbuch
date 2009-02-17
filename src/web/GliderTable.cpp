@@ -23,8 +23,9 @@ using Wt::WImage;
 using Wt::WText;
 using std::string;
 using std::vector;
-//using boost::bind;
+using std::set;
 using namespace boost::lambda;
+namespace bll = boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
 
@@ -336,19 +337,19 @@ void GliderPanel::load()
 {
     cbBrand_->clear();
     cbBrand_->addItem("alle");
-    std::set<string> brands;
+    set<string> brands;
     transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::inserter(brands, brands.end()),
-        bind(&Glider::brand, *boost::lambda::_1));
-//    for_each(brands.begin(), brands.end(), bind(&Wt::Ext::ComboBox::addItem, cbBrand_, *boost::lambda::_1));
+		bll::bind(&Glider::brand, *bll::_1));
+//    for_each(brands.begin(), brands.end(), bind(&Wt::Ext::ComboBox::addItem, cbBrand_, *bll::_1));
     BOOST_FOREACH(string str, brands)
         cbBrand_->addItem(str);
     cbBrand_->setCurrentIndex(0);
 
     cbClassi_->clear();
     cbClassi_->addItem("alle");
-    std::set<string> classis;
+    set<string> classis;
     transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classis, classis.end()),
-        bind(&Glider::classification, *boost::lambda::_1));
+		bll::bind(&Glider::classification, *bll::_1));
 //    for_each(classis.begin(), classis.end(), bind(&Wt::Ext::ComboBox::addItem, cbClassi_, *boost::lambda::_1));
     BOOST_FOREACH(string str, classis)
         cbClassi_->addItem(str);

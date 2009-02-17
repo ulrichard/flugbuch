@@ -130,6 +130,9 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
         // the flight areas can be used as is
         dtl::DynamicDBView<> viewArea("Fluggebiete", "*");
         transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.end()), bind(&inout_mdb::GetArea, this, _1));
+//		for_each(areas_.begin(), areas_.end(), bind(&FlightDatabase::addFlightArea, fldb, ret<shared_ptr<FlightArea> >(bind(&pair<unsigned int, shared_ptr<FlightArea> >::second, _1))));
+		for(map<unsigned int, shared_ptr<FlightArea> >::iterator it = areas_.begin(); it != areas_.end(); ++it)
+			fldb.addFlightArea(it->second);
 
         // the gliders can be used as is
         dtl::DynamicDBView<> viewGlider("Gleitschirme", "*");
@@ -178,7 +181,8 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 pair<unsigned int, shared_ptr<FlightArea> > inout_mdb::GetArea(const dtl::variant_row &row)
 {
-    shared_ptr<FlightArea> flar(new FlightArea(row["Name"], countries_[row["LandId"]], row["Beschreibung"]));
+	const string name = normalize_str(row["Name"]);
+    shared_ptr<FlightArea> flar(new FlightArea(name, countries_[row["LandId"]], row["Beschreibung"]));
     return make_pair(static_cast<int>(row["FluggebietId"]), flar);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -255,6 +259,19 @@ void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location
         (*fit)->addUsage(usage);
         locp.second = *fit;
     }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+string inout_mdb::normalize_str(string str)
+{
+	transform(str.begin(), str.end(), str.begin(), bind(&inout_mdb::normalize_char, this, _1));
+	return str;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+char inout_mdb::normalize_char(char chr)
+{
+	if((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z'))
+		return chr;
+	return '_';
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

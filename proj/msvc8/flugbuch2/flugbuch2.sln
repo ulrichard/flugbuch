@@ -1,7 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "flugbuch2", "flugbuch2.vcproj", "{D56ABE24-C5B9-4717-B64C-6CCE39A8B98C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "flugbuch2_wt", "flugbuch2.vcproj", "{D56ABE24-C5B9-4717-B64C-6CCE39A8B98C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simple_tests", "..\simple_tests\simple_tests.vcproj", "{26D8FAEC-1E3E-4E2F-9A9B-0478FDCECAA8}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -17,6 +23,10 @@ Global
 		{D56ABE24-C5B9-4717-B64C-6CCE39A8B98C}.Debug|Win32.Build.0 = Debug|Win32
 		{D56ABE24-C5B9-4717-B64C-6CCE39A8B98C}.Release|Win32.ActiveCfg = Release|Win32
 		{D56ABE24-C5B9-4717-B64C-6CCE39A8B98C}.Release|Win32.Build.0 = Release|Win32
+		{26D8FAEC-1E3E-4E2F-9A9B-0478FDCECAA8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{26D8FAEC-1E3E-4E2F-9A9B-0478FDCECAA8}.Debug|Win32.Build.0 = Debug|Win32
+		{26D8FAEC-1E3E-4E2F-9A9B-0478FDCECAA8}.Release|Win32.ActiveCfg = Release|Win32
+		{26D8FAEC-1E3E-4E2F-9A9B-0478FDCECAA8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

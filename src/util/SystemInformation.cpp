@@ -18,8 +18,11 @@ bfs::path SystemInformation::homeDir()
 {
 #ifdef WIN32
     char tmp[MAX_PATH];
-    if(!SHGetSpecialFolderPath(NULL, tmp, CSIDL_MYDOCUMENTS, TRUE))
-        throw std::runtime_error("Home directory not found");
+	HRESULT retval = SHGetFolderPath(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, tmp);
+	if(retval == S_FALSE || retval == E_FAIL)
+		throw std::runtime_error("Home directory not found : The CSIDL in nFolder is valid, but the folder does not exist.");
+	if(retval == E_INVALIDARG)
+		throw std::runtime_error("Home directory not found : The CSIDL in nFolder is not valid..");
     return bfs::path(tmp);
 #else
     return bfs::path(getenv("HOME"));

@@ -41,17 +41,9 @@ private:
     std::pair<unsigned int, boost::shared_ptr<Location> >   GetLocation(const dtl::variant_row &row, const std::string &idname);
     std::pair<unsigned int, boost::shared_ptr<Flight> >     GetFlight(const dtl::variant_row &row);
     void consolidateLocation(std::pair<const unsigned int, boost::shared_ptr<Location> >  &locp, Location::UseAs usage, FlightDatabase &fldb);
+	std::string normalize_str(std::string str);
+	char		normalize_char(char chr);
 
-//	boost::filesystem::path export_csv(const boost::filesystem::path &source, const std::string &tablename);
-//	void parse_csv(const boost::filesystem::path &file, boost::function<void(const std::vector<std::string>&)> lineFunc);
-//	void readCountry(const std::vector<std::string> &tokens);
-/*
-	void readFlightArea(const std::vector<std::string> &tokens);
-	void readGlider(const std::vector<std::string> &tokens);
-	void readLocation(const std::vector<std::string> &tokens, std::map<unsigned int, boost::shared_ptr<Location> > &locations);
-	void readFlight(const std::vector<std::string> &tokens);
-    void readWptLink(const std::vector<std::string> &tokens);
-*/
     // members
 	std::map<unsigned int, std::string>                             countries_;
 	std::map<unsigned int, boost::shared_ptr<FlightArea> >          areas_;
