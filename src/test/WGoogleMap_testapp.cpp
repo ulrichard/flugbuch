@@ -26,10 +26,10 @@ using std::make_pair;
 
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class Testapp : public Wt::WApplication
+class Testapp_GM : public Wt::WApplication
 {
 public:
-    Testapp(const Wt::WEnvironment& env) : Wt::WApplication(env)
+    Testapp_GM(const Wt::WEnvironment& env) : Wt::WApplication(env)
     {
         // only for testing
         Wt::WContainerWidget *contall = new Wt::WContainerWidget(root());
@@ -44,29 +44,29 @@ public:
         blayout->addWidget(conth, Wt::WBorderLayout::North);
 
         Wt::Ext::ComboBox *cbStatSel = new Wt::Ext::ComboBox();
-        cbStatSel->activated.connect(SLOT(this, Testapp::drawMap));
+        cbStatSel->activated.connect(SLOT(this, Testapp_GM::drawMap));
         cbStatSel->addItem("Marker");
         cbStatSel->addItem("Polyline");
         conth->layout()->addWidget(cbStatSel);
 
         cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom");
-        cbScrollZoom_->checked.connect(SLOT(this, Testapp::scrollZoom));
-        cbScrollZoom_->unChecked.connect(SLOT(this, Testapp::scrollZoom));
+        cbScrollZoom_->checked.connect(SLOT(this, Testapp_GM::scrollZoom));
+        cbScrollZoom_->unChecked.connect(SLOT(this, Testapp_GM::scrollZoom));
         conth->layout()->addWidget(cbScrollZoom_);
 
         cbDragging_ = new Wt::Ext::CheckBox("Dragging");
         cbDragging_->setChecked(true);
-        cbDragging_->checked.connect(SLOT(this, Testapp::dragging));
-        cbDragging_->unChecked.connect(SLOT(this, Testapp::dragging));
+        cbDragging_->checked.connect(SLOT(this, Testapp_GM::dragging));
+        cbDragging_->unChecked.connect(SLOT(this, Testapp_GM::dragging));
         conth->layout()->addWidget(cbDragging_);
 
         cbGooBar_ = new Wt::Ext::CheckBox("GoogleBar");
-        cbGooBar_->checked.connect(SLOT(this, Testapp::gooBar));
-        cbGooBar_->unChecked.connect(SLOT(this, Testapp::gooBar));
+        cbGooBar_->checked.connect(SLOT(this, Testapp_GM::gooBar));
+        cbGooBar_->unChecked.connect(SLOT(this, Testapp_GM::gooBar));
         conth->layout()->addWidget(cbGooBar_);
 
         Wt::Ext::ComboBox *cbMapType = new Wt::Ext::ComboBox();
-        cbMapType->activated.connect(SLOT(this, Testapp::mapType));
+        cbMapType->activated.connect(SLOT(this, Testapp_GM::mapType));
         cbMapType->addItem("Normal");
         cbMapType->addItem("Hierarchical");
         cbMapType->addItem("Menu");
@@ -75,7 +75,7 @@ public:
  //       drawMap(0);
     }
 
-    virtual ~Testapp() { }
+    virtual ~Testapp_GM() { }
 
     void drawMap(int ind)
     {
@@ -84,7 +84,8 @@ public:
         gmap_->setCenter(Wt::WGoogleMap::LatLng(47.01887777, 8.651888), 13);
         gmap_->resize(700, 500);
 
-        gmap_->click.connect(SLOT(this, Testapp::positionPopup));
+        gmap_->clicked.connect(SLOT(this, Testapp_GM::positionPopup));
+        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup));
 
         if(ind)
         {
@@ -169,16 +170,16 @@ private:
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
-Wt::WApplication *createApplication(const Wt::WEnvironment& env)
+Wt::WApplication *createApplication_GM(const Wt::WEnvironment& env)
 {
-    Testapp *app = new Testapp(env);
+    Testapp_GM *app = new Testapp_GM(env);
 
 	return app;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-int main(int argc, char *argv[])
+int __main(int argc, char *argv[])
 {
-	return Wt::WRun(argc, argv, &createApplication);
+	return Wt::WRun(argc, argv, &createApplication_GM);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

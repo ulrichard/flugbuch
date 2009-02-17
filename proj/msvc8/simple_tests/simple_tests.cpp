@@ -9,10 +9,10 @@
 // std lib
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class Testapp : public Wt::WApplication
+class Testapp_IE : public Wt::WApplication
 {
 public:
-	Testapp(const Wt::WEnvironment& env) : Wt::WApplication(env)
+	Testapp_IE(const Wt::WEnvironment& env) : Wt::WApplication(env)
 	{
 		// only for testing
 		Wt::WContainerWidget *contall = new Wt::WContainerWidget(root());
@@ -21,7 +21,7 @@ public:
 
 		Wt::WContainerWidget *contw = new Wt::WContainerWidget();
 		blayout->addWidget(contw, Wt::WBorderLayout::Center);
-	
+
 		tabw_ = new Wt::WTabWidget(contw);
 
 		Wt::WContainerWidget *tab1 = new Wt::WContainerWidget();
@@ -29,16 +29,16 @@ public:
 		Wt::WImage *img1 = new Wt::WImage("http://www.swissleague.ch/big/sl2486.jpg");
 		img1->resize(50, 50);
 		tab1->addWidget(img1);
-		
+
 		Wt::WContainerWidget *tab2 = new Wt::WContainerWidget();
 		tabw_->addTab(tab2, "Tab2");
 		Wt::WImage *img2 = new Wt::WImage("http://www.swissleague.ch/big/sl2486.jpg");
 		img2->resize(500, 50);
 		tab2->addWidget(img2);
-		
+
 	}
 
-	virtual ~Testapp() { }
+	virtual ~Testapp_IE() { }
 
 private:
 	Wt::WTabWidget *tabw_;
@@ -47,7 +47,7 @@ private:
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 {
-	Testapp *app = new Testapp(env);
+	Testapp_IE *app = new Testapp_IE(env);
 
 	return app;
 }
@@ -57,15 +57,4 @@ int main(int argc, char *argv[])
 	return Wt::WRun(argc, argv, &createApplication);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-
-// simple_tests.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
-
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-	return 0;
-}
 

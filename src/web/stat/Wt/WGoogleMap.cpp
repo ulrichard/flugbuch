@@ -20,8 +20,8 @@ using std::swap;
 // http://code.google.com/apis/maps/documentation/
 
 WGoogleMap::WGoogleMap(WContainerWidget *parent)
- : WContainerWidget(0), clicked(this), click_js(this, "click"), dblclicked(this), dbclick_js(this, "dbclick"),
-   mousemove(this), mousemove_js(this, "mousemove"), rendered_(false)
+ : WContainerWidget(0), clicked(this), dblclicked(this), mousemove(this), click_js(this, "click"), dbclick_js(this, "dbclick"),
+   mousemove_js(this, "mousemove"), rendered_(false)
 {
     WApplication *app = WApplication::instance();
 
@@ -52,7 +52,8 @@ void WGoogleMap::prepareRerender()
     {
         // initialize the map
         std::ostringstream strm;
-        strm << "function initialize() {"
+        strm << "function initialize()"
+             << "{"
              << "    var map = new google.maps.Map2(" << jsRef() << ");"
              << "    map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);"
              <<      jsRef() << ".map = map;";
@@ -81,7 +82,8 @@ void WGoogleMap::prepareRerender()
 
         // additional things
         copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
-        strm << "}";
+
+        strm << "}"; // function initialize
         strm << "google.load(\"maps\", \"2\", {other_params:\"sensor=false\", callback: initialize});";
 
         additions_.clear();
