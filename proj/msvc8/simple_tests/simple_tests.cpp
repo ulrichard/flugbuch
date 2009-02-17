@@ -27,13 +27,11 @@ public:
 		Wt::WContainerWidget *tab1 = new Wt::WContainerWidget();
 		tabw_->addTab(tab1, "Tab1");
 		Wt::WImage *img1 = new Wt::WImage("http://www.swissleague.ch/big/sl2486.jpg");
-		img1->resize(50, 50);
 		tab1->addWidget(img1);
 
 		Wt::WContainerWidget *tab2 = new Wt::WContainerWidget();
 		tabw_->addTab(tab2, "Tab2");
-		Wt::WImage *img2 = new Wt::WImage("http://www.swissleague.ch/big/sl2486.jpg");
-		img2->resize(500, 50);
+		Wt::WImage *img2 = new Wt::WImage("http://swissleague.ch/raw/sl2486.jpg");
 		tab2->addWidget(img2);
 
 	}
