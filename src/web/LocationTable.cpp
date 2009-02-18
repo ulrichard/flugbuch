@@ -7,6 +7,8 @@
 #include <Wt/Ext/CheckBox>
 #include <Wt/Ext/NumberField>
 #include <Wt/Ext/MessageBox>
+#include <Wt/Ext/Dialog>
+#include <Wt/Ext/Button>
 #include <Wt/WImage>
 #include <Wt/WText>
 #include <Wt/WVBoxLayout>
@@ -357,6 +359,12 @@ void LocationTableRow::edit()
         wiCancel->clicked.connect(SLOT(this, LocationTableRow::remove));
     else
         wiCancel->clicked.connect(SLOT(this, LocationTableRow::show));
+    // the map image
+	WImage *wiMap = new WImage("img/map.png");
+	wiMap->setToolTip("position setzen");
+    wiMap->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiMap);
+	wiMap->clicked.connect(SLOT(this, LocationTableRow::map));
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
@@ -443,6 +451,36 @@ void LocationTableRow::remove()
     {
         Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
     }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void LocationTableRow::map()
+{
+    mapDlg_ = new Wt::Ext::Dialog("Doubleclick at the new location");
+    mapDlg_->resize(400, 300);
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
+    mapDlg_->contents()->addWidget(gmap);
+    gmap->dblclicked.connect(SLOT(this, LocationTableRow::setPos));
+    Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
+    mapDlg_->addButton(btnCancel);
+    btnCancel->clicked.connect(SLOT(this, LocationTableRow::closeDlg));
+
+    mapDlg_->show();
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void LocationTableRow::setPos(Wt::WGoogleMap::LatLng pos)
+{
+    assert(mapDlg_);
+
+    pfPosition_->setPos(make_pair(pos.lat_, pos.lon_));
+
+    mapDlg_->accept();
+    delete mapDlg_;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void LocationTableRow::closeDlg()
+{
+    mapDlg_->accept();
+    delete mapDlg_;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

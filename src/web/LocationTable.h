@@ -10,6 +10,7 @@
 #include <Wt/WCompositeWidget>
 #include <Wt/WTable>
 #include <Wt/WPanel>
+#include <Wt/WGoogleMap>
 // std lib
 #include <vector>
 #include <string>
@@ -23,6 +24,7 @@ namespace Wt
         class ComboBox;
         class NumberField;
         class CheckBox;
+        class Dialog;
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -68,6 +70,9 @@ public:
 
 private:
 	virtual void clearRow();
+	void map();
+	void setPos(Wt::WGoogleMap::LatLng pos);
+	void closeDlg();
 
     boost::shared_ptr<flb::Location> location_;
 	// gui elements
@@ -78,6 +83,7 @@ private:
 	Wt::Ext::CheckBox    *cbTakeoff_;
 	Wt::Ext::CheckBox    *cbLanding_;
 	Wt::Ext::CheckBox    *cbWayPnt_;
+	Wt::Ext::Dialog      *mapDlg_;
 
 	enum ColPositons
 	{
