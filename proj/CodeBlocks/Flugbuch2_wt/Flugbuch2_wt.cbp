@@ -26,9 +26,9 @@
 					<Add library="boost_serialization-mt-d" />
 					<Add library="boost_signals-mt-d" />
 					<Add library="boost_filesystem-mt-d" />
-					<Add library="wt" />
-					<Add library="wtext" />
-					<Add library="wthttp" />
+					<Add library="wtd" />
+					<Add library="wtextd" />
+					<Add library="wthttpd" />
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">
@@ -46,18 +46,18 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="libboost_date_time-mt.a" />
-					<Add library="libboost_serialization-mt.a" />
-					<Add library="libboost_signals-mt.a" />
-					<Add library="libboost_filesystem-mt.a" />
+					<Add library="libboost_date_time-mt-s.a" />
+					<Add library="libboost_serialization-mt-s.a" />
+					<Add library="libboost_signals-mt-s.a" />
+					<Add library="libboost_filesystem-mt-s.a" />
 					<Add library="libwt.a" />
 					<Add library="libwtext.a" />
 					<Add library="libwtfcgi.a" />
 					<Add library="libfcgi.a" />
-					<Add library="libboost_thread-mt.a" />
-					<Add library="libboost_program_options-mt.a" />
-					<Add library="libboost_regex-mt.a" />
-					<Add library="libboost_system-mt.a" />
+					<Add library="libboost_thread-mt-s.a" />
+					<Add library="libboost_program_options-mt-s.a" />
+					<Add library="libboost_regex-mt-s.a" />
+					<Add library="libboost_system-mt-s.a" />
 				</Linker>
 			</Target>
 			<Target title="Release_http">
