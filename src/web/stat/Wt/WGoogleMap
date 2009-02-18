@@ -165,11 +165,11 @@ public:
 
 private:
     JSignal<double, double> click_js;
-    JSignal<double, double> dbclick_js;
+    JSignal<double, double> dblclick_js;
     JSignal<double, double> mousemove_js;
 
     void click_relay(double lat, double lon);
-    void dbclick_relay(double lat, double lon);
+    void dblclick_relay(double lat, double lon);
     void mousemove_relay(double lat, double lon);
 
 protected:

@@ -49,10 +49,16 @@ public:
         cbStatSel->addItem("Polyline");
         conth->layout()->addWidget(cbStatSel);
 
-        cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom");
-        cbScrollZoom_->checked.connect(SLOT(this, Testapp_GM::scrollZoom));
-        cbScrollZoom_->unChecked.connect(SLOT(this, Testapp_GM::scrollZoom));
-        conth->layout()->addWidget(cbScrollZoom_);
+		cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom");
+		cbScrollZoom_->checked.connect(SLOT(this, Testapp_GM::scrollZoom));
+		cbScrollZoom_->unChecked.connect(SLOT(this, Testapp_GM::scrollZoom));
+		conth->layout()->addWidget(cbScrollZoom_);
+
+		cbDblClickZoom_ = new Wt::Ext::CheckBox("DoubleClickZoom");
+		cbDblClickZoom_->setChecked(true);
+		cbDblClickZoom_->checked.connect(SLOT(this, Testapp_GM::dblclickZoom));
+		cbDblClickZoom_->unChecked.connect(SLOT(this, Testapp_GM::dblclickZoom));
+		conth->layout()->addWidget(cbDblClickZoom_);
 
         cbDragging_ = new Wt::Ext::CheckBox("Dragging");
         cbDragging_->setChecked(true);
@@ -72,7 +78,7 @@ public:
         cbMapType->addItem("Menu");
         conth->layout()->addWidget(cbMapType);
 
- //       drawMap(0);
+        drawMap(0);
     }
 
     virtual ~Testapp_GM() { }
@@ -84,8 +90,8 @@ public:
         gmap_->setCenter(Wt::WGoogleMap::LatLng(47.01887777, 8.651888), 13);
         gmap_->resize(700, 500);
 
-        gmap_->clicked.connect(SLOT(this, Testapp_GM::positionPopup));
-        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup));
+//        gmap_->clicked.connect(SLOT(this, Testapp_GM::positionPopup));
+        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup)); 
 
         if(ind)
         {
@@ -103,6 +109,11 @@ public:
         }
         else
             gmap_->addMarker(Wt::WGoogleMap::LatLng(47.01887777, 8.651888));
+
+		scrollZoom();
+		dblclickZoom();
+		dragging();
+		gooBar();
     }
 
     void positionPopup(Wt::WGoogleMap::LatLng lalo)
@@ -141,6 +152,17 @@ public:
         }
     }
 
+	void dblclickZoom()
+	{
+		if(gmap_)
+		{
+			if(cbDblClickZoom_->isChecked())
+				gmap_->enableDoubleClickZoom();
+			else
+				gmap_->disableDoubleClickZoom();
+		}
+	}
+
     void dragging()
     {
         if(gmap_)
@@ -166,7 +188,7 @@ public:
 private:
     Wt::WContainerWidget *contw_;
     Wt::WGoogleMap       *gmap_;
-    Wt::Ext::CheckBox    *cbScrollZoom_, *cbDragging_, *cbGooBar_;
+    Wt::Ext::CheckBox    *cbScrollZoom_, *cbDblClickZoom_, *cbDragging_, *cbGooBar_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
@@ -177,7 +199,7 @@ Wt::WApplication *createApplication_GM(const Wt::WEnvironment& env)
 	return app;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-int __main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	return Wt::WRun(argc, argv, &createApplication_GM);
 }

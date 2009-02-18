@@ -40,6 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="C:\flugbuch2\src\web\stat"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -182,6 +183,14 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\web\stat\Wt\WGoogleMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\test\WGoogleMap_testapp.cpp"
 				>
 			</File>
 		</Filter>

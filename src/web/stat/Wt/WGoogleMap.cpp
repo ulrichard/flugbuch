@@ -20,7 +20,7 @@ using std::swap;
 // http://code.google.com/apis/maps/documentation/
 
 WGoogleMap::WGoogleMap(WContainerWidget *parent)
- : WContainerWidget(0), clicked(this), dblclicked(this), mousemove(this), click_js(this, "click"), dbclick_js(this, "dbclick"),
+ : WContainerWidget(0), clicked(this), dblclicked(this), mousemove(this), click_js(this, "click"), dblclick_js(this, "dblclick"),
    mousemove_js(this, "mousemove"), rendered_(false)
 {
     WApplication *app = WApplication::instance();
@@ -38,7 +38,9 @@ WGoogleMap::WGoogleMap(WContainerWidget *parent)
     if(parent)
         parent->addWidget(this);
 
-    click_js.connect(SLOT(this, WGoogleMap::click_relay));
+	click_js.connect(    SLOT(this, WGoogleMap::click_relay));
+	dblclick_js.connect( SLOT(this, WGoogleMap::dblclick_relay));
+	mousemove_js.connect(SLOT(this, WGoogleMap::mousemove_relay));
 }
 
 void WGoogleMap::refresh()
@@ -64,21 +66,21 @@ void WGoogleMap::prepareRerender()
              << "        {"
              << "            Wt.emit(\"" << id() << "\", \"" << click_js.name() << "\", latlng.lat(), latlng.lng());"
              << "        }"
-             << "    }";
-        strm << "    google.maps.Event.addListener(map, \"dbclick\", function(overlay, latlng) "
+             << "    });";
+        strm << "    google.maps.Event.addListener(map, \"dblclick\", function(overlay, latlng) "
              << "    {"
              << "        if(latlng)"
              << "        {"
-             << "            Wt.emit(\"" << id() << "\", \"" << dbclick_js.name() << "\", latlng.lat(), latlng.lng());"
+             << "            Wt.emit(\"" << id() << "\", \"" << dblclick_js.name() << "\", latlng.lat(), latlng.lng());"
              << "        }"
-             << "    }";
+             << "    });";
         strm << "    google.maps.Event.addListener(map, \"mousemove\", function(latlng) "
              << "    {"
              << "        if(latlng)"
              << "        {"
              << "            Wt.emit(\"" << id() << "\", \"" << mousemove_js.name() << "\", latlng.lat(), latlng.lng());"
              << "        }"
-             << "    }";
+             << "    });";
 
         // additional things
         copy(additions_.begin(), additions_.end(), std::ostream_iterator<string>(strm));
@@ -206,7 +208,7 @@ void WGoogleMap::click_relay(double lat, double lon)
     clicked.emit(LatLng(lat, lon));
 }
 
-void WGoogleMap::dbclick_relay(double lat, double lon)
+void WGoogleMap::dblclick_relay(double lat, double lon)
 {
     dblclicked.emit(LatLng(lat, lon));
 }

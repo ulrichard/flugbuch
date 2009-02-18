@@ -459,7 +459,12 @@ void LocationTableRow::map()
     mapDlg_->resize(400, 300);
     Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
     mapDlg_->contents()->addWidget(gmap);
-    gmap->dblclicked.connect(SLOT(this, LocationTableRow::setPos));
+	gmap->resize(700, 500);
+	gmap->enableScrollWheelZoom();
+	gmap->disableDoubleClickZoom();
+	gmap->enableDragging();
+	gmap->addHierarchicalMapTypeControl();
+    gmap->clicked.connect(SLOT(this, LocationTableRow::setPos));
     Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
     mapDlg_->addButton(btnCancel);
     btnCancel->clicked.connect(SLOT(this, LocationTableRow::closeDlg));
