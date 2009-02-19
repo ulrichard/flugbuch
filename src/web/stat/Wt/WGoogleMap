@@ -56,6 +56,10 @@ public:
      */
     void clearOverlays() { doGmJavaScript(jsRef() + ".map.clearOverlays();", false); }
 
+    /*! \brief Opens a text bubble with html text at a specific location.
+     */
+    void openInfoWindow(const LatLng &pos, const std::string &myHtml);
+
     /*! \brief Sets the map view to the given center and zoom level.
      */
     void setCenter(const LatLng &center, int zoom);

@@ -70,7 +70,7 @@ public:
 
 private:
 	virtual void clearRow();
-	void map();
+	void map(bool editable);
 	void setPos(Wt::WGoogleMap::LatLng pos);
 	void closeDlg();
 

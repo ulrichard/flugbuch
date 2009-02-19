@@ -133,6 +133,14 @@ void WGoogleMap::addPolyline(const vector<WGoogleMap::LatLng> &points, const str
     doGmJavaScript(strm.str(), true);
 }
 
+void WGoogleMap::openInfoWindow(const LatLng &pos, const std::string &myHtml)
+{
+    std::ostringstream strm;
+    strm << jsRef() << ".map.openInfoWindow(new google.maps.LatLng(" << pos.lat_ << ", " << pos.lon_ << "), " << myHtml << ");";
+
+    doGmJavaScript(strm.str(), false);
+}
+
 void WGoogleMap::setCenter(const WGoogleMap::LatLng &center, int zoom)
 {
     std::ostringstream strm;

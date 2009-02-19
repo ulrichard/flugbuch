@@ -15,6 +15,7 @@
 #include <Wt/WHBoxLayout>
 #include <Wt/WBorderLayout>
 #include <Wt/WGridLayout>
+#include <Wt/WSignalMapper>
 // boost
 #include <boost/lexical_cast.hpp>
 #include <boost/checked_delete.hpp>
@@ -211,20 +212,22 @@ void PositionField::setPos(std::pair<double, double> pos)
 pair<double, double> PositionField::pos() const
 {
     pair<double, double> val = make_pair(0.0, 0.0);
+    const double NorthSouth = (cbNoSo_->currentIndex() ? -1.0 : 1.0);
+    const double EastWest   = (cbEaWe_->currentIndex() ? -1.0 : 1.0);
 
     switch(format_)
     {
         case WGS84_SEC:
-            val = make_pair((cbNoSo_->currentIndex() ? -1.0 : 1.0) * (nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value(),
-                            (cbEaWe_->currentIndex() ? -1.0 : 1.0) * (nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value());
+            val = make_pair(NorthSouth * ((nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value()),
+                            EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
             break;
         case WGS84_MIN:
-            val = make_pair((cbNoSo_->currentIndex() ? -1.0 : 1.0) * nfLatMin_->value() / 60.0 + nfLatDeg_->value(),
-                            (cbEaWe_->currentIndex() ? -1.0 : 1.0) * nfLonMin_->value() / 60.0 + nfLonDeg_->value());
+            val = make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
+                            EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
             break;
         case WGS84_DEC:
-            val = make_pair((cbNoSo_->currentIndex() ? -1.0 : 1.0) * nfLatDeg_->value(),
-                            (cbEaWe_->currentIndex() ? -1.0 : 1.0) * nfLonDeg_->value());
+            val = make_pair(NorthSouth * nfLatDeg_->value(),
+                            EastWest   * nfLonDeg_->value());
             break;
         case WGS84_UTM:
             throw std::logic_error("not implemented");
@@ -309,17 +312,26 @@ void LocationTableRow::show()
 {
 	clearRow();
 
+    // the edit image
 	WImage *wiEdit = new WImage("img/edit.png");
 	wiEdit->setToolTip("Ort bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked.connect(SLOT(this, LocationTableRow::edit));
-
+    // the delete image
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Ort löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
 	wiDelete->clicked.connect(SLOT(this, LocationTableRow::remove));
+	// the map image
+	WImage *wiMap = new WImage("img/map.png");
+	wiMap->setToolTip("position anschauen");
+    wiMap->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiMap);
+	Wt::WSignalMapper<bool> *myMap = new Wt::WSignalMapper<bool>(this);
+    myMap->mapped.connect(SLOT(this, LocationTableRow::map));
+    myMap->mapConnect(wiMap->clicked, false);
 
 	// prepare the text
 	vector<string> vsText;
@@ -364,7 +376,9 @@ void LocationTableRow::edit()
 	wiMap->setToolTip("position setzen");
     wiMap->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiMap);
-	wiMap->clicked.connect(SLOT(this, LocationTableRow::map));
+    Wt::WSignalMapper<bool> *myMap = new Wt::WSignalMapper<bool>(this);
+    myMap->mapped.connect(SLOT(this, LocationTableRow::map));
+    myMap->mapConnect(wiMap->clicked, false);
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
@@ -453,18 +467,30 @@ void LocationTableRow::remove()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void LocationTableRow::map()
+void LocationTableRow::map(bool editable)
 {
-    mapDlg_ = new Wt::Ext::Dialog("Doubleclick at the new location");
-    mapDlg_->resize(400, 300);
+    mapDlg_ = new Wt::Ext::Dialog(editable ? "Doubleclick at the new location" : "View the location");
+    mapDlg_->resize(500, 400);
+    mapDlg_->setSizeGripEnabled(false);
     Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
     mapDlg_->contents()->addWidget(gmap);
-	gmap->resize(700, 500);
+	gmap->resize(500, 400);
 	gmap->enableScrollWheelZoom();
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
 	gmap->addHierarchicalMapTypeControl();
-    gmap->clicked.connect(SLOT(this, LocationTableRow::setPos));
+	if(editable)
+	{
+        gmap->enableGoogleBar();
+        gmap->clicked.connect(SLOT(this, LocationTableRow::setPos));
+	}
+    pair<double, double> pdpos = pfPosition_->pos();
+    if(pdpos.first != 0.0 && pdpos.second != 0.0)
+    {
+        Wt::WGoogleMap::LatLng lalo(pdpos.first, pdpos.second);
+        gmap->setCenter(lalo, 13);
+        gmap->addMarker(lalo);
+    }
     Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
     mapDlg_->addButton(btnCancel);
     btnCancel->clicked.connect(SLOT(this, LocationTableRow::closeDlg));
@@ -575,7 +601,7 @@ void LocationTable::loadPage(unsigned int page)
 
     clear();
     createHeaderRow();
-    const int nFirst = (pageNr_ - 1) * entriesPerPage_;
+    const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < locations_.size())
     {
         vector<shared_ptr<Location> >::iterator ibeg = locations_.begin();
