@@ -29,6 +29,7 @@
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
+					<Add library="libDTLd" />
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">

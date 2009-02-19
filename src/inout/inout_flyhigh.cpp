@@ -2,6 +2,8 @@
 #include "inout_flyhigh.h"
 #include "SystemInformation.h"
 // mdb odbc
+#define DTL_NO_UNICODE
+#include <dtl/DTL.h>
 // boost
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>

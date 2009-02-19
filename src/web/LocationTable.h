@@ -10,7 +10,7 @@
 #include <Wt/WCompositeWidget>
 #include <Wt/WTable>
 #include <Wt/WPanel>
-#include <Wt/WGoogleMap>
+#include <Wt/WLatLng>
 // std lib
 #include <vector>
 #include <string>
@@ -18,6 +18,8 @@
 // some forward declarations
 namespace Wt
 {
+    class WGoogleMap;
+    class WGeoPosEdit;
     namespace Ext
     {
         class LineEdit;
@@ -30,31 +32,6 @@ namespace Wt
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 namespace flbwt
 {
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class PositionField : public Wt::WCompositeWidget
-{
-public:
-    PositionField(flb::PositionFormat fmt = flb::WGS84_SEC, Wt::WContainerWidget *parent = 0);
-
-    void setPos(std::pair<double, double> pos);
-    std::pair<double, double> pos() const;
-    static std::string format(std::pair<double, double> pos, flb::PositionFormat fmt = flb::WGS84_SEC);
-
-private:
-    flb::PositionFormat  format_;
-    Wt::WContainerWidget *impl_;
-    Wt::Ext::ComboBox    *cbNoSo_;
-    Wt::Ext::NumberField *nfLatDeg_;
-    Wt::Ext::NumberField *nfLatMin_;
-    Wt::Ext::NumberField *nfLatSec_;
-    Wt::Ext::ComboBox    *cbEaWe_;
-    Wt::Ext::NumberField *nfLonDeg_;
-    Wt::Ext::NumberField *nfLonMin_;
-    Wt::Ext::NumberField *nfLonSec_;
-    Wt::Ext::LineEdit    *leZone_;
-    Wt::Ext::NumberField *nfGridX_;
-    Wt::Ext::NumberField *nfGridY_;
-};
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class LocationTableRow : public DetailTableRowBase
 {
@@ -71,7 +48,7 @@ public:
 private:
 	virtual void clearRow();
 	void map(bool editable);
-	void setPos(Wt::WGoogleMap::LatLng pos);
+	void setPos(Wt::WLatLng pos);
 	void closeDlg();
 
     boost::shared_ptr<flb::Location> location_;
@@ -79,7 +56,7 @@ private:
 	Wt::Ext::ComboBox    *cbArea_;
 	Wt::Ext::LineEdit    *edName_;
 	Wt::Ext::NumberField *nfHeight_;
-	PositionField        *pfPosition_;
+	Wt::WGeoPosEdit      *pfPosition_;
 	Wt::Ext::CheckBox    *cbTakeoff_;
 	Wt::Ext::CheckBox    *cbLanding_;
 	Wt::Ext::CheckBox    *cbWayPnt_;

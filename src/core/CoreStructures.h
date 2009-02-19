@@ -267,14 +267,5 @@ public:
 BOOST_SERIALIZATION_SHARED_PTR(Flight);
 static bool operator<(const boost::shared_ptr<Flight> lhs, const boost::shared_ptr<Flight> rhs) { return *lhs < *rhs; }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-enum PositionFormat
-{
-    WGS84_SEC,
-    WGS84_MIN,
-    WGS84_DEC,
-    WGS84_UTM,
-    SWISSGRID
-};
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 } // namespace flb
 #endif // CORESTRUCTURES_H

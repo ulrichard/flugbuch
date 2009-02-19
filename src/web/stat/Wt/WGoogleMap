@@ -5,6 +5,7 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WJavaScript>
 #include <Wt/WSignal>
+#include <Wt/WLatLng>
 // standard library
 #include <vector>
 #include <utility>
@@ -22,15 +23,6 @@ class WColor;
 class WGoogleMap : public WContainerWidget
 {
 public:
-    // local types
-    struct LatLng
-    {
-        LatLng(double lat, double lon) : lat_(lat), lon_(lon) { }
-        LatLng(std::pair<double, double> lalo) : lat_(lalo.first), lon_(lalo.second) { }
-
-        double lat_, lon_;
-    };
-public:
     /*! \brief Create a map widget with optional parent.
      */
     WGoogleMap(WContainerWidget *parent = 0);
@@ -43,13 +35,13 @@ public:
 
     /*! \brief Add a marker overlay to the map.
      */
-    void addMarker(const LatLng &pos);
+    void addMarker(const WLatLng &pos);
 
     /*! \brief Add a polyline overlay to the map.
      *
      *  specify a vaue between 0.0 and 1.0 for the opacity.
      */
-    void addPolyline(const std::vector<LatLng> &points,
+    void addPolyline(const std::vector<WLatLng> &points,
                      const std::string &color = "#FF0000", int width = 2, double opacity = 1.0);
 
     /*! \brief Removes all overlays from the map.
@@ -58,20 +50,20 @@ public:
 
     /*! \brief Opens a text bubble with html text at a specific location.
      */
-    void openInfoWindow(const LatLng &pos, const std::string &myHtml);
+    void openInfoWindow(const WLatLng &pos, const std::string &myHtml);
 
     /*! \brief Sets the map view to the given center and zoom level.
      */
-    void setCenter(const LatLng &center, int zoom);
+    void setCenter(const WLatLng &center, int zoom);
 
     /*! \brief Changes the center point of the map to the given point. If the point is already visible
      *   in the current map view, change the center in a smooth animation.
      */
-    void panTo(const LatLng &center);
+    void panTo(const WLatLng &center);
 
     /*! \brief Zoom the map to a region defined by a bounding box of lat/lon coordinates.
      */
-    void zoomWindow(std::pair<LatLng, LatLng> bbox);
+    void zoomWindow(std::pair<WLatLng, WLatLng> bbox);
 
     /*! \brief Sets the zoom level to the given new value.
      */
@@ -155,17 +147,17 @@ public:
      *         while the overlaylatlng argument contains the coordinates of the clicked overlay. In addition, a click event
      *         is then also fired on the overlay itself.
      */
-    Signal<LatLng> clicked;
+    Signal<WLatLng> clicked;
 
      /*! \brief This event is fired when a double click is done on the map. Notice that this event will not be fired if the
      *          double click was on a marker or other clickable overlay. The geographical coordinates of the point that was
      *          double clicked are passed in the latlng argument. The overlay argument is always set to null.
      */
-    Signal<LatLng> dblclicked;
+    Signal<WLatLng> dblclicked;
 
     /*! \brief This event is fired when the user moves the mouse inside the map.
      */
-    Signal<LatLng> mousemove;
+    Signal<WLatLng> mousemove;
 
 private:
     JSignal<double, double> click_js;

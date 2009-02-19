@@ -1,0 +1,70 @@
+#ifndef WLATLNG_INCLUDED
+#define WLATLNG_INCLUDED
+
+
+// standard library
+#include <utility>
+#include <cmath>
+#include <stdexcept>
+#include <numeric>
+
+namespace Wt
+{
+
+class WLatLng
+{
+public:
+    /*! \brief constructors
+     */
+    WLatLng(double lat, double lon)                  { setLat(lat); setLon(lon); }
+    explicit WLatLng(std::pair<double, double> lalo) { setLat(lalo.first); setLon(lalo.second); }
+
+    /*! \brief set the latitude.
+     */
+    void setLat(double val)
+    {
+        if(val < -90.0 || val > 90.0)
+            throw std::out_of_range("invalid position");
+        lat_ = val;
+    }
+
+    /*! \brief set the longitude.
+     */
+    void setLon(double val)
+    {
+        if(val < -180.0 || val > 180.0)
+            throw std::out_of_range("invalid position");
+        lon_ = val;
+    }
+
+    /*! \brief get the latitude.
+     */
+    double lat() const { return lat_; }
+
+    /*! \brief get the longitude.
+     */
+    double lon() const { return lon_; }
+
+    /*! \brief Calculate the distance between two points in km using a sphere. Results can be out by 0.3%
+     */
+    double distance(const WLatLng &rhs) const
+    {
+        const double lat1 = lat_      * M_PI / 180.0;
+        const double lat2 = rhs.lat() * M_PI / 180.0;
+        const double deltaLong = (rhs.lon() - lon_) * M_PI / 180.0;
+        const double angle = sinl(lat1) * sinl(lat2) + cosl(lat1) * cosl(lat2) * cosl(deltaLong);
+        const double earthRadius = 6371.0; // km
+        const double dist = earthRadius * acosl(angle);
+
+        return dist;
+    }
+
+    /*! \brief conversion operator to pair of double
+     */
+    std::pair<double, double> operator ()() const { return std::make_pair(lat_, lon_); }
+private:
+    double lat_, lon_;
+};
+
+} // namespace Wt
+#endif // WLATLNG_INCLUDED

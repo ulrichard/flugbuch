@@ -15,6 +15,8 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 using std::swap;
+using std::min;
+using std::max;
 
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
@@ -110,49 +112,49 @@ void WGoogleMap::doGmJavaScript(std::string jscode, bool sepScope)
         additions_.push_back(jscode);
 }
 
-void WGoogleMap::addMarker(const WGoogleMap::LatLng &pos)
+void WGoogleMap::addMarker(const WLatLng &pos)
 {
     std::ostringstream strm;
-    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(" << pos.lat_ << ", " << pos.lon_ << "));"
+    strm << "var marker = new google.maps.Marker(new google.maps.LatLng(" << pos.lat() << ", " << pos.lon() << "));"
          <<  jsRef() << ".map.addOverlay(marker);";
 
     doGmJavaScript(strm.str(), false);
 }
 
-void WGoogleMap::addPolyline(const vector<WGoogleMap::LatLng> &points, const string &color, int width, double opacity)
+void WGoogleMap::addPolyline(const vector<WLatLng> &points, const string &color, int width, double opacity)
 {
     opacity = std::max(std::min(opacity, 1.0), 0.0); // opacity has to be between 0.0 and 1.0
 
     std::ostringstream strm;
     strm << "var waypoints = [];";
     for(size_t i=0; i<points.size(); ++i)
-        strm << "waypoints[" << i << "] = new google.maps.LatLng(" << points[i].lat_ << ", " << points[i].lon_ << ");";
+        strm << "waypoints[" << i << "] = new google.maps.LatLng(" << points[i].lat() << ", " << points[i].lon() << ");";
     strm << "var poly = new google.maps.Polyline(waypoints, \"" << color << "\", " << width << ", " << opacity << ");";
     strm << jsRef() << ".map.addOverlay(poly);";
 
     doGmJavaScript(strm.str(), true);
 }
 
-void WGoogleMap::openInfoWindow(const LatLng &pos, const std::string &myHtml)
+void WGoogleMap::openInfoWindow(const WLatLng &pos, const std::string &myHtml)
 {
     std::ostringstream strm;
-    strm << jsRef() << ".map.openInfoWindow(new google.maps.LatLng(" << pos.lat_ << ", " << pos.lon_ << "), " << myHtml << ");";
+    strm << jsRef() << ".map.openInfoWindow(new google.maps.LatLng(" << pos.lat() << ", " << pos.lon() << "), " << myHtml << ");";
 
     doGmJavaScript(strm.str(), false);
 }
 
-void WGoogleMap::setCenter(const WGoogleMap::LatLng &center, int zoom)
+void WGoogleMap::setCenter(const WLatLng &center, int zoom)
 {
     std::ostringstream strm;
-    strm << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "), " << zoom << ");";
+    strm << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat() << ", " << center.lon() << "), " << zoom << ");";
 
     doGmJavaScript(strm.str(), false);
 }
 
-void WGoogleMap::panTo(const WGoogleMap::LatLng &center)
+void WGoogleMap::panTo(const WLatLng &center)
 {
     std::ostringstream strm;
-    strm << jsRef() << ".map.panTo(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "));";
+    strm << jsRef() << ".map.panTo(new google.maps.LatLng(" << center.lat() << ", " << center.lon() << "));";
 
     doGmJavaScript(strm.str(), false);
 }
@@ -163,20 +165,20 @@ void WGoogleMap::setZoom(int level)
 }
 
 
-void WGoogleMap::zoomWindow(pair<WGoogleMap::LatLng, WGoogleMap::LatLng > bbox)
+void WGoogleMap::zoomWindow(pair<WLatLng, WLatLng > bbox)
 {
-    LatLng center((bbox.first.lat_ + bbox.second.lat_) / 2.0,
-                  (bbox.first.lon_ + bbox.second.lon_) / 2.0);
-    if(bbox.first.lat_ > bbox.second.lat_)
-        swap(bbox.first.lat_, bbox.second.lat_);
-    if(bbox.first.lon_ > bbox.second.lon_)
-        swap(bbox.first.lon_, bbox.second.lon_);
+    const WLatLng center((bbox.first.lat() + bbox.second.lat()) / 2.0,
+                  (bbox.first.lon() + bbox.second.lon()) / 2.0);
+    bbox = make_pair(WLatLng(min(bbox.first.lat(), bbox.second.lat()),
+                             min(bbox.first.lon(), bbox.second.lon())),
+                     WLatLng(max(bbox.first.lat(), bbox.second.lat()),
+                             max(bbox.first.lon(), bbox.second.lon())));
 
     std::ostringstream strm;
-    strm << "var bbox = new google.maps.LatLngBounds(new google.maps.LatLng(" << bbox.first.lat_  << ", " << bbox.first.lon_  << "), "
-         <<                                         "new google.maps.LatLng(" << bbox.second.lat_ << ", " << bbox.second.lon_ << "));"
+    strm << "var bbox = new google.maps.LatLngBounds(new google.maps.LatLng(" << bbox.first.lat()  << ", " << bbox.first.lon()  << "), "
+         <<                                         "new google.maps.LatLng(" << bbox.second.lat() << ", " << bbox.second.lon() << "));"
          << "var zooml = " << jsRef() << ".map.getBoundsZoomLevel(bbox);"
-         << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat_ << ", " << center.lon_ << "), zooml);";
+         << jsRef() << ".map.setCenter(new google.maps.LatLng(" << center.lat() << ", " << center.lon() << "), zooml);";
 
     doGmJavaScript(strm.str(), true);
 }
@@ -213,15 +215,15 @@ void WGoogleMap::addMenuMapTypeControl()
 
 void WGoogleMap::click_relay(double lat, double lon)
 {
-    clicked.emit(LatLng(lat, lon));
+    clicked.emit(WLatLng(lat, lon));
 }
 
 void WGoogleMap::dblclick_relay(double lat, double lon)
 {
-    dblclicked.emit(LatLng(lat, lon));
+    dblclicked.emit(WLatLng(lat, lon));
 }
 
 void WGoogleMap::mousemove_relay(double lat, double lon)
 {
-    mousemove.emit(LatLng(lat, lon));
+    mousemove.emit(WLatLng(lat, lon));
 }

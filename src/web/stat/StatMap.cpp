@@ -8,6 +8,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/lambda/construct.hpp>
 // standard library
 #include <algorithm>
 
@@ -34,21 +35,22 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     gmap->enableScrollWheelZoom();
     gmap->addHierarchicalMapTypeControl();
 
-    pair<Wt::WGoogleMap::LatLng, Wt::WGoogleMap::LatLng> bbox = make_pair(Wt::WGoogleMap::LatLng(90, 180), Wt::WGoogleMap::LatLng(-90, -180));
+    pair<Wt::WLatLng, Wt::WLatLng> bbox = make_pair(Wt::WLatLng(90, 180), Wt::WLatLng(-90, -180));
     for(flb::FlightDatabase::SeqFlights::const_iterator it = flights.begin(); it != flights.end(); ++it)
     {
-        vector<Wt::WGoogleMap::LatLng> points;
-        points.push_back(Wt::WGoogleMap::LatLng((*it)->takeoff()->pos()));
-        transform((*it)->Waypoints.begin(), (*it)->Waypoints.end(), back_inserter(points), bind(&flb::Location::pos, *bll::_1));
-        points.push_back(Wt::WGoogleMap::LatLng((*it)->landing()->pos()));
+        vector<Wt::WLatLng> points;
+        points.push_back(Wt::WLatLng((*it)->takeoff()->pos()));
+        transform((*it)->Waypoints.begin(), (*it)->Waypoints.end(), back_inserter(points),
+            bind(bll::constructor<Wt::WLatLng>(), bind(&flb::Location::pos, *bll::_1)));
+        points.push_back(Wt::WLatLng((*it)->landing()->pos()));
 
         // bbox
-        for(vector<Wt::WGoogleMap::LatLng>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+        for(vector<Wt::WLatLng>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
         {
-            bbox.first.lat_  = min(bbox.first.lat_,  itb->lat_);
-            bbox.first.lon_  = min(bbox.first.lon_,  itb->lon_);
-            bbox.second.lat_ = max(bbox.second.lat_, itb->lat_);
-            bbox.second.lon_ = max(bbox.second.lon_, itb->lon_);
+            bbox.first.setLat( min(bbox.first.lat(),  itb->lat()));
+            bbox.first.setLon( min(bbox.first.lon(),  itb->lon()));
+            bbox.second.setLat(max(bbox.second.lat(), itb->lat()));
+            bbox.second.setLon(max(bbox.second.lon(), itb->lon()));
         }
 
         gmap->addPolyline(points, "#FF0000", 2, 0.7);

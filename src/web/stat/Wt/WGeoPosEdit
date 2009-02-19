@@ -1,0 +1,56 @@
+#ifndef WGEOPOSEDIT_INCLUDED
+#define WGEOPOSEDIT_INCLUDED
+
+#include <Wt/WCompositeWidget>
+#include <utility>
+
+namespace Wt
+{
+// forward declarations
+class WContainerWidget;
+class WComboBox;
+namespace Ext
+{
+    class ComboBox;
+    class NumberField;
+    class LineEdit;
+}
+
+class WGeoPosEdit : public Wt::WCompositeWidget
+{
+public:
+    //local types
+    enum PositionFormat
+    {
+        WGS84_SEC,
+        WGS84_MIN,
+        WGS84_DEC,
+        WGS84_UTM,
+        SWISSGRID
+    };
+public:
+    WGeoPosEdit(PositionFormat fmt = WGS84_SEC, Wt::WContainerWidget *parent = 0);
+
+    void setPos(std::pair<double, double> pos);
+    std::pair<double, double> pos() const;
+    static std::string format(std::pair<double, double> pos, PositionFormat fmt = WGS84_SEC);
+
+private:
+    PositionFormat       format_;
+    Wt::WContainerWidget *impl_;
+    Wt::Ext::ComboBox    *cbNoSo_;
+    Wt::Ext::NumberField *nfLatDeg_;
+    Wt::Ext::NumberField *nfLatMin_;
+    Wt::Ext::NumberField *nfLatSec_;
+    Wt::Ext::ComboBox    *cbEaWe_;
+    Wt::Ext::NumberField *nfLonDeg_;
+    Wt::Ext::NumberField *nfLonMin_;
+    Wt::Ext::NumberField *nfLonSec_;
+    Wt::Ext::LineEdit    *leZone_;
+    Wt::Ext::NumberField *nfGridX_;
+    Wt::Ext::NumberField *nfGridY_;
+};
+
+} // namespace Wt
+
+#endif // WGEOPOSEDIT_INCLUDED
