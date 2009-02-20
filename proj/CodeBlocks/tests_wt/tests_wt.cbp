@@ -30,8 +30,11 @@
 		</Compiler>
 		<Unit filename="../../msvc8/simple_tests/simple_tests.cpp" />
 		<Unit filename="../../../src/test/WGoogleMap_testapp.cpp" />
+		<Unit filename="../../../src/web/stat/Wt/WGeoPosEdit" />
+		<Unit filename="../../../src/web/stat/Wt/WGeoPosEdit.cpp" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap.cpp" />
+		<Unit filename="../../../src/web/stat/Wt/WLatLng" />
 		<Extensions>
 			<envvars />
 			<code_completion />

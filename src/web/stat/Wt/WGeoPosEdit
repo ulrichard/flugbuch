@@ -2,6 +2,7 @@
 #define WGEOPOSEDIT_INCLUDED
 
 #include <Wt/WCompositeWidget>
+#include <Wt/WLatLng>
 #include <utility>
 
 namespace Wt
@@ -9,11 +10,13 @@ namespace Wt
 // forward declarations
 class WContainerWidget;
 class WComboBox;
+class WImage;
 namespace Ext
 {
     class ComboBox;
     class NumberField;
     class LineEdit;
+    class Dialog;
 }
 
 class WGeoPosEdit : public Wt::WCompositeWidget
@@ -29,13 +32,17 @@ public:
         SWISSGRID
     };
 public:
-    WGeoPosEdit(PositionFormat fmt = WGS84_SEC, Wt::WContainerWidget *parent = 0);
+    WGeoPosEdit(Wt::WContainerWidget *parent = 0, PositionFormat fmt = WGS84_SEC);
 
     void setPos(std::pair<double, double> pos);
     std::pair<double, double> pos() const;
     static std::string format(std::pair<double, double> pos, PositionFormat fmt = WGS84_SEC);
 
 private:
+    void showMap();
+    void setPosFromDlg(WLatLng pos);
+    void closeDlg();
+
     PositionFormat       format_;
     Wt::WContainerWidget *impl_;
     Wt::Ext::ComboBox    *cbNoSo_;
@@ -49,6 +56,8 @@ private:
     Wt::Ext::LineEdit    *leZone_;
     Wt::Ext::NumberField *nfGridX_;
     Wt::Ext::NumberField *nfGridY_;
+    Wt::WImage           *mapIcon_;
+    Wt::Ext::Dialog      *mapDlg_;
 };
 
 } // namespace Wt

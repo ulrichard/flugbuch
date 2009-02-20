@@ -83,7 +83,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     BOOST_FOREACH(string str, countries)
         sbCountry_->addItem(str);
     std::set<int> selind;
-    for(int i=0; i<countries.size(); ++i)
+    for(size_t i=0; i<countries.size(); ++i)
         selind.insert(i);
     sbCountry_->setSelectedIndexes(selind);
     sbCountry_->setVerticalSize(5);
@@ -99,7 +99,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     BOOST_FOREACH(int yyy, years)
         sbYear_->addItem(lexical_cast<string>(yyy));
     selind.clear();
-    for(int i=0; i<years.size(); ++i)
+    for(size_t i=0; i<years.size(); ++i)
         selind.insert(i);
     sbYear_->setSelectedIndexes(selind);
     sbYear_->setVerticalSize(5);
@@ -115,7 +115,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     BOOST_FOREACH(string str, classes)
         sbClassi_->addItem(str);
     selind.clear();
-    for(int i=0; i<classes.size(); ++i)
+    for(size_t i=0; i<classes.size(); ++i)
         selind.insert(i);
     sbClassi_->setSelectedIndexes(selind);
     sbClassi_->setVerticalSize(5);

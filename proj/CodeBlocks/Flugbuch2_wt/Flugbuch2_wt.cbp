@@ -29,7 +29,6 @@
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
-					<Add library="libDTLd" />
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">
@@ -47,18 +46,18 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="libboost_date_time-mt-s.a" />
-					<Add library="libboost_serialization-mt-s.a" />
-					<Add library="libboost_signals-mt-s.a" />
-					<Add library="libboost_filesystem-mt-s.a" />
-					<Add library="libwt.a" />
-					<Add library="libwtext.a" />
-					<Add library="libwtfcgi.a" />
-					<Add library="libfcgi.a" />
-					<Add library="libboost_thread-mt-s.a" />
-					<Add library="libboost_program_options-mt-s.a" />
-					<Add library="libboost_regex-mt-s.a" />
-					<Add library="libboost_system-mt-s.a" />
+					<Add library="/usr/lib/libboost_date_time-mt-s.a" />
+					<Add library="/usr/lib/libboost_serialization-mt-s.a" />
+					<Add library="/usr/lib/libboost_signals-mt-s.a" />
+					<Add library="/usr/lib/libboost_filesystem-mt-s.a" />
+					<Add library="/usr/lib/libwt.a" />
+					<Add library="/usr/lib/libwtext.a" />
+					<Add library="/usr/lib/libwtfcgi.a" />
+					<Add library="/usr/lib/libfcgi.a" />
+					<Add library="/usr/lib/libboost_thread-mt-s.a" />
+					<Add library="/usr/lib/libboost_program_options-mt-s.a" />
+					<Add library="/usr/lib/libboost_regex-mt-s.a" />
+					<Add library="/usr/lib/libboost_system-mt-s.a" />
 				</Linker>
 			</Target>
 			<Target title="Release_http">
@@ -234,8 +233,11 @@
 		<Unit filename="../../../src/web/stat/StatMap.h" />
 		<Unit filename="../../../src/web/stat/StatStandard.cpp" />
 		<Unit filename="../../../src/web/stat/StatStandard.h" />
+		<Unit filename="../../../src/web/stat/Wt/WGeoPosEdit" />
+		<Unit filename="../../../src/web/stat/Wt/WGeoPosEdit.cpp" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap" />
 		<Unit filename="../../../src/web/stat/Wt/WGoogleMap.cpp" />
+		<Unit filename="../../../src/web/stat/Wt/WLatLng" />
 		<Extensions>
 			<envvars />
 			<code_completion />

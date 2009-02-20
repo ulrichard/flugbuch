@@ -47,8 +47,7 @@ public:
 
 private:
 	virtual void clearRow();
-	void map(bool editable);
-	void setPos(Wt::WLatLng pos);
+	void map();
 	void closeDlg();
 
     boost::shared_ptr<flb::Location> location_;

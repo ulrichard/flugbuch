@@ -217,7 +217,7 @@ void AreaTable::loadPage(unsigned int page)
 
     clear();
     createHeaderRow();
-    const int nFirst = (pageNr_ - 1) * entriesPerPage_;
+    const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < areas_.size())
     {
         vector<shared_ptr<FlightArea> >::iterator ibeg = areas_.begin();

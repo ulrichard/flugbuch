@@ -1,11 +1,15 @@
 // witty
+#include <Wt/WGeoPosEdit>
+#include <Wt/WGoogleMap>
 #include <Wt/WCompositeWidget>
 #include <Wt/WContainerWidget>
-#include <Wt/WGeoPosEdit>
 #include <Wt/Ext/ComboBox>
 #include <Wt/Ext/NumberField>
 #include <Wt/Ext/LineEdit>
+#include <Wt/Ext/Button>
+#include <Wt/Ext/Dialog>
 #include <Wt/WHBoxLayout>
+#include <Wt/WImage>
 // boost
 // standard library
 #include <cmath>
@@ -16,57 +20,53 @@ using std::make_pair;
 
 using namespace Wt;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-WGeoPosEdit::WGeoPosEdit(Wt::WGeoPosEdit::PositionFormat fmt, Wt::WContainerWidget *parent)
+WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat fmt)
   : Wt::WCompositeWidget(parent), format_(fmt), impl_(new Wt::WContainerWidget())
 {
     cbNoSo_ = cbEaWe_ = NULL;
     nfLatDeg_ = nfLatMin_ = nfLatSec_ = nfLonDeg_ = nfLonMin_ = nfLonSec_ = nfGridX_ = nfGridY_ = NULL;
     leZone_ = NULL;
 
+
     switch(format_)
     {
         case WGS84_SEC:
-            cbNoSo_   = new Wt::Ext::ComboBox(impl_);
-            cbNoSo_->addItem("N");
-            cbNoSo_->addItem("S");
-            nfLatDeg_ = new Wt::Ext::NumberField(impl_);
-            nfLatMin_ = new Wt::Ext::NumberField(impl_);
-            nfLatSec_ = new Wt::Ext::NumberField(impl_);
-            cbEaWe_   = new Wt::Ext::ComboBox(impl_);
-            cbEaWe_->addItem("E");
-            cbEaWe_->addItem("W");
-            nfLonDeg_ = new Wt::Ext::NumberField(impl_);
-            nfLonMin_ = new Wt::Ext::NumberField(impl_);
-            nfLonSec_ = new Wt::Ext::NumberField(impl_);
-            break;
+            nfLatSec_ = new Wt::Ext::NumberField();
+            nfLatSec_->resize(40, nfLatSec_->height());
+            nfLonSec_ = new Wt::Ext::NumberField();
+            nfLonSec_->resize(40, nfLonSec_->height());
+            // no break
         case WGS84_MIN:
-            cbNoSo_   = new Wt::Ext::ComboBox(impl_);
-            cbNoSo_->addItem("N");
-            cbNoSo_->addItem("S");
-            nfLatDeg_ = new Wt::Ext::NumberField(impl_);
-            nfLatMin_ = new Wt::Ext::NumberField(impl_);
-            cbEaWe_   = new Wt::Ext::ComboBox(impl_);
-            cbEaWe_->addItem("E");
-            cbEaWe_->addItem("W");
-            nfLonDeg_ = new Wt::Ext::NumberField(impl_);
-            nfLonMin_ = new Wt::Ext::NumberField(impl_);
-            break;
+            nfLatMin_ = new Wt::Ext::NumberField();
+            nfLatMin_->resize(40, nfLatMin_->height());
+            nfLonMin_ = new Wt::Ext::NumberField();
+            nfLonMin_->resize(40, nfLonMin_->height());
+            // no break
         case WGS84_DEC:
-            cbNoSo_   = new Wt::Ext::ComboBox(impl_);
+            nfLatDeg_ = new Wt::Ext::NumberField();
+            nfLatDeg_->resize(40, nfLatDeg_->height());
+            nfLonDeg_ = new Wt::Ext::NumberField();
+            nfLonDeg_->resize(40, nfLonDeg_->height());
+            cbNoSo_   = new Wt::Ext::ComboBox();
             cbNoSo_->addItem("N");
             cbNoSo_->addItem("S");
-            nfLatDeg_ = new Wt::Ext::NumberField(impl_);
-            cbEaWe_   = new Wt::Ext::ComboBox(impl_);
+            cbNoSo_->setEditable(false);
+            cbNoSo_->resize(20, cbNoSo_->height());
+            cbEaWe_   = new Wt::Ext::ComboBox();
             cbEaWe_->addItem("E");
             cbEaWe_->addItem("W");
-            nfLonDeg_ = new Wt::Ext::NumberField(impl_);
+            cbEaWe_->setEditable(false);
+            cbEaWe_->resize(20, cbEaWe_->height());
             break;
         case WGS84_UTM:
-            leZone_   = new Wt::Ext::LineEdit(impl_);
+            leZone_   = new Wt::Ext::LineEdit();
+            leZone_->resize(40, leZone_->height());
             // no break
         case SWISSGRID:
-            nfGridX_  = new Wt::Ext::NumberField(impl_);
-            nfGridY_  = new Wt::Ext::NumberField(impl_);
+            nfGridX_  = new Wt::Ext::NumberField();
+            nfGridX_->resize(80, nfGridX_->height());
+            nfGridY_  = new Wt::Ext::NumberField();
+            nfGridY_->resize(80, nfGridY_->height());
             break;
         default:
             assert(!"unknown position format");
@@ -74,103 +74,77 @@ WGeoPosEdit::WGeoPosEdit(Wt::WGeoPosEdit::PositionFormat fmt, Wt::WContainerWidg
 
     setImplementation(impl_);
     impl_->setLayout(new Wt::WHBoxLayout());
+    // here, the order is important
     if(cbNoSo_)
-    {
-        cbNoSo_->resize(20, cbNoSo_->height());
         impl_->layout()->addWidget(cbNoSo_);
-    }
     if(nfLatDeg_)
-    {
-        nfLatDeg_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLatDeg_);
-    }
     if(nfLatMin_)
-    {
-        nfLatMin_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLatMin_);
-    }
     if(nfLatSec_)
-    {
-        nfLatSec_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLatSec_);
-    }
     if(cbEaWe_)
-    {
-        cbEaWe_->resize(20, cbNoSo_->height());
         impl_->layout()->addWidget(cbEaWe_);
-    }
     if(nfLonDeg_)
-    {
-        nfLonDeg_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLonDeg_);
-    }
     if(nfLonMin_)
-    {
-        nfLonMin_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLonMin_);
-    }
     if(nfLonSec_)
-    {
-        nfLonSec_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(nfLonSec_);
-    }
     if(leZone_)
-    {
-        leZone_->resize(40, cbNoSo_->height());
         impl_->layout()->addWidget(leZone_);
-    }
     if(nfGridX_)
-    {
-        nfGridX_->resize(80, cbNoSo_->height());
         impl_->layout()->addWidget(nfGridX_);
-    }
     if(nfGridY_)
-    {
-        nfGridY_->resize(80, cbNoSo_->height());
         impl_->layout()->addWidget(nfGridY_);
-    }
+
+    mapIcon_ = new Wt::WImage("resources/slider-thumb-v.gif"); // we might want to add an image that's better suited to wt/resources
+    impl_->layout()->addWidget(mapIcon_);
+    mapIcon_->setToolTip("pick position from map");
+    mapIcon_->clicked.connect(SLOT(this, WGeoPosEdit::showMap));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WGeoPosEdit::setPos(std::pair<double, double> pos)
 {
     double tmpval;
+
+    if(format_ == WGS84_SEC || format_ == WGS84_MIN || format_ == WGS84_DEC)
+    {
+        cbNoSo_->setCurrentIndex(pos.first >= 0.0 ? 0 : 1);
+        cbNoSo_->refresh();
+        pos.first = fabs(pos.first);
+        cbEaWe_->setCurrentIndex(pos.second >= 0.0 ? 0 : 1);
+        cbEaWe_->refresh();
+        pos.second = fabs(pos.second);
+    }
+
     switch(format_)
     {
         case WGS84_SEC:
-            cbNoSo_->setCurrentIndex(pos.first >= 0.0 ? 0 : 1);
-            tmpval = fabs(pos.first);
-            nfLatDeg_->setValue(static_cast<int>(tmpval));
-            tmpval = (tmpval - static_cast<int>(tmpval)) * 60.0;
+            nfLatDeg_->setValue(static_cast<int>(pos.first));
+            tmpval = (pos.first - static_cast<int>(pos.first)) * 60.0;
             nfLatMin_->setValue(static_cast<int>(tmpval));
             nfLatSec_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
-            cbEaWe_->setCurrentIndex(pos.second >= 0.0 ? 0 : 1);
-            tmpval = fabs(pos.second);
-            nfLonDeg_->setValue(static_cast<int>(tmpval));
-            tmpval = (tmpval - static_cast<int>(tmpval)) * 60.0;
+            nfLonDeg_->setValue(static_cast<int>(pos.second));
+            tmpval = (pos.second - static_cast<int>(pos.second)) * 60.0;
             nfLonMin_->setValue(static_cast<int>(tmpval));
             nfLonSec_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
             break;
         case WGS84_MIN:
-            cbNoSo_->setCurrentIndex(pos.first >= 0.0 ? 0 : 1);
-            tmpval = fabs(pos.first);
-            nfLatDeg_->setValue(static_cast<int>(tmpval));
-            nfLatMin_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
-            cbEaWe_->setCurrentIndex(pos.second >= 0.0 ? 0 : 1);
-            tmpval = fabs(pos.second);
-            nfLonDeg_->setValue(static_cast<int>(tmpval));
-            nfLonMin_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
+            nfLatDeg_->setValue(static_cast<int>(pos.first));
+            nfLatMin_->setValue((pos.first - static_cast<int>(pos.first)) * 60.0);
+            nfLonDeg_->setValue(static_cast<int>(pos.second));
+            nfLonMin_->setValue((pos.second - static_cast<int>(pos.second)) * 60.0);
             break;
         case WGS84_DEC:
-            cbNoSo_->setCurrentIndex(pos.first >= 0.0 ? 0 : 1);
             nfLatDeg_->setValue(pos.first);
-            cbEaWe_->setCurrentIndex(pos.second >= 0.0 ? 0 : 1);
             nfLonDeg_->setValue(pos.second);
             break;
         case WGS84_UTM:
-            throw std::logic_error("not implemented");
+            throw std::logic_error("not implemented yet");
             break;
         case SWISSGRID:
-            throw std::logic_error("not implemented");
+            throw std::logic_error("not implemented yet");
             break;
         default:
             assert(!"unknown position format");
@@ -179,34 +153,28 @@ void WGeoPosEdit::setPos(std::pair<double, double> pos)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 pair<double, double> WGeoPosEdit::pos() const
 {
-    pair<double, double> val = make_pair(0.0, 0.0);
     const double NorthSouth = (cbNoSo_->currentIndex() ? -1.0 : 1.0);
     const double EastWest   = (cbEaWe_->currentIndex() ? -1.0 : 1.0);
 
     switch(format_)
     {
         case WGS84_SEC:
-            val = make_pair(NorthSouth * ((nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value()),
-                            EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
-            break;
+            return make_pair(NorthSouth * ((nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value()),
+                             EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
         case WGS84_MIN:
-            val = make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
-                            EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
-            break;
+            return make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
+                             EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
         case WGS84_DEC:
-            val = make_pair(NorthSouth * nfLatDeg_->value(),
-                            EastWest   * nfLonDeg_->value());
-            break;
+            return make_pair(NorthSouth * nfLatDeg_->value(),
+                             EastWest   * nfLonDeg_->value());
         case WGS84_UTM:
             throw std::logic_error("not implemented");
-            break;
         case SWISSGRID:
             throw std::logic_error("not implemented");
-            break;
         default:
             assert(!"unknown position format");
     }
-    return val;
+    return make_pair(0.0, 0.0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFormat fmt)
@@ -256,3 +224,51 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
     }
     return sstr.str();
 }
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void WGeoPosEdit::showMap()
+{
+    mapDlg_ = new Wt::Ext::Dialog("Doubleclick at the new location");
+    mapDlg_->resize(508, 440);
+    mapDlg_->setSizeGripEnabled(false);
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
+    mapDlg_->contents()->addWidget(gmap);
+	gmap->resize(500, 380);
+	gmap->enableScrollWheelZoom();
+	gmap->disableDoubleClickZoom();
+	gmap->enableDragging();
+	gmap->addHierarchicalMapTypeControl();
+    gmap->enableGoogleBar();
+    gmap->dblclicked.connect(SLOT(this, WGeoPosEdit::setPosFromDlg));
+    const pair<double, double> pdpos = pos();
+    if(pdpos.first != 0.0 && pdpos.second != 0.0)
+    {
+        Wt::WLatLng lalo(pdpos.first, pdpos.second);
+        gmap->setCenter(lalo, 13);
+        gmap->addMarker(lalo);
+    }
+    Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
+    mapDlg_->addButton(btnCancel);
+    btnCancel->clicked.connect(SLOT(this, WGeoPosEdit::closeDlg));
+
+    mapDlg_->show();
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void WGeoPosEdit::setPosFromDlg(WLatLng pos)
+{
+    assert(mapDlg_);
+
+    setPos(make_pair(pos.lat(), pos.lon()));
+
+    mapDlg_->accept();
+    delete mapDlg_;
+    mapDlg_ = NULL;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void WGeoPosEdit::closeDlg()
+{
+    assert(mapDlg_);
+    mapDlg_->accept();
+    delete mapDlg_;
+    mapDlg_ = NULL;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

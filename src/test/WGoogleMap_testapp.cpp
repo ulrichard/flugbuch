@@ -4,13 +4,15 @@
 #include <Wt/Ext/ComboBox>
 #include <Wt/WComboBox>
 #include <Wt/WEnvironment>
-#include <Wt/WGoogleMap>
 #include <Wt/WContainerWidget>
 #include <Wt/WBorderLayout>
 #include <Wt/WApplication>
 #include <Wt/Ext/CheckBox>
 #include <Wt/WHBoxLayout>
 #include <Wt/Ext/MessageBox>
+
+#include <Wt/WGoogleMap>
+#include <Wt/WGeoPosEdit>
 // boost
 #include <boost/lexical_cast.hpp>
 // std lib
@@ -31,7 +33,6 @@ class Testapp_GM : public Wt::WApplication
 public:
     Testapp_GM(const Wt::WEnvironment& env) : Wt::WApplication(env)
     {
-        // only for testing
         Wt::WContainerWidget *contall = new Wt::WContainerWidget(root());
         Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
         contall->setLayout(blayout);
@@ -78,6 +79,10 @@ public:
         cbMapType->addItem("Menu");
         conth->layout()->addWidget(cbMapType);
 
+        Wt::WGeoPosEdit *geoEdit = new Wt::WGeoPosEdit();
+        blayout->addWidget(geoEdit, Wt::WBorderLayout::South);
+
+
         drawMap(0);
     }
 
@@ -87,28 +92,28 @@ public:
     {
         contw_->clear();
         gmap_ = new Wt::WGoogleMap(contw_);
-        gmap_->setCenter(Wt::WGoogleMap::LatLng(47.01887777, 8.651888), 13);
+        gmap_->setCenter(Wt::WLatLng(47.01887777, 8.651888), 13);
         gmap_->resize(700, 500);
 
 //        gmap_->clicked.connect(SLOT(this, Testapp_GM::positionPopup));
-        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup)); 
+        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup));
 
         if(ind)
         {
-            vector<Wt::WGoogleMap::LatLng> points;
-            points.push_back(Wt::WGoogleMap::LatLng(47.06354722, 8.647369)); // Engelstock
-            points.push_back(Wt::WGoogleMap::LatLng(47.01887777, 8.651888)); // Steisteg
+            vector<Wt::WLatLng> points;
+            points.push_back(Wt::WLatLng(47.06354722, 8.647369)); // Engelstock
+            points.push_back(Wt::WLatLng(47.01887777, 8.651888)); // Steisteg
             gmap_->addPolyline(points, "#FF0000", 2, 0.9);
 
             points.clear();
-            points.push_back(Wt::WGoogleMap::LatLng(47.063, 8.647)); // Engelstock
-            points.push_back(Wt::WGoogleMap::LatLng(47.018, 8.651)); // Steisteg
+            points.push_back(Wt::WLatLng(47.063, 8.647)); // Engelstock
+            points.push_back(Wt::WLatLng(47.018, 8.651)); // Steisteg
             gmap_->addPolyline(points, "#FFF000", 2, 0.9);
 
-            gmap_->zoomWindow(make_pair(Wt::WGoogleMap::LatLng(47.063, 8.647), Wt::WGoogleMap::LatLng(47.018, 8.651)));
+            gmap_->zoomWindow(make_pair(Wt::WLatLng(47.063, 8.647), Wt::WLatLng(47.018, 8.651)));
         }
         else
-            gmap_->addMarker(Wt::WGoogleMap::LatLng(47.01887777, 8.651888));
+            gmap_->addMarker(Wt::WLatLng(47.01887777, 8.651888));
 
 		scrollZoom();
 		dblclickZoom();
@@ -116,9 +121,9 @@ public:
 		gooBar();
     }
 
-    void positionPopup(Wt::WGoogleMap::LatLng lalo)
+    void positionPopup(Wt::WLatLng lalo)
     {
-        string latlonstr = lexical_cast<string>(lalo.lat_) + ", " + lexical_cast<string>(lalo.lon_);
+        string latlonstr = lexical_cast<string>(lalo.lat()) + ", " + lexical_cast<string>(lalo.lon());
         Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::Warning, true);
     }
 

@@ -341,7 +341,7 @@ void FlightTable::loadPage(unsigned int page)
 
     clear();
     createHeaderRow();
-    const int nFirst = (pageNr_ - 1) * entriesPerPage_;
+    const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < flights_.size())
     {
         vector<shared_ptr<Flight> >::iterator ibeg = flights_.begin();

@@ -87,13 +87,11 @@ void LocationTableRow::show()
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
 	wiDelete->clicked.connect(SLOT(this, LocationTableRow::remove));
 	// the map image
-	WImage *wiMap = new WImage("img/map.png");
-	wiMap->setToolTip("position anschauen");
-    wiMap->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
-	Wt::WSignalMapper<bool> *myMap = new Wt::WSignalMapper<bool>(this);
-    myMap->mapped.connect(SLOT(this, LocationTableRow::map));
-    myMap->mapConnect(wiMap->clicked, false);
+//	WImage *wiMap = new WImage("img/map.png");
+//	wiMap->setToolTip("position anschauen");
+//    wiMap->setStyleClass("operationImg");
+//	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
+//	wiMap->clicked.connect(SLOT(this, LocationTableRow::map));
 
 	// prepare the text
 	vector<string> vsText;
@@ -133,14 +131,6 @@ void LocationTableRow::edit()
         wiCancel->clicked.connect(SLOT(this, LocationTableRow::remove));
     else
         wiCancel->clicked.connect(SLOT(this, LocationTableRow::show));
-    // the map image
-	WImage *wiMap = new WImage("img/map.png");
-	wiMap->setToolTip("position setzen");
-    wiMap->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiMap);
-    Wt::WSignalMapper<bool> *myMap = new Wt::WSignalMapper<bool>(this);
-    myMap->mapped.connect(SLOT(this, LocationTableRow::map));
-    myMap->mapConnect(wiMap->clicked, true);
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
@@ -158,7 +148,7 @@ void LocationTableRow::edit()
     nfHeight_->setValue(location_->height());
 	table_->elementAt(rowNr_, colHeight)->addWidget(nfHeight_);
     // position
-    pfPosition_ = new Wt::WGeoPosEdit(Wt::WGeoPosEdit::WGS84_SEC);
+    pfPosition_ = new Wt::WGeoPosEdit(0, Wt::WGeoPosEdit::WGS84_SEC);
     pfPosition_->setPos(make_pair(location_->latitude(), location_->longitude()));
 	table_->elementAt(rowNr_, colPosition)->addWidget(pfPosition_);
 	// use as takeoff
@@ -229,9 +219,9 @@ void LocationTableRow::remove()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void LocationTableRow::map(bool editable)
+void LocationTableRow::map()
 {
-    mapDlg_ = new Wt::Ext::Dialog(editable ? "Doubleclick at the new location" : "View the location");
+    mapDlg_ = new Wt::Ext::Dialog("View the location");
     mapDlg_->resize(500, 400);
     mapDlg_->setSizeGripEnabled(false);
     Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
@@ -241,12 +231,7 @@ void LocationTableRow::map(bool editable)
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
 	gmap->addHierarchicalMapTypeControl();
-	if(editable)
-	{
-        gmap->enableGoogleBar();
-        gmap->dblclicked.connect(SLOT(this, LocationTableRow::setPos));
-	}
-    const pair<double, double> pdpos = (editable ? pfPosition_->pos() : location_->pos());
+    const pair<double, double> pdpos = location_->pos();
     if(pdpos.first != 0.0 && pdpos.second != 0.0)
     {
         Wt::WLatLng lalo(pdpos.first, pdpos.second);
@@ -258,16 +243,6 @@ void LocationTableRow::map(bool editable)
     btnCancel->clicked.connect(SLOT(this, LocationTableRow::closeDlg));
 
     mapDlg_->show();
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void LocationTableRow::setPos(Wt::WLatLng pos)
-{
-    assert(mapDlg_);
-
-    pfPosition_->setPos(make_pair(pos.lat(), pos.lon()));
-
-    mapDlg_->accept();
-    delete mapDlg_;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationTableRow::closeDlg()
