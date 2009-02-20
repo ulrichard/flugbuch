@@ -272,6 +272,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\web\stat\Wt\WGeoPosEdit.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\web\stat\Wt\WGoogleMap.cpp"
 				>
 			</File>

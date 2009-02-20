@@ -1,5 +1,6 @@
 [Files]
-Source: ..\..\proj\msvc8\flugbuch2\Release\flugbuch2_wt.exe; DestDir: {app}
+Source: ..\..\proj\CodeBlocks\Flugbuch2_wt\bin\Release_MSVC\Flugbuch2_wt.exe; DestDir: {app}
+Source: ..\..\proj\CodeBlocks\Flugbuch2_wt\bin\Release_MSVC\Flugbuch2_wt.exe.manifest; DestDir: {app}
 Source: ..\..\res\*.*; DestDir: {app}; Excludes: *\.svn\*; Flags: recursesubdirs
 Source: ..\wt_config.xml; DestDir: {app}
 Source: vcredist_x86.exe; DestDir: {tmp}; Flags: deleteafterinstall
@@ -9,7 +10,7 @@ Name: {group}\Web Client; Filename: http://localhost:8080
 [Setup]
 AppCopyright=Richard Ulrich
 AppName=Flugbuch2
-AppVerName=2.0.0.3
+AppVerName=2.0.0.4
 ShowLanguageDialog=no
 DefaultDirName={pf}\flugbuch2
 OutputBaseFilename=flugbuch2_inst
