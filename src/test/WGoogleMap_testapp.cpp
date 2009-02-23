@@ -10,6 +10,7 @@
 #include <Wt/Ext/CheckBox>
 #include <Wt/WHBoxLayout>
 #include <Wt/Ext/MessageBox>
+#include <Wt/WBreak>
 
 #include <Wt/WGoogleMap>
 #include <Wt/WGeoPosEdit>
@@ -79,9 +80,8 @@ public:
         cbMapType->addItem("Menu");
         conth->layout()->addWidget(cbMapType);
 
-        Wt::WGeoPosEdit *geoEdit = new Wt::WGeoPosEdit();
-        blayout->addWidget(geoEdit, Wt::WBorderLayout::South);
-
+        Wt::WGeoPosEdit *geoEditS = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_SEC);
+        blayout->addWidget(geoEditS, Wt::WBorderLayout::South);
 
         drawMap(0);
     }
@@ -204,7 +204,7 @@ Wt::WApplication *createApplication_GM(const Wt::WEnvironment& env)
 	return app;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-int main(int argc, char *argv[])
+int __main(int argc, char *argv[])
 {
 	return Wt::WRun(argc, argv, &createApplication_GM);
 }

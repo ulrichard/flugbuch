@@ -60,7 +60,7 @@ void MainMenu::info(void)
                      << "<br>Folgende Drittbibliotheken wurden verwendet:"
                      << "<br>www.webtoolkit.eu  " << Wt::WEnvironment::libraryVersion()
                      << "<br>www.boost.org " << BOOST_VERSION / 100000 << "." << (BOOST_VERSION / 100) % 1000 << "." << BOOST_VERSION % 100
-                     << "<br>www.extjs.com"
+                     << "<br>www.extjs.com 2.1"
                      << "<br>dtemplatelib.sourceforge.net"
                      << "<br>mdbtools.sourceforge.net");
 

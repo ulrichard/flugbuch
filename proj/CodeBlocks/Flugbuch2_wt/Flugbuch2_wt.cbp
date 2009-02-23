@@ -29,6 +29,9 @@
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
+					<Add library="DTL" />
+					<Add library="odbc" />
+					<Add directory="/usr/local/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">
@@ -58,6 +61,7 @@
 					<Add library="/usr/lib/libboost_program_options-mt-s.a" />
 					<Add library="/usr/lib/libboost_regex-mt-s.a" />
 					<Add library="/usr/lib/libboost_system-mt-s.a" />
+					<Add library="/usr/lib/libpthread.a" />
 				</Linker>
 			</Target>
 			<Target title="Release_http">
@@ -83,6 +87,8 @@
 					<Add library="wt" />
 					<Add library="wtext" />
 					<Add library="wthttp" />
+					<Add library="DTL" />
+					<Add library="odbc" />
 				</Linker>
 			</Target>
 			<Target title="Debug_MSVC">
@@ -104,11 +110,11 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_DEBUG" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
-					<Add directory="..\..\..\src\web\stat" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
+					<Add directory="../../../src/web/stat" />
 				</Compiler>
 				<Linker>
 					<Add option="/DEBUG" />
@@ -144,11 +150,11 @@
 					<Add option="/DWIN32" />
 					<Add option="/DNDEBUG" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
-					<Add directory="..\..\..\src\web\stat" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
+					<Add directory="../../../src/web/stat" />
 				</Compiler>
 				<Linker>
 					<Add library="libboost_date_time-vc80-mt-1_38" />
@@ -184,7 +190,12 @@
 		<Unit filename="../../../src/core/FlightDatabase.h" />
 		<Unit filename="../../../src/core/MainExternalIncludes.h" />
 		<Unit filename="../../../src/inout/inout.h" />
-		<Unit filename="../../../src/inout/inout_flyhigh.cpp" />
+		<Unit filename="../../../src/inout/inout_flyhigh.cpp">
+			<Option target="Debug" />
+			<Option target="Release_http" />
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
 		<Unit filename="../../../src/inout/inout_flyhigh.h" />
 		<Unit filename="../../../src/inout/inout_mdb.cpp">
 			<Option target="Debug" />
