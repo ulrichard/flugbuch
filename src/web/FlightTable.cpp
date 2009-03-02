@@ -46,7 +46,7 @@ LocationField::LocationField(const boost::shared_ptr<flb::FlightDatabase>  fligh
     impl_->layout()->addWidget(cbArea_);
     impl_->layout()->addWidget(cbLocation_);
 
-    cbArea_->activated.connect(SLOT(this, LocationField::fillLocations));
+    cbArea_->activated().connect(SLOT(this, LocationField::fillLocations));
 
 	fillAreas();
 }
@@ -132,13 +132,13 @@ void FlightTableRow::show()
 	wiEdit->setToolTip("Flug bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
-	wiEdit->clicked.connect(SLOT(this, FlightTableRow::edit));
+	wiEdit->clicked().connect(SLOT(this, FlightTableRow::edit));
 
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Flug löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
-	wiDelete->clicked.connect(SLOT(this, FlightTableRow::remove));
+	wiDelete->clicked().connect(SLOT(this, FlightTableRow::remove));
 
 	if(flight_->hasTrack())
 	{
@@ -185,16 +185,16 @@ void FlightTableRow::edit()
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
-	wiSave->clicked.connect(SLOT(this, FlightTableRow::save));
+	wiSave->clicked().connect(SLOT(this, FlightTableRow::save));
 	// the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
 	if(isNewEntry_)
-        wiCancel->clicked.connect(SLOT(this, FlightTableRow::remove));
+        wiCancel->clicked().connect(SLOT(this, FlightTableRow::remove));
     else
-        wiCancel->clicked.connect(SLOT(this, FlightTableRow::show));
+        wiCancel->clicked().connect(SLOT(this, FlightTableRow::show));
 	// flight number
 	nbrEdit_ = new Wt::Ext::NumberField();
 	nbrEdit_->setValue(flight_->number());
@@ -295,7 +295,7 @@ void FlightTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
 
     }
 
@@ -310,7 +310,7 @@ void FlightTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -378,7 +378,7 @@ void FlightTable::createFooterRow()
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Flug hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
-	wiAdd->clicked.connect(SLOT(this, FlightTable::addNewFlight));
+	wiAdd->clicked().connect(SLOT(this, FlightTable::addNewFlight));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightTableRow* FlightTable::addFlight(shared_ptr<Flight> fl, size_t row, bool newEntry)
@@ -408,7 +408,7 @@ void FlightTable::addNewFlight()
         // first make sure, we have gliders and locations defined
         if(!flightDb_->Gliders.size())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggeraet.", Wt::Warning, true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggeraet.", Wt::WFlags<Wt::StandardButton>(), true);
             return;
         }
         // find the first takeoff and the first landing place
@@ -418,12 +418,12 @@ void FlightTable::addNewFlight()
                             bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_LANDING));
         if(itTo == flightDb_->Locations.end())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::Warning, true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::WFlags<Wt::StandardButton>(), true);
             return;
         }
         if(itLa == flightDb_->Locations.end())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Landeplatz.", Wt::Warning, true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Landeplatz.", Wt::WFlags<Wt::StandardButton>(), true);
             return;
         }
         // create the new flight
@@ -451,7 +451,7 @@ FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     table_  = new FlightTable(flightDb, impl_);
     pglist_ = new PagesList(table_);
     // signals
-    cbArea_->activated.connect(SLOT(this, FlightPanel::filter));
+    cbArea_->activated().connect(SLOT(this, FlightPanel::filter));
 
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();

@@ -154,7 +154,7 @@ void FlightLogApp::loadTestDb()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -175,7 +175,7 @@ void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string 
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -190,7 +190,7 @@ void FlightLogApp::saveDb()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error saving flight db", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error saving flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -211,7 +211,7 @@ void FlightLogApp::reload()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error reloading flight db", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error reloading flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

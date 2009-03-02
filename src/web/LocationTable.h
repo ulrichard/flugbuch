@@ -10,7 +10,6 @@
 #include <Wt/WCompositeWidget>
 #include <Wt/WTable>
 #include <Wt/WPanel>
-#include <Wt/WLatLng>
 // std lib
 #include <vector>
 #include <string>

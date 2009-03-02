@@ -50,7 +50,7 @@ void PagesList::load()
         WText *previous = new WText("<", impl_);
         previous->setStyleClass("pageNumbers");
         previous->setToolTip("vorherige");
-        previous->clicked.connect(SLOT(this, PagesList::select));
+        previous->clicked().connect(SLOT(this, PagesList::select));
 	}
     for(unsigned int i=0; i<pagesCount; ++i)
     {
@@ -60,7 +60,7 @@ void PagesList::load()
         else
         {
             wtxt->setStyleClass("pageNumbers");
-            wtxt->clicked.connect(SLOT(this, PagesList::select));
+            wtxt->clicked().connect(SLOT(this, PagesList::select));
         }
     }
 	if(pagesCount > 1 && table_->pageNr() < pagesCount)
@@ -68,7 +68,7 @@ void PagesList::load()
         WText *next = new WText(">", impl_);
         next->setStyleClass("pageNumbers");
         next->setToolTip("nächste");
-        next->clicked.connect(SLOT(this, PagesList::select));
+        next->clicked().connect(SLOT(this, PagesList::select));
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

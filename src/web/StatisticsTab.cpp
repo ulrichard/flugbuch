@@ -68,7 +68,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     Wt::WText *wtStat = new Wt::WText("Auswertung");
     wtStat->setStyleClass("FilterSubTitle");
     cbStatSel_ = new Wt::Ext::ComboBox();
-    cbStatSel_->activated.connect(SLOT(this, StatisticsPanel::load));
+    cbStatSel_->activated().connect(SLOT(this, StatisticsPanel::load));
     for(boost::ptr_map<std::string, StatBase>::iterator it = stats_.begin(); it != stats_.end(); ++it)
         cbStatSel_->addItem(it->first);
     //for_each(stats_.begin(), stats_.end(), bind(&Wt::Ext::ComboBox::addItem, cbStatSel_, bind(pair<string, StatBase*>::first)));
@@ -87,7 +87,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
         selind.insert(i);
     sbCountry_->setSelectedIndexes(selind);
     sbCountry_->setVerticalSize(5);
-    sbCountry_->clicked.connect(SLOT(this, StatisticsPanel::load));
+    sbCountry_->clicked().connect(SLOT(this, StatisticsPanel::load));
     // years
     Wt::WText *wtYear = new Wt::WText("Jahr");
     wtYear->setStyleClass("FilterSubTitle");
@@ -103,7 +103,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
         selind.insert(i);
     sbYear_->setSelectedIndexes(selind);
     sbYear_->setVerticalSize(5);
-    sbYear_->clicked.connect(SLOT(this, StatisticsPanel::load));
+    sbYear_->clicked().connect(SLOT(this, StatisticsPanel::load));
     // glider class
     Wt::WText *wtClassi = new Wt::WText("Schirmklasse");
     wtClassi->setStyleClass("FilterSubTitle");
@@ -119,7 +119,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
         selind.insert(i);
     sbClassi_->setSelectedIndexes(selind);
     sbClassi_->setVerticalSize(5);
-    sbClassi_->clicked.connect(SLOT(this, StatisticsPanel::load));
+    sbClassi_->clicked().connect(SLOT(this, StatisticsPanel::load));
 
 
     topBar->layout()->addWidget(wtStat);

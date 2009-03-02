@@ -27,15 +27,15 @@ MainMenu::MainMenu(Wt::WContainerWidget *parent)
 
     Wt::Ext::MenuItem *item = menu->addItem("Flugbuch speichern");
     item->setIcon("img/save.png");
-    item->activated.connect(SLOT(app, FlightLogApp::saveDb));
+    item->activated().connect(SLOT(app, FlightLogApp::saveDb));
 
     item = menu->addItem("Änderungen verwerfen");
     item->setIcon("img/undo.png");
-    item->activated.connect(SLOT(app, FlightLogApp::reload));
+    item->activated().connect(SLOT(app, FlightLogApp::reload));
 
     item = menu->addItem("Logout");
     item->setIcon("img/home.png");
-    item->activated.connect(SLOT(app, FlightLogApp::doLogin));
+    item->activated().connect(SLOT(app, FlightLogApp::doLogin));
 
 
     // create the help menu
@@ -47,7 +47,7 @@ MainMenu::MainMenu(Wt::WContainerWidget *parent)
 //    item->setIcon("icons/yellow-folder-open.png");
 
     item = menu->addItem("Informationen");
-    item->activated.connect(SLOT(this, MainMenu::info));
+    item->activated().connect(SLOT(this, MainMenu::info));
 
 
 }
@@ -64,7 +64,7 @@ void MainMenu::info(void)
                      << "<br>dtemplatelib.sourceforge.net"
                      << "<br>mdbtools.sourceforge.net");
 
-    Wt::Ext::MessageBox::show("Informationen zum Flugbuch2", msg, Wt::Information, true);
+    Wt::Ext::MessageBox::show("Informationen zum Flugbuch2", msg, Wt::WFlags<Wt::StandardButton>(), true);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

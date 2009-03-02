@@ -35,25 +35,25 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     gmap->enableScrollWheelZoom();
     gmap->addHierarchicalMapTypeControl();
 
-    pair<Wt::WLatLng, Wt::WLatLng> bbox = make_pair(Wt::WLatLng(90, 180), Wt::WLatLng(-90, -180));
+    pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
     for(flb::FlightDatabase::SeqFlights::const_iterator it = flights.begin(); it != flights.end(); ++it)
     {
-        vector<Wt::WLatLng> points;
-        points.push_back(Wt::WLatLng((*it)->takeoff()->pos()));
+        vector<Wt::WGoogleMap::Coordinate> points;
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->takeoff()->pos()));
         transform((*it)->Waypoints.begin(), (*it)->Waypoints.end(), back_inserter(points),
-            bind(bll::constructor<Wt::WLatLng>(), bind(&flb::Location::pos, *bll::_1)));
-        points.push_back(Wt::WLatLng((*it)->landing()->pos()));
+            bind(bll::constructor<Wt::WGoogleMap::Coordinate>(), bind(&flb::Location::pos, *bll::_1)));
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->landing()->pos()));
 
         // bbox
-        for(vector<Wt::WLatLng>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+        for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
         {
-            bbox.first.setLat( min(bbox.first.lat(),  itb->lat()));
-            bbox.first.setLon( min(bbox.first.lon(),  itb->lon()));
-            bbox.second.setLat(max(bbox.second.lat(), itb->lat()));
-            bbox.second.setLon(max(bbox.second.lon(), itb->lon()));
+            bbox.first.setLatitude(  min(bbox.first.latitude(),   itb->latitude()));
+            bbox.first.setLongitude( min(bbox.first.longitude(),  itb->longitude()));
+            bbox.second.setLatitude( max(bbox.second.latitude(),  itb->latitude()));
+            bbox.second.setLongitude(max(bbox.second.longitude(), itb->longitude()));
         }
 
-        gmap->addPolyline(points, "#FF0000", 2, 0.7);
+        gmap->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.7);
     }
 
     gmap->zoomWindow(bbox);

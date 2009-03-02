@@ -54,13 +54,13 @@ void GliderTableRow::show()
 	wiEdit->setToolTip("Schirm bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
-	wiEdit->clicked.connect(SLOT(this, GliderTableRow::edit));
+	wiEdit->clicked().connect(SLOT(this, GliderTableRow::edit));
 
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Schirm löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
-	wiDelete->clicked.connect(SLOT(this, GliderTableRow::remove));
+	wiDelete->clicked().connect(SLOT(this, GliderTableRow::remove));
 
 	// prepare the text
 	vector<string> vsText;
@@ -90,16 +90,16 @@ void GliderTableRow::edit()
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
-	wiSave->clicked.connect(SLOT(this, GliderTableRow::save));
+	wiSave->clicked().connect(SLOT(this, GliderTableRow::save));
     // the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
 	if(isNewEntry_)
-        wiCancel->clicked.connect(SLOT(this, GliderTableRow::remove));
+        wiCancel->clicked().connect(SLOT(this, GliderTableRow::remove));
     else
-        wiCancel->clicked.connect(SLOT(this, GliderTableRow::show));
+        wiCancel->clicked().connect(SLOT(this, GliderTableRow::show));
 	// brand
 	edBrand_ = new Wt::Ext::LineEdit();
 	edBrand_->setText(glider_->brand());
@@ -178,7 +178,7 @@ void GliderTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -191,7 +191,7 @@ void GliderTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -223,7 +223,7 @@ void GliderTable::createFooterRow()
     wiAdd->setAlternateText("add new glider");
     wiAdd->setToolTip("Schirm hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
-	wiAdd->clicked.connect(SLOT(this, GliderTable::addNewGlider));
+	wiAdd->clicked().connect(SLOT(this, GliderTable::addNewGlider));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 GliderTableRow * GliderTable::addGlider(shared_ptr<Glider> gld, size_t row, bool newEntry)
@@ -304,8 +304,8 @@ GliderPanel::GliderPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     table_  = new GliderTable(flightDb, impl_);
     pglist_ = new PagesList(table_);
     // signals
-    cbBrand_->activated.connect(SLOT(this, GliderPanel::filter));
-    cbClassi_->activated.connect(SLOT(this, GliderPanel::filter));
+    cbBrand_->activated().connect(SLOT(this, GliderPanel::filter));
+    cbClassi_->activated().connect(SLOT(this, GliderPanel::filter));
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
     topBar->setLayout(new Wt::WHBoxLayout());

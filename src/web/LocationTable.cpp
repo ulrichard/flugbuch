@@ -79,13 +79,13 @@ void LocationTableRow::show()
 	wiEdit->setToolTip("Ort bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
-	wiEdit->clicked.connect(SLOT(this, LocationTableRow::edit));
+	wiEdit->clicked().connect(SLOT(this, LocationTableRow::edit));
     // the delete image
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Ort löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
-	wiDelete->clicked.connect(SLOT(this, LocationTableRow::remove));
+	wiDelete->clicked().connect(SLOT(this, LocationTableRow::remove));
 	// the map image
 //	WImage *wiMap = new WImage("img/map.png");
 //	wiMap->setToolTip("position anschauen");
@@ -121,16 +121,16 @@ void LocationTableRow::edit()
 	wiSave->setToolTip("speichern");
     wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
-	wiSave->clicked.connect(SLOT(this, LocationTableRow::save));
+	wiSave->clicked().connect(SLOT(this, LocationTableRow::save));
 	// the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
 	if(isNewEntry_)
-        wiCancel->clicked.connect(SLOT(this, LocationTableRow::remove));
+        wiCancel->clicked().connect(SLOT(this, LocationTableRow::remove));
     else
-        wiCancel->clicked.connect(SLOT(this, LocationTableRow::show));
+        wiCancel->clicked().connect(SLOT(this, LocationTableRow::show));
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
@@ -202,7 +202,7 @@ void LocationTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -215,7 +215,7 @@ void LocationTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -234,13 +234,13 @@ void LocationTableRow::map()
     const pair<double, double> pdpos = location_->pos();
     if(pdpos.first != 0.0 && pdpos.second != 0.0)
     {
-        Wt::WLatLng lalo(pdpos.first, pdpos.second);
+        Wt::WGoogleMap::Coordinate lalo(pdpos.first, pdpos.second);
         gmap->setCenter(lalo, 13);
         gmap->addMarker(lalo);
     }
     Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
     mapDlg_->addButton(btnCancel);
-    btnCancel->clicked.connect(SLOT(this, LocationTableRow::closeDlg));
+    btnCancel->clicked().connect(SLOT(this, LocationTableRow::closeDlg));
 
     mapDlg_->show();
 }
@@ -277,7 +277,7 @@ void LocationTable::createFooterRow()
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Orte hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
-	wiAdd->clicked.connect(SLOT(this, LocationTable::addNewLocation));
+	wiAdd->clicked().connect(SLOT(this, LocationTable::addNewLocation));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 LocationTableRow* LocationTable::addLocation(shared_ptr<Location> loc, size_t row, bool newEntry)
@@ -292,7 +292,7 @@ void LocationTable::addNewLocation()
 {
     if(!flightDb_->FlightAreas.size())
     {
-        Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggebiet.", Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggebiet.", Wt::WFlags<Wt::StandardButton>(), true);
         return;
     }
     shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
@@ -369,13 +369,13 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
     table_  = new LocationTable(flightDb, impl_);
     pglist_ = new PagesList(table_);
     // signals
-    cbArea_->activated.connect(SLOT(this, LocationPanel::filter));
-    cbTakeoff_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbLanding_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbWayPnt_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbTakeoff_->unChecked.connect(SLOT(this, LocationPanel::filter));
-    cbLanding_->unChecked.connect(SLOT(this, LocationPanel::filter));
-    cbWayPnt_->unChecked.connect(SLOT(this, LocationPanel::filter));
+    cbArea_->activated().connect(SLOT(this, LocationPanel::filter));
+    cbTakeoff_->checked().connect(SLOT(this, LocationPanel::filter));
+    cbLanding_->checked().connect(SLOT(this, LocationPanel::filter));
+    cbWayPnt_->checked().connect(SLOT(this, LocationPanel::filter));
+    cbTakeoff_->unChecked().connect(SLOT(this, LocationPanel::filter));
+    cbLanding_->unChecked().connect(SLOT(this, LocationPanel::filter));
+    cbWayPnt_->unChecked().connect(SLOT(this, LocationPanel::filter));
 
 /*
     cbTakeoff_->checked.connect(SLOT(this, LocationPanel::filter));

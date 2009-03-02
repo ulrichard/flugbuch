@@ -2,7 +2,7 @@
 #define WGEOPOSEDIT_INCLUDED
 
 #include <Wt/WCompositeWidget>
-#include <Wt/WLatLng>
+#include <Wt/WGoogleMap>
 #include <utility>
 
 namespace Wt
@@ -40,7 +40,7 @@ public:
 
 private:
     void showMap();
-    void setPosFromDlg(WLatLng pos);
+    void setPosFromDlg(WGoogleMap::Coordinate pos);
     void closeDlg();
 
     PositionFormat       format_;

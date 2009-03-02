@@ -101,7 +101,7 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
     mapIcon_ = new Wt::WImage("resources/slider-thumb-v.gif"); // we might want to add an image that's better suited to wt/resources
     impl_->layout()->addWidget(mapIcon_);
     mapIcon_->setToolTip("pick position from map");
-    mapIcon_->clicked.connect(SLOT(this, WGeoPosEdit::showMap));
+    mapIcon_->clicked().connect(SLOT(this, WGeoPosEdit::showMap));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WGeoPosEdit::setPos(std::pair<double, double> pos)
@@ -238,26 +238,26 @@ void WGeoPosEdit::showMap()
 	gmap->enableDragging();
 	gmap->addHierarchicalMapTypeControl();
     gmap->enableGoogleBar();
-    gmap->dblclicked.connect(SLOT(this, WGeoPosEdit::setPosFromDlg));
+    gmap->doubleClicked().connect(SLOT(this, WGeoPosEdit::setPosFromDlg));
     const pair<double, double> pdpos = pos();
     if(pdpos.first != 0.0 && pdpos.second != 0.0)
     {
-        Wt::WLatLng lalo(pdpos.first, pdpos.second);
+        WGoogleMap::Coordinate lalo(pdpos.first, pdpos.second);
         gmap->setCenter(lalo, 13);
         gmap->addMarker(lalo);
     }
     Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
     mapDlg_->addButton(btnCancel);
-    btnCancel->clicked.connect(SLOT(this, WGeoPosEdit::closeDlg));
+    btnCancel->clicked().connect(SLOT(this, WGeoPosEdit::closeDlg));
 
     mapDlg_->show();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void WGeoPosEdit::setPosFromDlg(WLatLng pos)
+void WGeoPosEdit::setPosFromDlg(WGoogleMap::Coordinate pos)
 {
     assert(mapDlg_);
 
-    setPos(make_pair(pos.lat(), pos.lon()));
+    setPos(make_pair(pos.latitude(), pos.longitude()));
 
     mapDlg_->accept();
     delete mapDlg_;

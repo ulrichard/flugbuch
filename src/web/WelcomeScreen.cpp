@@ -55,11 +55,11 @@ Wt::WWidget * WelcomeScreen::makeNormalLoginTab()
     Wt::WLabel *passwordLabel = new Wt::WLabel("Password: ", layout->elementAt(1, 0));
     nl_password_ = new Wt::WLineEdit(layout->elementAt(1, 1));
     nl_password_->setEchoMode(Wt::WLineEdit::Password);
-    nl_password_->enterPressed.connect(SLOT(this, WelcomeScreen::doLogin));
+    nl_password_->enterPressed().connect(SLOT(this, WelcomeScreen::doLogin));
     passwordLabel->setBuddy(nl_password_);
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Login", layout->elementAt(2, 1));
-    LoginButton->clicked.connect(SLOT( this, WelcomeScreen::doLogin));
+    LoginButton->clicked().connect(SLOT( this, WelcomeScreen::doLogin));
 
     return cont;
 }
@@ -105,7 +105,7 @@ Wt::WWidget * WelcomeScreen::makeRegistrationTab()
     Wt::WLabel *passwordLabel2 = new Wt::WLabel("wiederholen: ", layout->elementAt(2, 0));
     rg_password2_ = new Wt::WLineEdit(layout->elementAt(2, 1));
     rg_password2_->setEchoMode(Wt::WLineEdit::Password);
-    rg_password2_->enterPressed.connect(SLOT(this, WelcomeScreen::doRegister));
+    rg_password2_->enterPressed().connect(SLOT(this, WelcomeScreen::doRegister));
     passwordLabel2->setBuddy(rg_password2_);
 
     Wt::WLabel *stdflareas = new Wt::WLabel("Standardfluggebiete importieren: ", layout->elementAt(3, 0));
@@ -113,7 +113,7 @@ Wt::WWidget * WelcomeScreen::makeRegistrationTab()
     stdflareas->setBuddy(rg_useStdLoc_);
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Registrieren", layout->elementAt(4, 1));
-    LoginButton->clicked.connect(SLOT( this, WelcomeScreen::doRegister));
+    LoginButton->clicked().connect(SLOT( this, WelcomeScreen::doRegister));
 
     return cont;
 }
@@ -134,7 +134,7 @@ Wt::WWidget * WelcomeScreen::makeTestDbTab()
     td_txt_ = new Wt::WText("Hier koennen sie mit einer kleinen Test-Datenbank das Programm ausprobieren.", cont);
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Testdatenbank laden", cont);
-    LoginButton->clicked.connect(SLOT( this, WelcomeScreen::doTest));
+    LoginButton->clicked().connect(SLOT( this, WelcomeScreen::doTest));
 
     return cont;
 }
@@ -154,8 +154,8 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     Wt::WBreak *brk1 = new Wt::WBreak(cont);
 
     im_uploader_ = new Wt::WFileUpload(cont);
-    im_uploader_->uploaded.connect(SLOT(this, WelcomeScreen::doImport));
-    im_uploader_->fileTooLarge.connect(SLOT(this, WelcomeScreen::uploadTooBig));
+    im_uploader_->uploaded().connect(SLOT(this, WelcomeScreen::doImport));
+    im_uploader_->fileTooLarge().connect(SLOT(this, WelcomeScreen::uploadTooBig));
 
     Wt::WTable *layout = new Wt::WTable(cont);
 
@@ -167,13 +167,13 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     Wt::WLabel *passwordLabel = new Wt::WLabel("Passwort: ", layout->elementAt(1, 0));
     im_password_ = new Wt::WLineEdit(layout->elementAt(1, 1));
     im_password_->setEchoMode(Wt::WLineEdit::Password);
-    im_password_->enterPressed.connect(SLOT(this, WelcomeScreen::startUpload));
+    im_password_->enterPressed().connect(SLOT(this, WelcomeScreen::startUpload));
     passwordLabel->setBuddy(im_password_);
 
     Wt::WBreak *brk2 = new Wt::WBreak(cont);
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Importieren", cont);
-    LoginButton->clicked.connect(SLOT(this, WelcomeScreen::startUpload));
+    LoginButton->clicked().connect(SLOT(this, WelcomeScreen::startUpload));
 
 
     return cont;

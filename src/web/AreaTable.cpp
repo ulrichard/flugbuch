@@ -53,13 +53,13 @@ void AreaTableRow::show()
 	wiEdit->setToolTip("Fluggebiet bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
-	wiEdit->clicked.connect(SLOT(this, AreaTableRow::edit));
+	wiEdit->clicked().connect(SLOT(this, AreaTableRow::edit));
 
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Fluggebiet löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
-	wiDelete->clicked.connect(SLOT(this, AreaTableRow::remove));
+	wiDelete->clicked().connect(SLOT(this, AreaTableRow::remove));
 
 	// prepare the text
 	vector<string> vsText;
@@ -85,16 +85,16 @@ void AreaTableRow::edit()
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
-	wiSave->clicked.connect(SLOT(this, AreaTableRow::save));
+	wiSave->clicked().connect(SLOT(this, AreaTableRow::save));
 	// the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
 	if(isNewEntry_)
-        wiCancel->clicked.connect(SLOT(this, AreaTableRow::remove));
+        wiCancel->clicked().connect(SLOT(this, AreaTableRow::remove));
     else
-        wiCancel->clicked.connect(SLOT(this, AreaTableRow::show));
+        wiCancel->clicked().connect(SLOT(this, AreaTableRow::show));
     // name
     edName_ = new Wt::Ext::LineEdit();
     edName_->setText(area_->name());
@@ -131,7 +131,7 @@ void AreaTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -144,7 +144,7 @@ void AreaTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Warning, true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -174,7 +174,7 @@ void AreaTable::createFooterRow()
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Flug hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
-	wiAdd->clicked.connect(SLOT(this, AreaTable::addNewArea));
+	wiAdd->clicked().connect(SLOT(this, AreaTable::addNewArea));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 AreaTableRow* AreaTable::addArea(shared_ptr<FlightArea> flar, size_t row, bool newEntry)
@@ -245,7 +245,7 @@ AreaPanel::AreaPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget 
     table_  = new AreaTable(flightDb, impl_);
     pglist_ = new PagesList(table_);
     // signals
-    cbCountry_->activated.connect(SLOT(this, AreaPanel::filter));
+    cbCountry_->activated().connect(SLOT(this, AreaPanel::filter));
     // header
     Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
     topBar->setLayout(new Wt::WHBoxLayout());
