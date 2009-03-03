@@ -46,35 +46,35 @@ public:
         blayout->addWidget(conth, Wt::WBorderLayout::North);
 
         Wt::Ext::ComboBox *cbStatSel = new Wt::Ext::ComboBox();
-        cbStatSel->activated.connect(SLOT(this, Testapp_GM::drawMap));
+        cbStatSel->activated().connect(SLOT(this, Testapp_GM::drawMap));
         cbStatSel->addItem("Marker");
         cbStatSel->addItem("Polyline");
         conth->layout()->addWidget(cbStatSel);
 
 		cbScrollZoom_ = new Wt::Ext::CheckBox("ScrollWheelZoom");
-		cbScrollZoom_->checked.connect(SLOT(this, Testapp_GM::scrollZoom));
-		cbScrollZoom_->unChecked.connect(SLOT(this, Testapp_GM::scrollZoom));
+		cbScrollZoom_->checked().connect(SLOT(this, Testapp_GM::scrollZoom));
+		cbScrollZoom_->unChecked().connect(SLOT(this, Testapp_GM::scrollZoom));
 		conth->layout()->addWidget(cbScrollZoom_);
 
 		cbDblClickZoom_ = new Wt::Ext::CheckBox("DoubleClickZoom");
 		cbDblClickZoom_->setChecked(true);
-		cbDblClickZoom_->checked.connect(SLOT(this, Testapp_GM::dblclickZoom));
-		cbDblClickZoom_->unChecked.connect(SLOT(this, Testapp_GM::dblclickZoom));
+		cbDblClickZoom_->checked().connect(SLOT(this, Testapp_GM::dblclickZoom));
+		cbDblClickZoom_->unChecked().connect(SLOT(this, Testapp_GM::dblclickZoom));
 		conth->layout()->addWidget(cbDblClickZoom_);
 
         cbDragging_ = new Wt::Ext::CheckBox("Dragging");
         cbDragging_->setChecked(true);
-        cbDragging_->checked.connect(SLOT(this, Testapp_GM::dragging));
-        cbDragging_->unChecked.connect(SLOT(this, Testapp_GM::dragging));
+        cbDragging_->checked().connect(SLOT(this, Testapp_GM::dragging));
+        cbDragging_->unChecked().connect(SLOT(this, Testapp_GM::dragging));
         conth->layout()->addWidget(cbDragging_);
 
         cbGooBar_ = new Wt::Ext::CheckBox("GoogleBar");
-        cbGooBar_->checked.connect(SLOT(this, Testapp_GM::gooBar));
-        cbGooBar_->unChecked.connect(SLOT(this, Testapp_GM::gooBar));
+        cbGooBar_->checked().connect(SLOT(this, Testapp_GM::gooBar));
+        cbGooBar_->unChecked().connect(SLOT(this, Testapp_GM::gooBar));
         conth->layout()->addWidget(cbGooBar_);
 
         Wt::Ext::ComboBox *cbMapType = new Wt::Ext::ComboBox();
-        cbMapType->activated.connect(SLOT(this, Testapp_GM::mapType));
+        cbMapType->activated().connect(SLOT(this, Testapp_GM::mapType));
         cbMapType->addItem("Normal");
         cbMapType->addItem("Hierarchical");
         cbMapType->addItem("Menu");
@@ -92,28 +92,28 @@ public:
     {
         contw_->clear();
         gmap_ = new Wt::WGoogleMap(contw_);
-        gmap_->setCenter(Wt::WLatLng(47.01887777, 8.651888), 13);
+        gmap_->setCenter(Wt::WGoogleMap::Coordinate(47.01887777, 8.651888), 13);
         gmap_->resize(700, 500);
 
-//        gmap_->clicked.connect(SLOT(this, Testapp_GM::positionPopup));
-        gmap_->dblclicked.connect(SLOT(this, Testapp_GM::positionPopup));
+//        gmap_->clicked().connect(SLOT(this, Testapp_GM::positionPopup));
+        gmap_->doubleClicked().connect(SLOT(this, Testapp_GM::positionPopup));
 
         if(ind)
         {
-            vector<Wt::WLatLng> points;
-            points.push_back(Wt::WLatLng(47.06354722, 8.647369)); // Engelstock
-            points.push_back(Wt::WLatLng(47.01887777, 8.651888)); // Steisteg
-            gmap_->addPolyline(points, "#FF0000", 2, 0.9);
+            vector<Wt::WGoogleMap::Coordinate> points;
+            points.push_back(Wt::WGoogleMap::Coordinate(47.06354722, 8.647369)); // Engelstock
+            points.push_back(Wt::WGoogleMap::Coordinate(47.01887777, 8.651888)); // Steisteg
+            gmap_->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.9);
 
             points.clear();
-            points.push_back(Wt::WLatLng(47.063, 8.647)); // Engelstock
-            points.push_back(Wt::WLatLng(47.018, 8.651)); // Steisteg
-            gmap_->addPolyline(points, "#FFF000", 2, 0.9);
+            points.push_back(Wt::WGoogleMap::Coordinate(47.063, 8.647)); // Engelstock
+            points.push_back(Wt::WGoogleMap::Coordinate(47.018, 8.651)); // Steisteg
+            gmap_->addPolyline(points, Wt::WColor("#FFF000"), 2, 0.9);
 
-            gmap_->zoomWindow(make_pair(Wt::WLatLng(47.063, 8.647), Wt::WLatLng(47.018, 8.651)));
+            gmap_->zoomWindow(make_pair(Wt::WGoogleMap::Coordinate(47.063, 8.647), Wt::WGoogleMap::Coordinate(47.018, 8.651)));
         }
         else
-            gmap_->addMarker(Wt::WLatLng(47.01887777, 8.651888));
+            gmap_->addMarker(Wt::WGoogleMap::Coordinate(47.01887777, 8.651888));
 
 		scrollZoom();
 		dblclickZoom();
@@ -121,10 +121,10 @@ public:
 		gooBar();
     }
 
-    void positionPopup(Wt::WLatLng lalo)
+    void positionPopup(Wt::WGoogleMap::Coordinate lalo)
     {
-        string latlonstr = lexical_cast<string>(lalo.lat()) + ", " + lexical_cast<string>(lalo.lon());
-        Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::Warning, true);
+        string latlonstr = lexical_cast<string>(lalo.latitude()) + ", " + lexical_cast<string>(lalo.longitude());
+        Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::WFlags<Wt::StandardButton>(), true);
     }
 
     void mapType(int ind)

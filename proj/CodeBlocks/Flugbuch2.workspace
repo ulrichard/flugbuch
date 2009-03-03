@@ -2,7 +2,7 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Flugbuch2">
 		<Project filename="Flugbuch2_unittests/Flugbuch2_unittests.cbp" />
-		<Project filename="Flugbuch2_wt/Flugbuch2_wt.cbp" active="1" />
-		<Project filename="tests_wt/tests_wt.cbp" />
+		<Project filename="Flugbuch2_wt/Flugbuch2_wt.cbp" />
+		<Project filename="tests_wt/tests_wt.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>

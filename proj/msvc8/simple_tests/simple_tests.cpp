@@ -6,6 +6,8 @@
 #include <Wt/WApplication>
 #include <Wt/WTabWidget>
 #include <Wt/WImage>
+#include <Wt/WStackedWidget>
+#include <Wt/WPushButton>
 // std lib
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -14,48 +16,44 @@ class Testapp_IE : public Wt::WApplication
 public:
 	Testapp_IE(const Wt::WEnvironment& env) : Wt::WApplication(env)
 	{
-		// only for testing
-		contall_ = new Wt::WContainerWidget(root());
+	    Wt::WContainerWidget *contall = root();
+	    Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
+		blayout->setLayoutHint("table-layout", "fixed");
+		contall->setLayout(blayout);
+
+	    mainStack_ = new Wt::WStackedWidget();
+	    blayout->addWidget(mainStack_, Wt::WBorderLayout::Center);
+
+        Wt::WPushButton *btn = new Wt::WPushButton("go", mainStack_);
+        btn->clicked().connect(SLOT(this, Testapp_IE::go));
+	}
+
+    void go()
+    {
+        Wt::WContainerWidget *contall = new Wt::WContainerWidget(mainStack_);
 		Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
-		contall_->setLayout(blayout);
-		contall_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
+		blayout->setLayoutHint("table-layout", "fixed");
+		contall->setLayout(blayout);
 
-		contw_ = new Wt::WContainerWidget();
-		blayout->addWidget(contw_, Wt::WBorderLayout::Center);
-		contw_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-
-		tabw_ = new Wt::WTabWidget(contw_);
-		tabw_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-		tabw_->currentChanged.connect(SLOT(this, Testapp_IE::resizeAgain));
+		Wt::WContainerWidget *contw = new Wt::WContainerWidget();
+		blayout->addWidget(contw, Wt::WBorderLayout::Center);
+		Wt::WTabWidget *tabw = new Wt::WTabWidget(contw);
 
 		Wt::WContainerWidget *tab1 = new Wt::WContainerWidget();
-		tabw_->addTab(tab1, "Tab1");
+		tabw->addTab(tab1, "Tab1");
 		Wt::WImage *img1 = new Wt::WImage("http://www.swissleague.ch/big/sl2486.jpg");
 		tab1->addWidget(img1);
-		tab1->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
 
 		Wt::WContainerWidget *tab2 = new Wt::WContainerWidget();
-		tabw_->addTab(tab2, "Tab2");
+		tabw->addTab(tab2, "Tab2");
 		Wt::WImage *img2 = new Wt::WImage("http://swissleague.ch/raw/sl2486.jpg");
 		tab2->addWidget(img2);
-		tab2->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
 
-	}
-
-	virtual ~Testapp_IE() { }
-
-	void resizeAgain(int ind)
-	{
-	    root()->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-	    contall_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-	    contw_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-	    tabw_->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-        tabw_->currentWidget()->resize(Wt::WLength(100.0, Wt::WLength::Percentage), Wt::WLength(100.0, Wt::WLength::Percentage));
-	}
+		mainStack_->setCurrentWidget(contall);
+    }
 
 private:
-	Wt::WTabWidget *tabw_;
-	Wt::WContainerWidget *contall_, *contw_;
+	Wt::WStackedWidget   *mainStack_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
