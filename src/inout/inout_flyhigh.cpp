@@ -1,6 +1,7 @@
 // flugbuch
 #include "inout_flyhigh.h"
 #include "SystemInformation.h"
+#include "FormatStr.h"
 // mdb odbc
 #define DTL_NO_UNICODE
 #include <dtl/DTL.h>
@@ -29,6 +30,7 @@ using std::back_inserter;
 using std::pair;
 using std::make_pair;
 using std::count;
+using std::find_if;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
@@ -39,15 +41,125 @@ FlightDatabase inout_flyhigh::read(const bfs::path &source)
 {
 	FlightDatabase fldb("");
 
+    try
+    {
+        string connectstr = FormatStr() << "Driver={Microsoft Access Driver (*.mdb)}; Dbq=" << source.external_file_string() << ";";
+        dtl::DBConnection::GetDefaultConnection().Connect(connectstr);
 
+        // gliders can be used as is
+        dtl::DynamicDBView<> viewGliders("Gliders", "*");
+        transform(viewGliders.begin(), viewGliders.end(), inserter(gliders_, gliders_.end()), bind(&inout_flyhigh::GetGlider, this, _1));
+        for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
+            fldb.addGlider(it->second);
+
+        // locations can be used more or less as is
+        dtl::DynamicDBView<> viewWayPnt("WayPoints", "*");
+        transform(viewWayPnt.begin(), viewWayPnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_flyhigh::GetLocation, this, _1, fldb));
+        for(map<unsigned int, shared_ptr<Location> >::iterator it = waypoints_.begin(); it != waypoints_.end(); ++it)
+            fldb.addLocation(it->second);
+
+        // Flights
+        dtl::DynamicDBView<> viewFlight("Fluege", "*");
+        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_flyhigh::GetFlight, this, _1));
+        for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
+            fldb.addFlight(it->second);
+
+        std::cout << "read source sucesfully : " << std::endl;
+        fldb.printCounts(std::cout);
+    }
+    catch(std::exception &ex)
+    {
+        std::cerr << ex.what() << std::endl;
+    }
 
 	return fldb;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_flyhigh::write(const FlightDatabase &fdb, const boost::filesystem::path &destination)
 {
+    try
+    {
+        string connectstr = FormatStr() << "Driver={Microsoft Access Driver (*.mdb)}; Dbq=" << destination.external_file_string() << ";";
+        dtl::DBConnection::GetDefaultConnection().Connect(connectstr);
 
+        // gliders can be used as is
+        dtl::DynamicDBView<> viewGliders("Gliders", "*");
+        dtl::DynamicDBView<>::insert_iterator write_it = viewGliders;
+        transform(fdb.Gliders.begin(), fdb.Gliders.end(), write_it, bind(&inout_flyhigh::SetGlider, this, _1));
 
+    }
+    catch(std::exception &ex)
+    {
+        std::cerr << ex.what() << std::endl;
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+pair<unsigned int, shared_ptr<Glider> > inout_flyhigh::GetGlider(const dtl::variant_row &row)
+{
+    shared_ptr<Glider> gld(new Glider(row["Manufacturer"],  // brand
+                                      row["Model"],         // model
+                                      "",                   // size
+                                      "",                   // color
+                                      0,                   // year
+                                      row["Serial"],        // classification
+                                      ""));                 // description
+    return make_pair(static_cast<int>(row["Id"]), gld);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+dtl::variant_row  inout_flyhigh::SetGlider(const shared_ptr<Glider> &gld)
+{
+    dtl::variant_row row;
+
+    row["Manufacturer"] = gld->brand();
+    row["Model"]        = gld->model();
+
+    return row;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+pair<unsigned int, boost::shared_ptr<Location> > inout_flyhigh::GetLocation(const dtl::variant_row &row, FlightDatabase &fldb)
+{
+    const string areaaName = row["Spot"];
+
+    FlightDatabase::FlightAreas::iterator itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
+                                                            bind(&FlightArea::name, *_1) == areaaName);
+    if(itArea == fldb.FlightAreas.end())
+    {
+        shared_ptr<FlightArea> newArea(new FlightArea(areaaName, row["Country"], ""));
+        fldb.addFlightArea(newArea);
+        itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
+                                                            bind(&FlightArea::name, *_1) == areaaName);
+    }
+    if(itArea == fldb.FlightAreas.end())
+        throw std::runtime_error("Flight area not found");
+
+    shared_ptr<Location> loc(new Location(*itArea,          // area
+                                          row["Name"],      // name
+                                          row["Altitude"],  // height
+                                          row["Latitude"],  // latitude
+                                          row["Longitude"], // longitude
+                                          Location::UA_TAKEOFF | Location::UA_LANDING | Location::UA_WAYPNT)); // usage will be restricted later
+
+    return make_pair(static_cast<int>(row["Id"]), loc);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+pair<unsigned int, boost::shared_ptr<Flight> > inout_flyhigh::GetFlight(const dtl::variant_row &row)
+{
+	const unsigned int flId = row["Id"];
+	vector<shared_ptr<Location> > wpts;
+
+	tagTIMESTAMP_STRUCT tms = row["Date"];
+	boost::gregorian::date bgdate(tms.year, tms.month, tms.day);
+
+    shared_ptr<Flight> flt(new Flight(row["Number"],                // flight number
+                                      bgdate,						// date
+                                      row["Duration"],              // airtime
+                                      gliders_[row["GliderId"]],    // glider
+                                      waypoints_[row["StartPtId"]], // takeoff
+                                      waypoints_[row["LandPtId"]],  // landing
+                                      row["Comment"],               // story
+                                      wpts));                       // waypoints
+
+    return make_pair(flId, flt);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 
