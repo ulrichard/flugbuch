@@ -13,6 +13,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 // standard library
 #include <fstream>
 #include <vector>
@@ -34,6 +36,8 @@ using std::find_if;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
+using namespace boost::lambda;
+namespace bll = boost::lambda;
 namespace bfs = boost::filesystem;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -48,19 +52,19 @@ FlightDatabase inout_flyhigh::read(const bfs::path &source)
 
         // gliders can be used as is
         dtl::DynamicDBView<> viewGliders("Gliders", "*");
-        transform(viewGliders.begin(), viewGliders.end(), inserter(gliders_, gliders_.end()), bind(&inout_flyhigh::GetGlider, this, _1));
+		transform(viewGliders.begin(), viewGliders.end(), inserter(gliders_, gliders_.end()), bind(&inout_flyhigh::GetGlider, this, ::_1));
         for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
             fldb.addGlider(it->second);
 
         // locations can be used more or less as is
         dtl::DynamicDBView<> viewWayPnt("WayPoints", "*");
-        transform(viewWayPnt.begin(), viewWayPnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_flyhigh::GetLocation, this, _1, fldb));
+		transform(viewWayPnt.begin(), viewWayPnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_flyhigh::GetLocation, this, ::_1, fldb));
         for(map<unsigned int, shared_ptr<Location> >::iterator it = waypoints_.begin(); it != waypoints_.end(); ++it)
             fldb.addLocation(it->second);
 
         // Flights
         dtl::DynamicDBView<> viewFlight("Fluege", "*");
-        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_flyhigh::GetFlight, this, _1));
+		transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_flyhigh::GetFlight, this, ::_1));
         for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
             fldb.addFlight(it->second);
 
@@ -85,7 +89,7 @@ void inout_flyhigh::write(const FlightDatabase &fdb, const boost::filesystem::pa
         // gliders can be used as is
         dtl::DynamicDBView<> viewGliders("Gliders", "*");
         dtl::DynamicDBView<>::insert_iterator write_it = viewGliders;
-        transform(fdb.Gliders.begin(), fdb.Gliders.end(), write_it, bind(&inout_flyhigh::SetGlider, this, _1));
+		transform(fdb.Gliders.begin(), fdb.Gliders.end(), write_it, bind(&inout_flyhigh::SetGlider, this, ::_1));
 
     }
     catch(std::exception &ex)
@@ -121,13 +125,13 @@ pair<unsigned int, boost::shared_ptr<Location> > inout_flyhigh::GetLocation(cons
     const string areaaName = row["Spot"];
 
     FlightDatabase::FlightAreas::iterator itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
-                                                            bind(&FlightArea::name, *_1) == areaaName);
+															bll::bind(&FlightArea::name, *bll::_1) == areaaName);
     if(itArea == fldb.FlightAreas.end())
     {
         shared_ptr<FlightArea> newArea(new FlightArea(areaaName, row["Country"], ""));
         fldb.addFlightArea(newArea);
         itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
-                                                            bind(&FlightArea::name, *_1) == areaaName);
+															bll::bind(&FlightArea::name, *bll::_1) == areaaName);
     }
     if(itArea == fldb.FlightAreas.end())
         throw std::runtime_error("Flight area not found");
