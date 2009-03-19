@@ -10,7 +10,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--docroot ../../../res --http-address 0.0.0.0 --http-port 8080 --config /etc/wt/wt_config.xml" />
+				<Option parameters="--docroot ../../../res --http-address 0.0.0.0 --http-port 8080 --config ../../../inst/wt_config.xml" />
 				<Compiler>
 					<Add option="-march=pentium3" />
 					<Add option="-g" />

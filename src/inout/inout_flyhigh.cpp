@@ -23,7 +23,7 @@
 #include <iostream>
 
 using namespace flb;
-//using namespace boost::lambda;
+using namespace boost::lambda;
 using std::string;
 using std::vector;
 using std::map;
@@ -36,9 +36,8 @@ using std::find_if;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
-using namespace boost::lambda;
-namespace bll = boost::lambda;
 namespace bfs = boost::filesystem;
+namespace bll = boost::lambda;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_flyhigh::read(const bfs::path &source)
@@ -49,25 +48,25 @@ FlightDatabase inout_flyhigh::read(const bfs::path &source)
     {
         string connectstr = FormatStr() << "Driver={Microsoft Access Driver (*.mdb)}; Dbq=" << source.external_file_string() << ";";
         dtl::DBConnection::GetDefaultConnection().Connect(connectstr);
-
+/*
         // gliders can be used as is
         dtl::DynamicDBView<> viewGliders("Gliders", "*");
-		transform(viewGliders.begin(), viewGliders.end(), inserter(gliders_, gliders_.end()), bind(&inout_flyhigh::GetGlider, this, ::_1));
+        transform(viewGliders.begin(), viewGliders.end(), inserter(gliders_, gliders_.end()), bind(&inout_flyhigh::GetGlider, this, bll::_1));
         for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
             fldb.addGlider(it->second);
 
         // locations can be used more or less as is
         dtl::DynamicDBView<> viewWayPnt("WayPoints", "*");
-		transform(viewWayPnt.begin(), viewWayPnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_flyhigh::GetLocation, this, ::_1, fldb));
+        transform(viewWayPnt.begin(), viewWayPnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_flyhigh::GetLocation, this, bll::_1, fldb));
         for(map<unsigned int, shared_ptr<Location> >::iterator it = waypoints_.begin(); it != waypoints_.end(); ++it)
             fldb.addLocation(it->second);
 
         // Flights
         dtl::DynamicDBView<> viewFlight("Fluege", "*");
-		transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_flyhigh::GetFlight, this, ::_1));
+        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_flyhigh::GetFlight, this, bll::_1));
         for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
             fldb.addFlight(it->second);
-
+*/
         std::cout << "read source sucesfully : " << std::endl;
         fldb.printCounts(std::cout);
     }
@@ -87,9 +86,9 @@ void inout_flyhigh::write(const FlightDatabase &fdb, const boost::filesystem::pa
         dtl::DBConnection::GetDefaultConnection().Connect(connectstr);
 
         // gliders can be used as is
-        dtl::DynamicDBView<> viewGliders("Gliders", "*");
-        dtl::DynamicDBView<>::insert_iterator write_it = viewGliders;
-		transform(fdb.Gliders.begin(), fdb.Gliders.end(), write_it, bind(&inout_flyhigh::SetGlider, this, ::_1));
+//        dtl::DynamicDBView<> viewGliders("Gliders", "*");
+//        dtl::DynamicDBView<>::insert_iterator write_it = viewGliders;
+//        transform(fdb.Gliders.begin(), fdb.Gliders.end(), write_it, bind(&inout_flyhigh::SetGlider, this, _1));
 
     }
     catch(std::exception &ex)
@@ -122,16 +121,16 @@ dtl::variant_row  inout_flyhigh::SetGlider(const shared_ptr<Glider> &gld)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 pair<unsigned int, boost::shared_ptr<Location> > inout_flyhigh::GetLocation(const dtl::variant_row &row, FlightDatabase &fldb)
 {
-    const string areaaName = row["Spot"];
+    const string areaName = row["Spot"];
 
     FlightDatabase::FlightAreas::iterator itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
-															bll::bind(&FlightArea::name, *bll::_1) == areaaName);
+                                                            bll::bind(&FlightArea::name, *bll::_1) == areaName);
     if(itArea == fldb.FlightAreas.end())
     {
-        shared_ptr<FlightArea> newArea(new FlightArea(areaaName, row["Country"], ""));
+        shared_ptr<FlightArea> newArea(new FlightArea(areaName, row["Country"], ""));
         fldb.addFlightArea(newArea);
         itArea = find_if(fldb.FlightAreas.begin(), fldb.FlightAreas.end(),
-															bll::bind(&FlightArea::name, *bll::_1) == areaaName);
+                                                            bll::bind(&FlightArea::name, *bll::_1) == areaName);
     }
     if(itArea == fldb.FlightAreas.end())
         throw std::runtime_error("Flight area not found");

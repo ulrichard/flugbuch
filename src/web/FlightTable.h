@@ -32,6 +32,7 @@ class LocationField : public Wt::WCompositeWidget
 public:
     LocationField(const boost::shared_ptr<flb::FlightDatabase>  flightDb, const flb::Location::UseAs useAs, Wt::WContainerWidget *parent = 0);
 
+    bool hasLocation() const;
     const boost::shared_ptr<flb::Location> getLocation() const;
 
 public slots:
@@ -71,6 +72,7 @@ private:
 	LocationField        *lfTakeoff_;
 	LocationField        *lfLanding_;
 	Wt::Ext::NumberField *ndDuration_;
+	std::vector<LocationField*> vlfWaypoints_;
 
 
 	enum ColPositons

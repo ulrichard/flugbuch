@@ -95,6 +95,11 @@ size_t LocationField::selectLocation(const string &loc)
     return 0;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+bool LocationField::hasLocation() const
+{
+    return (cbArea_->currentText().narrow().length() && cbLocation_->currentText().narrow().length());
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const boost::shared_ptr<flb::Location> LocationField::getLocation() const
 {
     shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
@@ -228,6 +233,23 @@ void FlightTableRow::edit()
 	lfTakeoff_->fillLocations(lfTakeoff_->selectArea(flight_->takeoff()->area()->name()));
 	lfTakeoff_->selectLocation(flight_->takeoff()->name());
 	table_->elementAt(rowNr_, colTakeoff)->addWidget(lfTakeoff_);
+	// waypoints
+	Wt::WText *txtWpt = new Wt::WText("Wegpunkte");
+	table_->elementAt(rowNr_, colTakeoff)->addWidget(txtWpt);
+	vlfWaypoints_.clear();
+	for(Flight::Waypoints::const_iterator it = flight_->Waypoints.begin(); it != flight_->Waypoints.end(); ++it)
+	{
+        LocationField *lfld = new LocationField(flightDb_, Location::UA_WAYPNT);
+        lfld->fillLocations(lfld->selectArea((*it)->area()->name()));
+        lfld->selectLocation((*it)->name());
+        table_->elementAt(rowNr_, colTakeoff)->addWidget(lfld);
+        vlfWaypoints_.push_back(lfld);
+	}
+	LocationField *lfld = new LocationField(flightDb_, Location::UA_WAYPNT);
+//    lfld->fillLocations(lfld->selectArea((*it)->area()->name()));
+//    lfld->selectLocation((*it)->name());
+    table_->elementAt(rowNr_, colTakeoff)->addWidget(lfld);
+    vlfWaypoints_.push_back(lfld);
 	// landing
 	lfLanding_ = new LocationField(flightDb_, Location::UA_LANDING);
 	lfLanding_->fillLocations(lfLanding_->selectArea(flight_->landing()->area()->name()));
@@ -280,7 +302,12 @@ void FlightTableRow::save()
         // takeoff
         assert(lfTakeoff_);
         flight_->setTakeoff(lfTakeoff_->getLocation());
-       // landing
+        // waypoints
+        flight_->clearWaypoints();
+        for(vector<LocationField*>::const_iterator it = vlfWaypoints_.begin(); it != vlfWaypoints_.end(); ++it)
+            if((*it)->hasLocation())
+                flight_->addWaypoint((*it)->getLocation());
+        // landing
         assert(lfLanding_);
         flight_->setLanding(lfLanding_->getLocation());
         // duration
