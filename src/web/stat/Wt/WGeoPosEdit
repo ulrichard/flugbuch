@@ -3,6 +3,7 @@
 
 #include <Wt/WCompositeWidget>
 #include <Wt/WGoogleMap>
+#include <Wt/WSignal>
 #include <utility>
 
 namespace Wt
@@ -36,12 +37,16 @@ public:
 
     void setPos(std::pair<double, double> pos);
     std::pair<double, double> pos() const;
+
     static std::string format(std::pair<double, double> pos, PositionFormat fmt = WGS84_SEC);
+
+    Wt::Signal<void>& changed() { return changed_; }
 
 private:
     void showMap();
     void setPosFromDlg(WGoogleMap::Coordinate pos);
     void closeDlg();
+    void keyUp(const Wt::WKeyEvent &kev);
 
     PositionFormat       format_;
     Wt::WContainerWidget *impl_;
@@ -58,6 +63,8 @@ private:
     Wt::Ext::NumberField *nfGridY_;
     Wt::WImage           *mapIcon_;
     Wt::Ext::Dialog      *mapDlg_;
+
+    Wt::Signal<void>     changed_;
 };
 
 } // namespace Wt

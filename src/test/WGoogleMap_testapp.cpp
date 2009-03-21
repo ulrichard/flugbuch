@@ -11,6 +11,8 @@
 #include <Wt/WHBoxLayout>
 #include <Wt/Ext/MessageBox>
 #include <Wt/WBreak>
+#include <Wt/WTable>
+#include <Wt/WText>
 
 #include <Wt/WGoogleMap>
 #include <Wt/WGeoPosEdit>
@@ -80,10 +82,47 @@ public:
         cbMapType->addItem("Menu");
         conth->layout()->addWidget(cbMapType);
 
-        Wt::WGeoPosEdit *geoEditS = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_SEC);
-        blayout->addWidget(geoEditS, Wt::WBorderLayout::South);
+        // table with some WGeoPosEdit's
+        Wt::WTable *table = new Wt::WTable();
+        blayout->addWidget(table, Wt::WBorderLayout::South);
+        table->setHeaderCount(1);
+        static const string txtHdr[4] = {"sec", "min", "deg", "UTM"/*, "SwissGrid"*/};
+        for(size_t i=0; i<sizeof(txtHdr) / sizeof(string); ++i)
+            table->elementAt(0, i)->addWidget(new Wt::WText(txtHdr[i]));
+        geoEditSec_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_SEC);
+        geoEditSec_->changed().connect(SLOT(this, Testapp_GM::GeoEditSecChanged));
+        table->elementAt(1, 0)->addWidget(geoEditSec_);
+        geoEditMin_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_MIN);
+        geoEditMin_->changed().connect(SLOT(this, Testapp_GM::GeoEditMinChanged));
+        table->elementAt(1, 1)->addWidget(geoEditMin_);
+        geoEditDec_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_DEC);
+        geoEditDec_->changed().connect(SLOT(this, Testapp_GM::GeoEditDecChanged));
+        table->elementAt(1, 2)->addWidget(geoEditDec_);
+//        Wt::WGeoPosEdit *geoEditUTM = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_UTM);
+//        table->elementAt(1, 3)->addWidget(geoEditUTM);
+//        Wt::WGeoPosEdit *geoEditSGr = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::SWISSGRID);
+//        table->elementAt(1, 4)->addWidget(geoEditSGr);
+
 
         drawMap(0);
+    }
+
+    void GeoEditSecChanged()
+    {
+        geoEditMin_->setPos(geoEditSec_->pos());
+        geoEditDec_->setPos(geoEditSec_->pos());
+    }
+
+    void GeoEditMinChanged()
+    {
+        geoEditSec_->setPos(geoEditMin_->pos());
+        geoEditDec_->setPos(geoEditMin_->pos());
+    }
+
+    void GeoEditDecChanged()
+    {
+        geoEditSec_->setPos(geoEditDec_->pos());
+        geoEditMin_->setPos(geoEditDec_->pos());
     }
 
     virtual ~Testapp_GM() { }
@@ -194,6 +233,7 @@ private:
     Wt::WContainerWidget *contw_;
     Wt::WGoogleMap       *gmap_;
     Wt::Ext::CheckBox    *cbScrollZoom_, *cbDblClickZoom_, *cbDragging_, *cbGooBar_;
+    Wt::WGeoPosEdit      *geoEditSec_, *geoEditMin_, *geoEditDec_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.

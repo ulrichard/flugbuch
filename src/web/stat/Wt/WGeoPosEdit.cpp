@@ -32,41 +32,30 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
     {
         case WGS84_SEC:
             nfLatSec_ = new Wt::Ext::NumberField();
-            nfLatSec_->resize(40, nfLatSec_->height());
             nfLonSec_ = new Wt::Ext::NumberField();
-            nfLonSec_->resize(40, nfLonSec_->height());
             // no break
         case WGS84_MIN:
             nfLatMin_ = new Wt::Ext::NumberField();
-            nfLatMin_->resize(40, nfLatMin_->height());
             nfLonMin_ = new Wt::Ext::NumberField();
-            nfLonMin_->resize(40, nfLonMin_->height());
             // no break
         case WGS84_DEC:
             nfLatDeg_ = new Wt::Ext::NumberField();
-            nfLatDeg_->resize(40, nfLatDeg_->height());
             nfLonDeg_ = new Wt::Ext::NumberField();
-            nfLonDeg_->resize(40, nfLonDeg_->height());
             cbNoSo_   = new Wt::Ext::ComboBox();
             cbNoSo_->addItem("N");
             cbNoSo_->addItem("S");
             cbNoSo_->setEditable(false);
-            cbNoSo_->resize(20, cbNoSo_->height());
             cbEaWe_   = new Wt::Ext::ComboBox();
             cbEaWe_->addItem("E");
             cbEaWe_->addItem("W");
             cbEaWe_->setEditable(false);
-            cbEaWe_->resize(20, cbEaWe_->height());
             break;
         case WGS84_UTM:
             leZone_   = new Wt::Ext::LineEdit();
-            leZone_->resize(40, leZone_->height());
             // no break
         case SWISSGRID:
             nfGridX_  = new Wt::Ext::NumberField();
-            nfGridX_->resize(80, nfGridX_->height());
             nfGridY_  = new Wt::Ext::NumberField();
-            nfGridY_->resize(80, nfGridY_->height());
             break;
         default:
             assert(!"unknown position format");
@@ -75,33 +64,75 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
     setImplementation(impl_);
     impl_->setLayout(new Wt::WHBoxLayout());
     // here, the order is important
-    if(cbNoSo_)
-        impl_->layout()->addWidget(cbNoSo_);
-    if(nfLatDeg_)
-        impl_->layout()->addWidget(nfLatDeg_);
-    if(nfLatMin_)
-        impl_->layout()->addWidget(nfLatMin_);
-    if(nfLatSec_)
-        impl_->layout()->addWidget(nfLatSec_);
-    if(cbEaWe_)
-        impl_->layout()->addWidget(cbEaWe_);
-    if(nfLonDeg_)
-        impl_->layout()->addWidget(nfLonDeg_);
-    if(nfLonMin_)
-        impl_->layout()->addWidget(nfLonMin_);
-    if(nfLonSec_)
-        impl_->layout()->addWidget(nfLonSec_);
-    if(leZone_)
-        impl_->layout()->addWidget(leZone_);
-    if(nfGridX_)
-        impl_->layout()->addWidget(nfGridX_);
-    if(nfGridY_)
-        impl_->layout()->addWidget(nfGridY_);
+    Wt::WWidget *widgets[] = {cbNoSo_, nfLatDeg_, nfLatMin_, nfLatSec_,
+                              cbEaWe_, nfLonDeg_, nfLonMin_, nfLonSec_, leZone_, nfGridX_, nfGridY_};
+    for(size_t i=0; i<sizeof(widgets)/sizeof(Wt::WWidget*); ++i)
+        if(Wt::WWidget *widget = widgets[i])
+        {
+            impl_->layout()->addWidget(widget);
+            if(Wt::Ext::LineEdit *le = dynamic_cast<Wt::Ext::LineEdit*>(widget))
+                le->keyWentUp().connect(SLOT(this, WGeoPosEdit::keyUp));
+        }
 
     mapIcon_ = new Wt::WImage("resources/slider-thumb-v.gif"); // we might want to add an image that's better suited to wt/resources
     impl_->layout()->addWidget(mapIcon_);
     mapIcon_->setToolTip("pick position from map");
     mapIcon_->clicked().connect(SLOT(this, WGeoPosEdit::showMap));
+
+    switch(format_)
+    {
+        case WGS84_SEC:
+            cbNoSo_->resize(13, cbNoSo_->height());
+            cbEaWe_->resize(13, cbEaWe_->height());
+            nfLatDeg_->resize(20, nfLatDeg_->height());
+            nfLonDeg_->resize(20, nfLonDeg_->height());
+            nfLatMin_->resize(20, nfLatMin_->height());
+            nfLonMin_->resize(20, nfLonMin_->height());
+            nfLatSec_->resize(40, nfLatSec_->height());
+            nfLonSec_->resize(40, nfLonSec_->height());
+            nfLatDeg_->setDecimalPrecision(0);
+            nfLonDeg_->setDecimalPrecision(0);
+            nfLatMin_->setDecimalPrecision(0);
+            nfLonMin_->setDecimalPrecision(0);
+            nfLatSec_->setDecimalPrecision(2);
+            nfLonSec_->setDecimalPrecision(2);
+            impl_->resize(380, impl_->height());
+            break;
+        case WGS84_MIN:
+            cbNoSo_->resize(13, cbNoSo_->height());
+            cbEaWe_->resize(13, cbEaWe_->height());
+            nfLatDeg_->resize(20, nfLatDeg_->height());
+            nfLonDeg_->resize(20, nfLonDeg_->height());
+            nfLatMin_->resize(40, nfLatMin_->height());
+            nfLonMin_->resize(40, nfLonMin_->height());
+            nfLatDeg_->setDecimalPrecision(0);
+            nfLonDeg_->setDecimalPrecision(0);
+            nfLatMin_->setDecimalPrecision(3);
+            nfLonMin_->setDecimalPrecision(3);
+            impl_->resize(260, impl_->height());
+            break;
+        case WGS84_DEC:
+            cbNoSo_->resize(13, cbNoSo_->height());
+            cbEaWe_->resize(13, cbEaWe_->height());
+            nfLatDeg_->resize(40, nfLatDeg_->height());
+            nfLonDeg_->resize(40, nfLonDeg_->height());
+            nfLatDeg_->setDecimalPrecision(4);
+            nfLonDeg_->setDecimalPrecision(4);
+            impl_->resize(220, impl_->height());
+            break;
+        case WGS84_UTM:
+            leZone_->resize(40, leZone_->height());
+            // no break
+        case SWISSGRID:
+            nfGridX_->resize(80, nfGridX_->height());
+            nfGridY_->resize(80, nfGridY_->height());
+            nfLatDeg_->setDecimalPrecision(3);
+            nfLonDeg_->setDecimalPrecision(3);
+            impl_->resize(200, impl_->height());
+            break;
+        default:
+            assert(!"unknown position format");
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WGeoPosEdit::setPos(std::pair<double, double> pos)
@@ -258,6 +289,7 @@ void WGeoPosEdit::setPosFromDlg(WGoogleMap::Coordinate pos)
     assert(mapDlg_);
 
     setPos(make_pair(pos.latitude(), pos.longitude()));
+    changed_.emit();
 
     mapDlg_->accept();
     delete mapDlg_;
@@ -270,5 +302,10 @@ void WGeoPosEdit::closeDlg()
     mapDlg_->accept();
     delete mapDlg_;
     mapDlg_ = NULL;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void WGeoPosEdit::keyUp(const Wt::WKeyEvent &kev)
+{
+    changed_.emit();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
