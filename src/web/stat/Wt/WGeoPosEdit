@@ -39,6 +39,7 @@ public:
     std::pair<double, double> pos() const;
 
     static std::string format(std::pair<double, double> pos, PositionFormat fmt = WGS84_SEC);
+    static std::string formatDescription(PositionFormat fmt);
 
     Wt::Signal<void>& changed() { return changed_; }
 
@@ -47,6 +48,7 @@ private:
     void setPosFromDlg(WGoogleMap::Coordinate pos);
     void closeDlg();
     void keyUp(const Wt::WKeyEvent &kev);
+    std::ostream & reportFields(std::ostream &oss) const;
 
     PositionFormat       format_;
     Wt::WContainerWidget *impl_;

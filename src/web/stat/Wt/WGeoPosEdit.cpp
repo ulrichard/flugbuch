@@ -13,10 +13,13 @@
 // boost
 // standard library
 #include <cmath>
+#include <iostream>
 
 using std::string;
 using std::pair;
 using std::make_pair;
+using std::cout;
+using std::endl;
 
 using namespace Wt;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -114,8 +117,8 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
         case WGS84_DEC:
             cbNoSo_->resize(13, cbNoSo_->height());
             cbEaWe_->resize(13, cbEaWe_->height());
-            nfLatDeg_->resize(40, nfLatDeg_->height());
-            nfLonDeg_->resize(40, nfLonDeg_->height());
+            nfLatDeg_->resize(60, nfLatDeg_->height());
+            nfLonDeg_->resize(60, nfLonDeg_->height());
             nfLatDeg_->setDecimalPrecision(4);
             nfLonDeg_->setDecimalPrecision(4);
             impl_->resize(220, impl_->height());
@@ -126,8 +129,8 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
         case SWISSGRID:
             nfGridX_->resize(80, nfGridX_->height());
             nfGridY_->resize(80, nfGridY_->height());
-            nfLatDeg_->setDecimalPrecision(3);
-            nfLonDeg_->setDecimalPrecision(3);
+            nfGridX_->setDecimalPrecision(3);
+            nfGridY_->setDecimalPrecision(3);
             impl_->resize(200, impl_->height());
             break;
         default:
@@ -138,6 +141,8 @@ WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat f
 void WGeoPosEdit::setPos(std::pair<double, double> pos)
 {
     double tmpval;
+
+    cout << "WGeoPosEdit::setPos(" << pos.first << ";" << pos.second << ") -> ";
 
     if(format_ == WGS84_SEC || format_ == WGS84_MIN || format_ == WGS84_DEC)
     {
@@ -152,20 +157,20 @@ void WGeoPosEdit::setPos(std::pair<double, double> pos)
     switch(format_)
     {
         case WGS84_SEC:
-            nfLatDeg_->setValue(static_cast<int>(pos.first));
-            tmpval = (pos.first - static_cast<int>(pos.first)) * 60.0;
-            nfLatMin_->setValue(static_cast<int>(tmpval));
-            nfLatSec_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
-            nfLonDeg_->setValue(static_cast<int>(pos.second));
-            tmpval = (pos.second - static_cast<int>(pos.second)) * 60.0;
-            nfLonMin_->setValue(static_cast<int>(tmpval));
-            nfLonSec_->setValue((tmpval - static_cast<int>(tmpval)) * 60.0);
+            nfLatDeg_->setValue(floor(pos.first));
+            tmpval = (pos.first - floor(pos.first)) * 60.0;
+            nfLatMin_->setValue(floor(tmpval));
+            nfLatSec_->setValue((tmpval - floor(tmpval)) * 60.0);
+            nfLonDeg_->setValue(floor(pos.second));
+            tmpval = (pos.second - floor(pos.second)) * 60.0;
+            nfLonMin_->setValue(floor(tmpval));
+            nfLonSec_->setValue((tmpval - floor(tmpval)) * 60.0);
             break;
         case WGS84_MIN:
-            nfLatDeg_->setValue(static_cast<int>(pos.first));
-            nfLatMin_->setValue((pos.first - static_cast<int>(pos.first)) * 60.0);
-            nfLonDeg_->setValue(static_cast<int>(pos.second));
-            nfLonMin_->setValue((pos.second - static_cast<int>(pos.second)) * 60.0);
+            nfLatDeg_->setValue(floor(pos.first));
+            nfLatMin_->setValue((pos.first - floor(pos.first)) * 60.0);
+            nfLonDeg_->setValue(floor(pos.second));
+            nfLonMin_->setValue((pos.second - floor(pos.second)) * 60.0);
             break;
         case WGS84_DEC:
             nfLatDeg_->setValue(pos.first);
@@ -175,37 +180,108 @@ void WGeoPosEdit::setPos(std::pair<double, double> pos)
             throw std::logic_error("not implemented yet");
             break;
         case SWISSGRID:
-            throw std::logic_error("not implemented yet");
+            {
+                const double zerox  =  26782.5  / 3600;
+                const double zeroy  = 169028.66 / 3600;
+                const double xt = (pos.second - zerox) * 3600.0 / 10000.0;
+                const double yt = (pos.first  - zeroy) * 3600.0 / 10000.0;
+
+                double xc  = 600.07237 * 1000;
+                xc += 211455.93 * xt;
+                xc -=  10938.51 * xt * yt;
+                xc -=      0.36 * xt * yt * yt;
+                xc -=     44.54 * xt * xt * xt;
+                xc /= 1000;
+
+                double yc  = 200.14707 * 1000;
+                yc += 308807.95 * yt;
+                yc +=   3745.25 * xt * xt;
+                yc +=     76.63 * yt * yt;
+                yc -=    194.56 * xt * xt * yt;
+                yc +=    119.79 * yt * yt * yt;
+                yc /= 1000;
+
+                nfGridX_->setValue(xc);
+                nfGridY_->setValue(yc);
+            }
             break;
         default:
             assert(!"unknown position format");
     }
+
+    reportFields(cout);
+    cout << endl;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 pair<double, double> WGeoPosEdit::pos() const
 {
-    const double NorthSouth = (cbNoSo_->currentIndex() ? -1.0 : 1.0);
-    const double EastWest   = (cbEaWe_->currentIndex() ? -1.0 : 1.0);
+    const double NorthSouth = (cbNoSo_ && cbNoSo_->currentIndex() ? -1.0 : 1.0);
+    const double EastWest   = (cbEaWe_ && cbEaWe_->currentIndex() ? -1.0 : 1.0);
+    pair<double, double> ppair = make_pair(0.0, 0.0);
 
     switch(format_)
     {
         case WGS84_SEC:
-            return make_pair(NorthSouth * ((nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value()),
-                             EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
+            ppair = make_pair(NorthSouth * ((nfLatSec_->value() / 60.0 + nfLatMin_->value()) / 60.0 + nfLatDeg_->value()),
+                              EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
+            break;
         case WGS84_MIN:
-            return make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
-                             EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
+        {
+            double val1 = nfLatMin_->value() / 60.0;
+            val1 += nfLatDeg_->value();
+            val1 *= NorthSouth;
+            double val2 = nfLonMin_->value() / 60.0;
+            val2 += nfLonDeg_->value();
+            val2 *= EastWest;
+        }
+            ppair = make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
+                              EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
+            break;
         case WGS84_DEC:
-            return make_pair(NorthSouth * nfLatDeg_->value(),
-                             EastWest   * nfLonDeg_->value());
+            ppair = make_pair(NorthSouth * nfLatDeg_->value(),
+                              EastWest   * nfLonDeg_->value());
+            break;
         case WGS84_UTM:
             throw std::logic_error("not implemented");
         case SWISSGRID:
-            throw std::logic_error("not implemented");
+        {
+            double xval = nfGridX_->value();
+            double yval = nfGridY_->value();
+            if(!nfGridX_->value() && !nfGridY_->value())
+                ppair = make_pair(0.0, 0.0);
+            else
+            {
+                const double zerox  =  26782.5  / 3600;
+                const double zeroy  = 169028.66 / 3600;
+                const double xt = (nfGridX_->value() - 600) / 1000;
+                const double yt = (nfGridY_->value() - 200) / 1000;
+
+                double dx = 2.6779094;
+                dx += 4.728982 * xt;
+                dx += 0.791484 * xt * yt;
+                dx += 0.1306   * xt * yt * yt;
+                dx -= 0.0436   * xt * xt * xt;
+
+                double dy = 16.9023892;
+                dy +=  3.238272 * yt;
+                dy -= 0.270978  * xt * xt;
+                dy -= 0.002528  * yt * yt;
+                dy -= 0.0447    * xt * xt * yt;
+                dy -= 0.0140    * yt * yt * yt;
+
+                ppair = make_pair(dy * 100.0 / 36.0, dx * 100.0 / 36.0);
+            }
+            break;
+        }
         default:
             assert(!"unknown position format");
     }
-    return make_pair(0.0, 0.0);
+
+    cout << "WGeoPosEdit::pos() ";
+    reportFields(cout);
+    cout << " -> (" << ppair.first <<";" << ppair.second << ")" << endl;
+
+    return ppair;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFormat fmt)
@@ -217,26 +293,26 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
         case WGS84_SEC:
             sstr << (pos.first >= 0.0 ? "N " : "S ");
             tmpval = fabs(pos.first);
-            sstr << static_cast<int>(tmpval) << "° ";
-            tmpval = (tmpval - static_cast<int>(tmpval)) * 60.0;
-            sstr << static_cast<int>(tmpval) << "' ";
-            sstr << ((tmpval - static_cast<int>(tmpval)) * 60.0) << "\"   ";
+            sstr << floor(tmpval) << "° ";
+            tmpval = (tmpval - floor(tmpval)) * 60.0;
+            sstr << floor(tmpval) << "' ";
+            sstr << ((tmpval - floor(tmpval)) * 60.0) << "\"   ";
             sstr << (pos.second >= 0.0 ? "O " : "W ");
             tmpval = pos.second;
-            sstr << static_cast<int>(tmpval) << "° ";
-            tmpval = (tmpval - static_cast<int>(tmpval)) * 60.0;
-            sstr << static_cast<int>(tmpval) << "' ";
-            sstr << ((tmpval - static_cast<int>(tmpval)) * 60.0) << "\"";
+            sstr << floor(tmpval) << "° ";
+            tmpval = (tmpval - floor(tmpval)) * 60.0;
+            sstr << floor(tmpval) << "' ";
+            sstr << ((tmpval - floor(tmpval)) * 60.0) << "\"";
             break;
         case WGS84_MIN:
             sstr << (pos.first >= 0.0 ? "N " : "S ");
             tmpval = fabs(pos.first);
-            sstr << static_cast<int>(tmpval) << "° ";
-            sstr << ((tmpval - static_cast<int>(tmpval)) * 60.0) << "'   ";
+            sstr << floor(tmpval) << "° ";
+            sstr << ((tmpval - floor(tmpval)) * 60.0) << "'   ";
             sstr << (pos.second >= 0.0 ? "O " : "W ");
             tmpval = pos.second;
-            sstr << static_cast<int>(tmpval) << "° ";
-            sstr << ((tmpval - static_cast<int>(tmpval)) * 60.0) << "' ";
+            sstr << floor(tmpval) << "° ";
+            sstr << ((tmpval - floor(tmpval)) * 60.0) << "' ";
             break;
         case WGS84_DEC:
             sstr << (pos.first >= 0.0 ? "N " : "S ");
@@ -254,6 +330,37 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
             assert(!"unknown position format");
     }
     return sstr.str();
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+string WGeoPosEdit::formatDescription(PositionFormat fmt)
+{
+    switch(fmt)
+    {
+        case WGS84_SEC:
+            return "WGS84 in degrees, minutes and decimal seconds";
+        case WGS84_MIN:
+            return "WGS84 in degrees and decimal minutes";
+        case WGS84_DEC:
+            return "WGS84 in decimal degrees";
+        case WGS84_UTM:
+            return "UTM (Universal Transverse Mercator)";
+        case SWISSGRID:
+            return "SwissGrid";
+        default:
+            assert(!"unknown position format");
+            return "";
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+std::ostream & WGeoPosEdit::reportFields(std::ostream &oss) const
+{
+    Wt::WWidget *widgets[] = {cbNoSo_, nfLatDeg_, nfLatMin_, nfLatSec_,
+                              cbEaWe_, nfLonDeg_, nfLonMin_, nfLonSec_, leZone_, nfGridX_, nfGridY_};
+    for(size_t i=0; i<sizeof(widgets)/sizeof(Wt::WWidget*); ++i)
+        if(Wt::WWidget *widget = widgets[i])
+            if(Wt::Ext::LineEdit *le = dynamic_cast<Wt::Ext::LineEdit*>(widget))
+                oss << le->text() << " ";
+    return oss;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WGeoPosEdit::showMap()
