@@ -11,10 +11,13 @@
 #include <Wt/WHBoxLayout>
 #include <Wt/WImage>
 // boost
+#include <boost/lexical_cast.hpp>
 // standard library
 #include <cmath>
 #include <iostream>
 
+using boost::lexical_cast;
+using boost::get;
 using std::string;
 using std::pair;
 using std::make_pair;
@@ -177,7 +180,12 @@ void WGeoPosEdit::setPos(std::pair<double, double> pos)
             nfLonDeg_->setValue(pos.second);
             break;
         case WGS84_UTM:
-            throw std::logic_error("not implemented yet");
+            {
+                boost::tuple<int, char, double, double> utm = LatLonToUtm(pos);
+                leZone_->setText(get<1>(utm) + lexical_cast<string>(get<0>(utm)));
+                nfGridX_->setValue(get<2>(utm));
+                nfGridY_->setValue(get<3>(utm));
+            }
             break;
         case SWISSGRID:
             {
@@ -226,14 +234,6 @@ pair<double, double> WGeoPosEdit::pos() const
                               EastWest   * ((nfLonSec_->value() / 60.0 + nfLonMin_->value()) / 60.0 + nfLonDeg_->value()));
             break;
         case WGS84_MIN:
-        {
-            double val1 = nfLatMin_->value() / 60.0;
-            val1 += nfLatDeg_->value();
-            val1 *= NorthSouth;
-            double val2 = nfLonMin_->value() / 60.0;
-            val2 += nfLonDeg_->value();
-            val2 *= EastWest;
-        }
             ppair = make_pair(NorthSouth * (nfLatMin_->value() / 60.0 + nfLatDeg_->value()),
                               EastWest   * (nfLonMin_->value() / 60.0 + nfLonDeg_->value()));
             break;
@@ -242,7 +242,11 @@ pair<double, double> WGeoPosEdit::pos() const
                               EastWest   * nfLonDeg_->value());
             break;
         case WGS84_UTM:
-            throw std::logic_error("not implemented");
+        {
+            string zone = leZone_->text().narrow();
+            ppair = UtmToLatLon(lexical_cast<int>(zone.substr(1, zone.length())), zone[0], nfGridX_->value(), nfGridY_->value());
+            break;
+        }
         case SWISSGRID:
         {
             double xval = nfGridX_->value();
@@ -416,3 +420,182 @@ void WGeoPosEdit::keyUp(const Wt::WKeyEvent &kev)
     changed_.emit();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+// Purpose:
+//  This function converts the specified lat/lon coordinate to a UTM
+//  coordinate.
+// tuple return value:
+//  int utmXZone:
+//      this field will contain the hotizontal zone number of
+//      the UTM coordinate.  The returned value for this parameter is a number
+//      within the range 1 to 60, inclusive.
+//  char utmYZone:
+//      this field will contain the zone letter of the UTM
+//      coordinate.  The returned value for this parameter will be one of:
+//      CDEFGHJKLMNPQRSTUVWX.
+//  double easting:
+//      this field will contain the UTM easting, in meters.
+//  double northing:
+//      this field will contain the UTM northing, in meters.
+// Notes:
+//  - The code in this function is a C conversion of some of the source code
+//    from the Mapping Datum Transformation Software (MADTRAN) program,
+//    written in PowerBasic.  To get the source code for MADTRAN, go to:
+//
+//      http://164.214.2.59/publications/guides/MADTRAN/index.html
+//
+//    and download MADTRAN.ZIP
+//  - If the UTM zone is out of range, the y-zone character is set to the
+//    asterisk character ('*').
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+boost::tuple<int, char, double, double> WGeoPosEdit::LatLonToUtm(pair<double, double> latlon)
+{
+    // Some constants used by these functions.
+    static const double fe = 500000.0;
+    static const double ok = 0.9996;
+    static const double PI(3.14159265);
+    static const double deg2rad(PI / 180.0);
+    static const double rad2deg(180.0 / PI);
+    // An array containing each vertical UTM zone.
+    static char cArray[] = "CDEFGHJKLMNPQRSTUVWX";
+    // parameters for wgs84
+    static const double a = 6378137.0;          // Ellipsoid semi-major axis, in meters.
+    static const double f = 1 / 298.257223563;  // Ellipsoid flattening.
+
+    int utmXZone = latlon.second <= 0.0 ? 30 + static_cast<int>(latlon.second / 6.0) : 31 + static_cast<int>(latlon.second / 6.0);
+
+    // Special case: zone X is 12 degrees from north to south, not 8.
+    char utmYZone = cArray[(latlon.first < 84.0 && latlon.first >= 72.0) ? 19 : static_cast<int>((latlon.first + 80.0) / 8.0)];
+	if(latlon.first >= 84.0 || latlon.first < -80.0)
+		utmYZone = '*'; // Invalid coordinate; the vertical zone is set to the invalid character
+
+	double latRad = latlon.first  * deg2rad;
+	double lonRad = latlon.second * deg2rad;
+	double recf = 1.0 / f;
+	double b = a * (recf - 1.0) / recf;
+	double eSquared  = ((a * a) - (b * b)) / (a * a);
+	double e2Squared = ((a * a) - (b * b)) / (b * b);
+	double tn = (a - b) / (a + b);
+	double ap = a * (1.0 - tn + 5.0 * ((tn * tn) - (tn * tn * tn)) / 4.0 + 81.0 *
+		((tn * tn * tn * tn) - (tn * tn * tn * tn * tn)) / 64.0);
+	double bp = 3.0 * a * (tn - (tn * tn) + 7.0 * ((tn * tn * tn)
+		- (tn * tn * tn * tn)) / 8.0 + 55.0 * (tn * tn * tn * tn * tn) / 64.0)
+		/ 2.0;
+	double cp = 15.0 * a * ((tn * tn) - (tn * tn * tn) + 3.0 * ((tn * tn * tn * tn)
+		- (tn * tn * tn * tn * tn)) / 4.0) / 16.0;
+	double dp = 35.0 * a * ((tn * tn * tn) - (tn * tn * tn * tn) + 11.0
+		* (tn * tn * tn * tn * tn) / 16.0) / 48.0;
+	double ep = 315.0 * a * ((tn * tn * tn * tn) - (tn * tn * tn * tn * tn)) / 512.0;
+	double olam = (utmXZone * 6 - 183) * deg2rad;
+	double dlam = lonRad - olam;
+	double s = sin (latRad);
+	double c = cos (latRad);
+	double t = s / c;
+	double eta = e2Squared * (c * c);
+	double sn = a / sqrt (1.0 - eSquared * std::pow(sin(latRad), 2));
+	double tmd = (ap * latRad) - (bp * sin(2.0 * latRad)) + (cp * sin(4.0 * latRad)) - (dp * sin(6.0 * latRad)) + (ep * sin(8.0 * latRad));
+	double t1 = tmd * ok;
+	double t2 = sn * s * c * ok / 2.0;
+	double t3 = sn * s * (c * c * c) * ok * (5.0 - (t * t) + 9.0 * eta + 4.0
+		* (eta * eta)) / 24.0;
+    double nfn = (latRad < 0.0) ? 10000000.0 : 0.0;
+	double northing = nfn + t1 + (dlam * dlam) * t2 + (dlam * dlam * dlam
+		* dlam) * t3 + (dlam * dlam * dlam * dlam * dlam * dlam) + 0.5;
+	double t6 = sn * c * ok;
+	double t7 = sn * (c * c * c) * (1.0 - (t * t) + eta) / 6.0;
+	double easting = fe + dlam * t6 + (dlam * dlam * dlam) * t7 + 0.5;
+	if(northing >= 9999999.0)
+        northing = 9999999.0;
+
+    return boost::make_tuple(utmXZone, utmYZone, easting, northing);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+// Purpose:
+//  This function converts the specified UTM coordinate to a lat/lon
+//  coordinate.
+// Pre:
+//  - utmXZone must be between 1 and 60, inclusive.
+//  - utmYZone must be one of: CDEFGHJKLMNPQRSTUVWX
+// Parameters:
+//  int utmXZone:
+//      The horizontal zone number of the UTM coordinate.
+//  char utmYZone:
+//      The vertical zone letter of the UTM coordinate.
+//  double easting, double northing:
+//      The UTM coordinate to convert.
+// Notes:
+//  The code in this function is a C conversion of some of the source code
+//  from the Mapping Datum Transformation Software (MADTRAN) program, written
+//  in PowerBasic.  To get the source code for MADTRAN, go to:
+//
+//    http://164.214.2.59/publications/guides/MADTRAN/index.html
+//
+//  and download MADTRAN.ZIP
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+pair<double, double> WGeoPosEdit::UtmToLatLon(int utmXZone, char utmYZone, double easting, double northing)
+{
+    // Some constants used by these functions.
+    static const double fe = 500000.0;
+    static const double ok = 0.9996;
+    static const double PI(3.14159265);
+    static const double deg2rad(PI / 180.0);
+    static const double rad2deg(180.0 / PI);
+    // An array containing each vertical UTM zone.
+    static char cArray[] = "CDEFGHJKLMNPQRSTUVWX";
+    // parameters for wgs84
+    static const double a = 6378137.0;          // Ellipsoid semi-major axis, in meters.
+    static const double f = 1 / 298.257223563;  // Ellipsoid flattening.
+
+
+	double nfn;
+	double ftphi;
+	double recf = 1.0 / f;
+	double b = a * (recf - 1) / recf;
+	double eSquared = ((a * a) - (b * b)) / (a * a);
+	double e2Squared = ((a * a) - (b * b)) / (b * b);
+	double tn = (a - b) / (a + b);
+	double ap = a * (1.0 - tn + 5.0 * ((tn * tn) - (tn * tn * tn)) / 4.0 + 81.0 *
+		((tn * tn * tn * tn) - (tn * tn * tn * tn * tn)) / 64.0);
+	double bp = 3.0 * a * (tn - (tn * tn) + 7.0 * ((tn * tn * tn)
+		- (tn * tn * tn * tn)) / 8.0 + 55.0 * (tn * tn * tn * tn * tn) / 64.0)
+		/ 2.0;
+	double cp = 15.0 * a * ((tn * tn) - (tn * tn * tn) + 3.0 * ((tn * tn * tn * tn)
+		- (tn * tn * tn * tn * tn)) / 4.0) / 16.0;
+	double dp = 35.0 * a * ((tn * tn * tn) - (tn * tn * tn * tn) + 11.0
+		* (tn * tn * tn * tn * tn) / 16.0) / 48.0;
+	double ep = 315.0 * a * ((tn * tn * tn * tn) - (tn * tn * tn * tn * tn)) / 512.0;
+	if ((utmYZone <= 'M' && utmYZone >= 'C') || (utmYZone <= 'm' && utmYZone >= 'c'))
+		nfn = 10000000.0;
+	else
+		nfn = 0;
+	double tmd = (northing - nfn) / ok;
+	double sr = a * (1.0 - eSquared);
+	ftphi = tmd / sr;
+	double t10, t11, t14, t15;
+	for(int i = 0; i < 5; i++)
+	{
+		t10 = (ap * ftphi) - (bp * sin (2.0 * ftphi)) + (cp * sin (4.0 * ftphi)) - (dp * sin (6.0 * ftphi)) + (ep * sin (8.0 * ftphi));
+		sr = a * (1.0 - eSquared) / std::pow(sqrt(1.0 - eSquared * std::pow(sin(ftphi), 2)), 3);
+		ftphi = ftphi + (tmd - t10) / sr;
+	}
+	sr = a * (1.0 - eSquared) / std::pow(sqrt(1.0 - eSquared * std::pow(sin(ftphi), 2)), 3);
+	double sn = a / sqrt(1.0 - eSquared * std::pow(sin(ftphi), 2));
+	double s = sin(ftphi);
+	double c = cos(ftphi);
+	double t = s / c;
+	double eta = e2Squared * (c * c);
+	double de = easting - fe;
+	t10 = t / (2.0 * sr * sn * (ok * ok));
+	t11 = t * (5.0 + 3.0 * (t * t) + eta - 4.0 * (eta * eta) - 9.0 * (t * t)
+		* eta) / (24.0 * sr * (sn * sn * sn) * (ok * ok * ok * ok));
+	double lat = ftphi - (de * de) * t10 + (de * de * de * de) * t11;
+	t14 = 1.0 / (sn * c * ok);
+	t15 = (1.0 + 2.0 * (t * t) + eta) / (6 * (sn * sn * sn) * c
+		* (ok * ok * ok));
+	double dlam = de * t14 - (de * de * de) * t15;
+	double olam = (utmXZone * 6 - 183.0) * deg2rad;
+	double lon = olam + dlam;
+	lon *= rad2deg;
+	lat *= rad2deg;
+
+	return make_pair(lat, lon);
+}

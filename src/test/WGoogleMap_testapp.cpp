@@ -13,8 +13,9 @@
 #include <Wt/WBreak>
 #include <Wt/WTable>
 #include <Wt/WText>
-
+#include <Wt/WSignalMapper>
 #include <Wt/WGoogleMap>
+
 #include <Wt/WGeoPosEdit>
 // boost
 #include <boost/lexical_cast.hpp>
@@ -86,58 +87,26 @@ public:
         Wt::WTable *table = new Wt::WTable();
         blayout->addWidget(table, Wt::WBorderLayout::South);
         table->setHeaderCount(1);
-        static const string txtHdr[5] = {"sec", "min", "deg", "UTM", "SwissGrid"};
-        for(size_t i=0; i<sizeof(txtHdr) / sizeof(string); ++i)
-            table->elementAt(0, i)->addWidget(new Wt::WText(txtHdr[i]));
-        geoEditSec_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_SEC);
-        geoEditSec_->changed().connect(SLOT(this, Testapp_GM::GeoEditSecChanged));
-        table->elementAt(1, 0)->addWidget(geoEditSec_);
-        geoEditMin_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_MIN);
-        geoEditMin_->changed().connect(SLOT(this, Testapp_GM::GeoEditMinChanged));
-        table->elementAt(1, 1)->addWidget(geoEditMin_);
-        geoEditDec_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_DEC);
-        geoEditDec_->changed().connect(SLOT(this, Testapp_GM::GeoEditDecChanged));
-        table->elementAt(1, 2)->addWidget(geoEditDec_);
-//        Wt::WGeoPosEdit *geoEditUTM = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::WGS84_UTM);
-//        table->elementAt(1, 3)->addWidget(geoEditUTM);
-        geoEditSgr_ = new Wt::WGeoPosEdit(NULL, Wt::WGeoPosEdit::SWISSGRID);
-        geoEditSgr_->changed().connect(SLOT(this, Testapp_GM::GeoEditSgrChanged));
-        table->elementAt(1, 4)->addWidget(geoEditSgr_);
-
+        static const Wt::WGeoPosEdit::PositionFormat gpeFmt[5] = {Wt::WGeoPosEdit::WGS84_SEC, Wt::WGeoPosEdit::WGS84_MIN,
+                        Wt::WGeoPosEdit::WGS84_DEC, Wt::WGeoPosEdit::WGS84_UTM, Wt::WGeoPosEdit::SWISSGRID};
+        Wt::WSignalMapper<Wt::WGeoPosEdit*> *mySignalMap = new Wt::WSignalMapper<Wt::WGeoPosEdit*>(this);
+        mySignalMap->mapped().connect(SLOT(this, Testapp_GM::GeoEditChanged));
+        for(size_t i=0; i<sizeof(gpeFmt) / sizeof(Wt::WGeoPosEdit::PositionFormat); ++i)
+        {
+            table->elementAt(i, 0)->addWidget(new Wt::WText(Wt::WGeoPosEdit::formatDescription(gpeFmt[i])));
+            Wt::WGeoPosEdit *geoEdit = new Wt::WGeoPosEdit(NULL, gpeFmt[i]);
+            table->elementAt(i, 1)->addWidget(geoEdit);
+            mySignalMap->mapConnect(geoEdit->changed(), geoEdit);
+            vGeoEdits_.push_back(geoEdit);
+        }
 
         drawMap(0);
     }
 
-    void GeoEditSecChanged()
+    void GeoEditChanged(Wt::WGeoPosEdit *gpedit)
     {
-        const pair<double, double> pos = geoEditSec_->pos();
-        geoEditMin_->setPos(pos);
-        geoEditDec_->setPos(pos);
-        geoEditSgr_->setPos(pos);
-    }
-
-    void GeoEditMinChanged()
-    {
-        const pair<double, double> pos = geoEditMin_->pos();
-        geoEditSec_->setPos(pos);
-        geoEditDec_->setPos(pos);
-        geoEditSgr_->setPos(pos);
-    }
-
-    void GeoEditDecChanged()
-    {
-        const pair<double, double> pos = geoEditDec_->pos();
-        geoEditSec_->setPos(pos);
-        geoEditMin_->setPos(pos);
-        geoEditSgr_->setPos(pos);
-    }
-
-    void GeoEditSgrChanged()
-    {
-        const pair<double, double> pos = geoEditSgr_->pos();
-        geoEditSec_->setPos(pos);
-        geoEditMin_->setPos(pos);
-        geoEditDec_->setPos(pos);
+        assert(find(vGeoEdits_.begin(), vGeoEdits_.end(), gpedit) != vGeoEdits_.end());
+        std::for_each(vGeoEdits_.begin(), vGeoEdits_.end(), bind(&Wt::WGeoPosEdit::setPos, _1, gpedit->pos()));
     }
 
     virtual ~Testapp_GM() { }
@@ -248,7 +217,7 @@ private:
     Wt::WContainerWidget *contw_;
     Wt::WGoogleMap       *gmap_;
     Wt::Ext::CheckBox    *cbScrollZoom_, *cbDblClickZoom_, *cbDragging_, *cbGooBar_;
-    Wt::WGeoPosEdit      *geoEditSec_, *geoEditMin_, *geoEditDec_, *geoEditSgr_;
+    std::vector<Wt::WGeoPosEdit*> vGeoEdits_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
