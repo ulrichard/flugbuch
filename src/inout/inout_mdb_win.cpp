@@ -6,7 +6,6 @@
 #define DTL_NO_UNICODE
 #include "DTL.h"
 // boost
-#include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>

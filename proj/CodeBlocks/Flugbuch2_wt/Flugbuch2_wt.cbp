@@ -29,9 +29,13 @@
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
+<<<<<<< .mine
+					<Add library="libDTLd" />
+=======
 					<Add library="DTL" />
 					<Add library="odbc" />
 					<Add directory="/usr/local/lib" />
+>>>>>>> .r84
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">
@@ -49,18 +53,18 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="/usr/lib/libboost_date_time-mt-s.a" />
-					<Add library="/usr/lib/libboost_serialization-mt-s.a" />
-					<Add library="/usr/lib/libboost_signals-mt-s.a" />
-					<Add library="/usr/lib/libboost_filesystem-mt-s.a" />
-					<Add library="/usr/lib/libwt.a" />
-					<Add library="/usr/lib/libwtext.a" />
-					<Add library="/usr/lib/libwtfcgi.a" />
-					<Add library="/usr/lib/libfcgi.a" />
-					<Add library="/usr/lib/libboost_thread-mt-s.a" />
-					<Add library="/usr/lib/libboost_program_options-mt-s.a" />
-					<Add library="/usr/lib/libboost_regex-mt-s.a" />
-					<Add library="/usr/lib/libboost_system-mt-s.a" />
+					<Add library="libboost_date_time-mt-s.a" />
+					<Add library="libboost_serialization-mt-s.a" />
+					<Add library="libboost_signals-mt-s.a" />
+					<Add library="libboost_filesystem-mt-s.a" />
+					<Add library="libwt.a" />
+					<Add library="libwtext.a" />
+					<Add library="libwtfcgi.a" />
+					<Add library="libfcgi.a" />
+					<Add library="libboost_thread-mt-s.a" />
+					<Add library="libboost_program_options-mt-s.a" />
+					<Add library="libboost_regex-mt-s.a" />
+					<Add library="libboost_system-mt-s.a" />
 					<Add library="/usr/lib/libpthread.a" />
 				</Linker>
 			</Target>
@@ -181,6 +185,7 @@
 		<Unit filename="../../../res/img/delete.png" />
 		<Unit filename="../../../res/img/edit.png" />
 		<Unit filename="../../../res/img/home.png" />
+		<Unit filename="../../../res/img/map.png" />
 		<Unit filename="../../../res/img/print.png" />
 		<Unit filename="../../../res/img/save.png" />
 		<Unit filename="../../../res/img/undo.png" />

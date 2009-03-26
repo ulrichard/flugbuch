@@ -27,7 +27,7 @@ using std::endl;
 using namespace Wt;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 WGeoPosEdit::WGeoPosEdit(WContainerWidget *parent, WGeoPosEdit::PositionFormat fmt)
-  : Wt::WCompositeWidget(parent), format_(fmt), impl_(new Wt::WContainerWidget())
+  : Wt::WCompositeWidget(parent), format_(fmt), impl_(new Wt::WContainerWidget()), changed_(this)
 {
     cbNoSo_ = cbEaWe_ = NULL;
     nfLatDeg_ = nfLatMin_ = nfLatSec_ = nfLonDeg_ = nfLonMin_ = nfLonSec_ = nfGridX_ = nfGridY_ = NULL;
