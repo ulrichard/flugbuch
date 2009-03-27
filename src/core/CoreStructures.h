@@ -232,6 +232,7 @@ public:
     void addWaypoint(boost::shared_ptr<Location> wpt) { waypoints_.push_back(wpt); }
     // misc
     double calcDistance() const;
+    bool   samePlaces(const Flight &other) const;
  private:
 	 Flight() : Waypoints(*this) {}
 	 // members

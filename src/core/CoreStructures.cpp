@@ -73,6 +73,19 @@ double Flight::calcDistance() const
     return std::accumulate(legLengths.begin(), legLengths.end(), 0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+bool Flight::samePlaces(const Flight &other) const
+{
+    if(takeoff_ != other.takeoff())
+        return false;
+    if(landing_ != other.landing())
+        return false;
+    if(waypoints_.size() != other.Waypoints.size())
+        return false;
+    if(!equal(waypoints_.begin(), waypoints_.end(), other.Waypoints.begin()))
+        return false;
+    return true;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

@@ -35,8 +35,12 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     gmap->enableScrollWheelZoom();
     gmap->addHierarchicalMapTypeControl();
 
+    vector<shared_ptr<flb::Flight> > vFlights;
+    copy(flights.begin(), flights.end(), back_inserter(vFlights));
+    vFlights.erase(unique(vFlights.begin(), vFlights.end(), bll::bind(&flb::Flight::samePlaces, *bll::_1, *bll::_2)), vFlights.end());
+
     pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
-    for(flb::FlightDatabase::SeqFlights::const_iterator it = flights.begin(); it != flights.end(); ++it)
+    for(vector<shared_ptr<flb::Flight> >::const_iterator it = vFlights.begin(); it != vFlights.end(); ++it)
     {
         vector<Wt::WGoogleMap::Coordinate> points;
         points.push_back(Wt::WGoogleMap::Coordinate((*it)->takeoff()->pos()));
