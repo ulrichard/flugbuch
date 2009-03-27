@@ -325,8 +325,11 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
             sstr << pos.second << "° ";
             break;
         case WGS84_UTM:
-            throw std::logic_error("not implemented");
+        {
+            boost::tuple<int, char, double, double> utm = LatLonToUtm(pos);
+            sstr << get<1>(utm) << get<0>(utm) << " " << get<2>(utm) << " " << get<3>(utm);
             break;
+        }
         case SWISSGRID:
             throw std::logic_error("not implemented");
             break;
@@ -370,7 +373,7 @@ std::ostream & WGeoPosEdit::reportFields(std::ostream &oss) const
 void WGeoPosEdit::showMap()
 {
     mapDlg_ = new Wt::Ext::Dialog("Doubleclick at the new location");
-    mapDlg_->resize(508, 440);
+    mapDlg_->resize(508, 445);
     mapDlg_->setSizeGripEnabled(false);
     Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
     mapDlg_->contents()->addWidget(gmap);

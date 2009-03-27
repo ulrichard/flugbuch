@@ -43,6 +43,7 @@ public:
     void loadFlights(boost::shared_ptr<flb::FlightDatabase> fldb);
     void saveDb(void);
     void reload(void);
+    void importIGC(void);
 
 protected:
     virtual void finalize();

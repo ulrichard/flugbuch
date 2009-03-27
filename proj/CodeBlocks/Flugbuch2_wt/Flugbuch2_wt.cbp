@@ -29,13 +29,9 @@
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
-<<<<<<< .mine
-					<Add library="libDTLd" />
-=======
 					<Add library="DTL" />
 					<Add library="odbc" />
 					<Add directory="/usr/local/lib" />
->>>>>>> .r84
 				</Linker>
 			</Target>
 			<Target title="Release_fcgi_static">
@@ -202,6 +198,8 @@
 			<Option target="Release_MSVC" />
 		</Unit>
 		<Unit filename="../../../src/inout/inout_flyhigh.h" />
+		<Unit filename="../../../src/inout/inout_igc.cpp" />
+		<Unit filename="../../../src/inout/inout_igc.h" />
 		<Unit filename="../../../src/inout/inout_mdb.cpp">
 			<Option target="Debug" />
 			<Option target="Release_fcgi_static" />
@@ -234,6 +232,8 @@
 		<Unit filename="../../../src/web/FlightTable.h" />
 		<Unit filename="../../../src/web/GliderTable.cpp" />
 		<Unit filename="../../../src/web/GliderTable.h" />
+		<Unit filename="../../../src/web/IgcImportForm.cpp" />
+		<Unit filename="../../../src/web/IgcImportForm.h" />
 		<Unit filename="../../../src/web/LocationTable.cpp" />
 		<Unit filename="../../../src/web/LocationTable.h" />
 		<Unit filename="../../../src/web/MainMenu.cpp" />

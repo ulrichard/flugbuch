@@ -37,6 +37,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
 
     vector<shared_ptr<flb::Flight> > vFlights;
     copy(flights.begin(), flights.end(), back_inserter(vFlights));
+    // todo: sort flights
     vFlights.erase(unique(vFlights.begin(), vFlights.end(), bll::bind(&flb::Flight::samePlaces, *bll::_1, *bll::_2)), vFlights.end());
 
     pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));

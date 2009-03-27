@@ -6,6 +6,7 @@
 #include "FormatStr.h"
 #include "MainMenu.h"
 #include "SystemInformation.h"
+#include "IgcImportForm.h"
 #ifdef WIN32
   #include "inout_mdb_win.h"
 #else
@@ -215,5 +216,12 @@ void FlightLogApp::reload()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightLogApp::importIGC()
+{
+    IgcImportForm *impDlg = new IgcImportForm(flightDb_);
+    impDlg->show();
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+
 
 

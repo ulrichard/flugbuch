@@ -185,7 +185,7 @@ public:
 	Flight(unsigned int number, const boost::gregorian::date &date, unsigned int airtime,
 			boost::shared_ptr<Glider> glider, boost::shared_ptr<Location> takeoff,
             boost::shared_ptr<Location> landing, const std::string story = "",
-            const SeqWaypoints &waypoints = std::vector<boost::shared_ptr<Location> >()):
+            const SeqWaypoints &waypoints = SeqWaypoints()):
 			number_(number), date_(date), airtime_(airtime), glider_(glider), takeoff_(takeoff),
 			landing_(landing), waypoints_(waypoints), distance_(0), story_(story), Waypoints(*this)    { }
 	Flight(const Flight &cpy) : number_(cpy.number_), date_(cpy.date_), airtime_(cpy.airtime_),

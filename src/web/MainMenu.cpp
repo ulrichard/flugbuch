@@ -37,6 +37,14 @@ MainMenu::MainMenu(Wt::WContainerWidget *parent)
     item->setIcon("img/home.png");
     item->activated().connect(SLOT(app, FlightLogApp::doLogin));
 
+    // create the flight menu
+    menu = new Wt::Ext::Menu();
+    btn = addButton("Flug", menu);
+//    b->setIcon("icons/yellow-folder-closed.png");
+
+    item = menu->addItem("IGC Import");
+//    item->setIcon("icons/yellow-folder-open.png");
+    item->activated().connect(SLOT(app, FlightLogApp::importIGC));
 
     // create the help menu
     menu = new Wt::Ext::Menu();
