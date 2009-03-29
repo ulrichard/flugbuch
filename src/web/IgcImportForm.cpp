@@ -47,15 +47,24 @@ void IgcImportForm::uploadTooBig(int size)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void IgcImportForm::fileReceived()
 {
-//    fileuploader_->stealSpooledFile();
+    try
+    {
+//      fileuploader_->stealSpooledFile();
 
-    igcfile_.read(fileuploader_->spoolFileName());
+        igcfile_.read(fileuploader_->spoolFileName());
 
 
 
-    shared_ptr<flb::Flight> flight = igcfile_.flight();
 
-    flightDb_->addFlight(flight);
+
+        shared_ptr<flb::Flight> flight = igcfile_.flight();
+
+        flightDb_->addFlight(flight);
+    }
+    catch(std::exception &ex)
+    {
+
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

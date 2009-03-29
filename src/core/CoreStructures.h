@@ -1,6 +1,7 @@
 #ifndef CORESTRUCTURES_H
 #define CORESTRUCTURES_H
 
+// boost
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/serialization/base_object.hpp>
@@ -9,6 +10,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+// standard library
 #include <fstream>
 #include <vector>
 #include <string>
