@@ -43,8 +43,8 @@ Wt::WWidget * WelcomeScreen::makeNormalLoginTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
     nl_txt_ = new Wt::WText("Hier koennen Sie ihr bestehendes Flugbuch aufrufen.", cont);
-    Wt::WBreak *brk1 = new Wt::WBreak(cont);
-    Wt::WBreak *brk2 = new Wt::WBreak(cont);
+    cont->addWidget(new Wt::WBreak());
+    cont->addWidget(new Wt::WBreak());
 
     Wt::WTable *layout = new Wt::WTable(cont);
     Wt::WLabel *usernameLabel = new Wt::WLabel("Benutzername: ", layout->elementAt(0, 0));
@@ -87,8 +87,9 @@ Wt::WWidget * WelcomeScreen::makeRegistrationTab()
 {
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
     rg_txt_ = new Wt::WText("Hier koennen Sie ihr neues Flugbuch eroeffnen.", cont);
-    Wt::WBreak *brk1 = new Wt::WBreak(cont);
-    Wt::WBreak *brk2 = new Wt::WBreak(cont);
+    cont->addWidget(new Wt::WBreak());
+    cont->addWidget(new Wt::WBreak());
+
 
     Wt::WTable *layout = new Wt::WTable(cont);
 
@@ -151,7 +152,8 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     Wt::WContainerWidget *cont = new Wt::WContainerWidget();
     im_txt_ = new Wt::WText("Hier koennen Sie ihre mdb Datenbank vom alten Flugbuchprogramm importieren.", cont);
 
-    Wt::WBreak *brk1 = new Wt::WBreak(cont);
+    cont->addWidget(new Wt::WBreak());
+
 
     im_uploader_ = new Wt::WFileUpload(cont);
     im_uploader_->uploaded().connect(SLOT(this, WelcomeScreen::doImport));
@@ -170,11 +172,10 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     im_password_->enterPressed().connect(SLOT(this, WelcomeScreen::startUpload));
     passwordLabel->setBuddy(im_password_);
 
-    Wt::WBreak *brk2 = new Wt::WBreak(cont);
+    cont->addWidget(new Wt::WBreak());
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Importieren", cont);
     LoginButton->clicked().connect(SLOT(this, WelcomeScreen::startUpload));
-
 
     return cont;
 }

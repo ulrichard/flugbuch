@@ -3,6 +3,7 @@
 
 // flugbuch
 #include "FlightDatabase.h"
+#include "inout.h"
 // boost
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -14,7 +15,7 @@
 namespace flb
 {
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class inout_igc
+class inout_igc : public inout_flight
 {
 private:
     struct track_point
@@ -31,11 +32,15 @@ private:
 public:
     inout_igc(boost::shared_ptr<flb::FlightDatabase> flightDb);
 
-    void read(const boost::filesystem::path &source);
+    virtual void read(const boost::filesystem::path &source);
+    virtual void write(const Flight &flt, const boost::filesystem::path &destination);
 
-    std::pair<double, double> getFirstLastPos(bool first) const;
-//    void setTakeoff(boost::shared_ptr<Location> to) { takeoff_ = to; };
-//    void setLanding(boost::shared_ptr<Location> la) { landing_ = la; };
+    std::string             pilotName()   const { return pilot_; }
+    std::string             gliderName()  const { return glider_; }
+    std::string             callsign()    const { return callsign_; }
+    std::string             takeoffName() const { return takeoff_; }
+    std::string             comment()     const { return comment_; }
+    boost::gregorian::date  date()        const { return date_; }
 
     boost::shared_ptr<flb::Flight> flight(void);
 
@@ -44,9 +49,25 @@ private:
     std::string                 pilot_, glider_, callsign_, takeoff_, comment_;
     boost::gregorian::date    	date_;
     std::vector<track_point>    track_points_;
-//    boost::shared_ptr<Location>                 takeoff_, landing_;
-//    std::vector<boost::shared_ptr<Location> >   waypoints_;
 
+public:
+    // memberspace for the trackpoints
+    struct Trackpoints
+	{
+	    typedef std::vector<track_point>::const_iterator       iterator;
+	    typedef std::vector<track_point>::const_iterator const_iterator;
+
+        iterator       begin()        { return ioigc_.track_points_.begin(); }
+        const_iterator begin() const  { return ioigc_.track_points_.begin(); }
+        iterator       end()          { return ioigc_.track_points_.end(); }
+        const_iterator end()   const  { return ioigc_.track_points_.end(); }
+
+        size_t size() const { return ioigc_.track_points_.size(); }
+    private:
+        friend class inout_igc;
+        Trackpoints(const inout_igc &ioigc) : ioigc_(ioigc) { }
+        const inout_igc &ioigc_;
+    }Trackpoints;
 
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

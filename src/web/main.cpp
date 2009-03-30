@@ -60,10 +60,6 @@ FlightLogApp::FlightLogApp(const Wt::WEnvironment& env)
 	setTitle("Flugbuch 2");               // application title
 	useStyleSheet("flugbuch2.css");
 
-    mainStack_     = new Wt::WStackedWidget(root());
-    welcomeScreen_ = new WelcomeScreen(mainStack_);
-    mainScreen_    = NULL;
-    tabCtrl_       = NULL;
     doLogin();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -86,7 +82,9 @@ bfs::path FlightLogApp::getPersistFileName(const string &usr)
 void FlightLogApp::doLogin()
 {
     // display the welcome page with different login options
-    mainStack_->setCurrentWidget(welcomeScreen_);
+    root()->clear();
+    WelcomeScreen *welcomeScreen = new WelcomeScreen();
+    root()->addWidget(welcomeScreen);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
@@ -126,25 +124,16 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 {
     flightDb_ = fldb;
 
-    if(mainScreen_)
-    {
-        mainStack_->removeWidget(mainScreen_);
-        delete mainScreen_;
-    }
-
-	mainScreen_ = new Wt::WContainerWidget(mainStack_);
+    root()->clear();
+	mainScreen_ = new Wt::WContainerWidget(root());
 	Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
 	mainScreen_->setLayout(borderLayout);
 
     flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
 	borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);
 
-    tabCtrl_ = new flbwt::TabControl(fldb);
-	borderLayout->addWidget(tabCtrl_,  Wt::WBorderLayout::Center);
-	// an attempt to make M$ internet exploder render the page correctly
-	tabCtrl_->resize(Wt::WLength(100, Wt::WLength::Percentage), Wt::WLength(100, Wt::WLength::Percentage));
-
-    mainStack_->setCurrentWidget(mainScreen_);
+    flbwt::TabControl *tabCtrl = new flbwt::TabControl(fldb);
+	borderLayout->addWidget(tabCtrl,  Wt::WBorderLayout::Center);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadTestDb()

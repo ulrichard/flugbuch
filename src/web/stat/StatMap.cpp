@@ -13,6 +13,7 @@
 #include <algorithm>
 
 using namespace flbwt;
+using namespace flb;
 using Wt::WContainerWidget;
 using boost::gregorian::date;
 using boost::shared_ptr;
@@ -27,6 +28,62 @@ using std::make_pair;
 using std::auto_ptr;
 using std::min;
 using std::max;
+using std::distance;
+using std::sort;
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+struct FlightSorterPlaces
+{
+public:
+    FlightSorterPlaces(const shared_ptr<FlightDatabase> flightDb) : flightDb_(flightDb) { }
+
+    bool operator()(const shared_ptr<Flight> &lhs, const shared_ptr<Flight> &rhs) const
+    {
+        if(lhs->takeoff() != rhs->takeoff())
+        {
+            FlightDatabase::Locations::const_iterator it_to_lhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), lhs->takeoff());
+            if(it_to_lhs == flightDb_->Locations.end())
+                throw std::runtime_error("lhs takeoff location not in db");
+            FlightDatabase::Locations::const_iterator it_to_rhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), rhs->takeoff());
+            if(it_to_rhs == flightDb_->Locations.end())
+                throw std::runtime_error("rhs takeoff location not in db");
+            return (distance(flightDb_->Locations.begin(), it_to_lhs) < distance(flightDb_->Locations.begin(), it_to_rhs));
+        }
+
+        if(lhs->landing() != rhs->landing())
+        {
+            FlightDatabase::Locations::const_iterator it_la_lhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), lhs->landing());
+            if(it_la_lhs == flightDb_->Locations.end())
+                throw std::runtime_error("lhs landing location not in db");
+            FlightDatabase::Locations::const_iterator it_la_rhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), rhs->landing());
+            if(it_la_rhs == flightDb_->Locations.end())
+                throw std::runtime_error("rhs landing location not in db");
+            return (distance(flightDb_->Locations.begin(), it_la_lhs) < distance(flightDb_->Locations.begin(), it_la_rhs));
+        }
+
+        for(FlightDatabase::Locations::const_iterator it_lhs = lhs->Waypoints.begin(), it_rhs = rhs->Waypoints.begin();
+            it_lhs != lhs->Waypoints.end() && it_rhs != rhs->Waypoints.end(); ++it_lhs, ++it_rhs)
+        {
+            if(*it_lhs != *it_rhs)
+            {
+                FlightDatabase::Locations::const_iterator it_wp_lhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), *it_lhs);
+                if(it_wp_lhs == flightDb_->Locations.end())
+                    throw std::runtime_error("lhs waypoint location not in db");
+                FlightDatabase::Locations::const_iterator it_wp_rhs = find(flightDb_->Locations.begin(), flightDb_->Locations.end(), *it_rhs);
+                if(it_wp_rhs == flightDb_->Locations.end())
+                    throw std::runtime_error("rhs waypoint location not in db");
+                return (distance(flightDb_->Locations.begin(), it_wp_lhs) < distance(flightDb_->Locations.begin(), it_wp_rhs));
+            }
+        }
+        if(lhs->Waypoints.size() != rhs->Waypoints.size())
+            if(lhs->Waypoints.size() < rhs->Waypoints.size())
+                return true;
+
+        return false;
+    }
+
+private:
+    const shared_ptr<flb::FlightDatabase> flightDb_;
+};
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
@@ -37,7 +94,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
 
     vector<shared_ptr<flb::Flight> > vFlights;
     copy(flights.begin(), flights.end(), back_inserter(vFlights));
-    // todo: sort flights
+    sort(vFlights.begin(), vFlights.end(), FlightSorterPlaces(flightDb_));
     vFlights.erase(unique(vFlights.begin(), vFlights.end(), bll::bind(&flb::Flight::samePlaces, *bll::_1, *bll::_2)), vFlights.end());
 
     pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));

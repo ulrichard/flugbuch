@@ -19,7 +19,7 @@ using std::string;
 using std::pair;
 using std::make_pair;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-inout_igc::inout_igc(shared_ptr<flb::FlightDatabase> flightDb) : flightDb_(flightDb)
+inout_igc::inout_igc(shared_ptr<flb::FlightDatabase> flightDb) : inout_flight(), flightDb_(flightDb), Trackpoints(*this)
 {
 
 }
@@ -90,16 +90,6 @@ void inout_igc::read(const boost::filesystem::path &source)
     } // while getline
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-pair<double, double> inout_igc::getFirstLastPos(bool first) const
-{
-    if(!track_points_.size())
-        throw std::runtime_error("no trackpoints");
-    if(first)
-        return track_points_.front().pos_;
-    else
-        return track_points_.back().pos_;
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 shared_ptr<flb::Flight> inout_igc::flight(void) // throws std::exception
 {
     // first make sure, we have gliders and locations defined
@@ -129,6 +119,10 @@ shared_ptr<flb::Flight> inout_igc::flight(void) // throws std::exception
     return flight;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void inout_igc::write(const Flight &flt, const bfs::path &destination)
+{
+    throw std::runtime_error("inout_igc::write()  not implemented!");
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

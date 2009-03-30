@@ -14,19 +14,16 @@
 namespace flb
 {
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class inout_mdb : public inout
+class inout_mdb : public inout_flb
 {
 public:
-	inout_mdb() : inout() {}
+	inout_mdb() : inout_flb() {}
 	virtual ~inout_mdb() {}
 
 	virtual FlightDatabase read(const boost::filesystem::path &source);
 	virtual void write(const FlightDatabase &fdb, const boost::filesystem::path &destination) { throw std::logic_error("not implemented"); };
 
 private:
-	inout_mdb(const inout &cpy);
-	const inout_mdb & operator=(const inout_mdb &cpy);
-
 	boost::filesystem::path export_csv(const boost::filesystem::path &source, const std::string &tablename);
 	void parse_csv(const boost::filesystem::path &file, boost::function<void(const std::vector<std::string>&)> lineFunc);
 	void readCountry(const std::vector<std::string> &tokens);

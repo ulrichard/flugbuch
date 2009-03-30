@@ -20,10 +20,10 @@ namespace dtl
 namespace flb
 {
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class inout_mdb : public inout
+class inout_mdb : public inout_flb
 {
 public:
-	inout_mdb() : inout() {}
+	inout_mdb() : inout_flb() {}
 	virtual ~inout_mdb() {}
 
 	virtual FlightDatabase read(const boost::filesystem::path &source);

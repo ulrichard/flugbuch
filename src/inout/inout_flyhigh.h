@@ -15,19 +15,16 @@ namespace dtl
 namespace flb
 {
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class inout_flyhigh : public inout
+class inout_flyhigh : public inout_flb
 {
 public:
-	inout_flyhigh() : inout() {}
+	inout_flyhigh() : inout_flb() {}
 	virtual ~inout_flyhigh() {}
 
 	virtual FlightDatabase read(const boost::filesystem::path &source);
 	virtual void write(const FlightDatabase &fdb, const boost::filesystem::path &destination);
 
 private:
-	inout_flyhigh(const inout &cpy);
-	const inout_flyhigh & operator=(const inout_flyhigh &cpy);
-
     std::pair<unsigned int, boost::shared_ptr<Glider> >     GetGlider(const dtl::variant_row &row);
     std::pair<unsigned int, boost::shared_ptr<Location> >   GetLocation(const dtl::variant_row &row, FlightDatabase &fldb);
     std::pair<unsigned int, boost::shared_ptr<Flight> >     GetFlight(const dtl::variant_row &row);

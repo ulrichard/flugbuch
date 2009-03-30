@@ -49,7 +49,6 @@ protected:
     virtual void finalize();
     boost::filesystem::path getPersistFileName(const std::string &usr);
 private:
-   Wt::WStackedWidget                       *mainStack_;
    WelcomeScreen                            *welcomeScreen_;
    Wt::WContainerWidget                     *mainScreen_;
    flbwt::TabControl                        *tabCtrl_;
