@@ -85,9 +85,8 @@ public:
 	void addUsage(int usg)                           { usageas_ |= usg; }
 
 	// calculation
-	double getDistance(const Location &rhs) const;
+	double getDistance(const std::pair<double, double> &latlon) const;
 	bool   isEquivalent(const Location &rhs) const;
-	bool   isEquivalentSp(const boost::shared_ptr<Location> &rhs) const { return isEquivalent(*rhs); };
 
 	template<class Archive> void serialize(Archive & ar, const unsigned int version)
 	{

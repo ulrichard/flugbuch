@@ -7,9 +7,17 @@
 #include <Wt/WApplication>
 #include <Wt/Ext/MessageBox>
 #include <Wt/Ext/Button>
+// boost
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 
 using namespace flbwt;
+using namespace flb;
 using boost::shared_ptr;
+using std::vector;
+using std::remove_copy_if;
+using namespace boost::lambda;
+namespace bll = boost::lambda;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 IgcImportForm::IgcImportForm(shared_ptr<flb::FlightDatabase> flightDb)
@@ -47,11 +55,17 @@ void IgcImportForm::uploadTooBig(int size)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void IgcImportForm::fileReceived()
 {
+    static const double distThreshold = 0.3; // km
     try
     {
 //      fileuploader_->stealSpooledFile();
 
         igcfile_.read(fileuploader_->spoolFileName());
+        // find the takeoff
+        vector<shared_ptr<Location> > tmploc;
+//        remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
+//            bind(&Location::usage, *bll::_1) & Location::UA_TAKEOFF &&
+//            bind(&Location::getDistance, *bll::_1, igcfile_.Trackpoints.begin()->pos_) < distThreshold);
 
 
 
@@ -63,7 +77,8 @@ void IgcImportForm::fileReceived()
     }
     catch(std::exception &ex)
     {
-
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        accept();
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

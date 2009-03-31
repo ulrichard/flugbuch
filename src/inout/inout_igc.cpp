@@ -33,17 +33,21 @@ void inout_igc::read(const boost::filesystem::path &source)
     static const string hdrCallsign = "HFGIDGLIDERID:";
     static const string hdrGpsDatum = "HODTM100GPSDATUM:";
     static const string hdrTakeoff  = "HOSITSite:";
-    static const string hdrComment  = "LPLT";
+    static const string hdrComment  = "LPLT ";
 
-    char linec[1024];
-    while(ifs.getline(linec, sizeof(linec)))
+    string line;
+    while(std::getline(ifs, line))
     {
-        const string line(linec);
+        if(!line.length())
+            continue;
+        if(*line.rbegin() == '\r')
+            line = line.substr(0, line.length() - 1);
+
         if(line.substr(0, hdrDate.length()) == hdrDate)
         {
             unsigned short day  = lexical_cast<unsigned short>(line.substr(hdrDate.length(),     2));
             unsigned short mon  = lexical_cast<unsigned short>(line.substr(hdrDate.length() + 2, 2));
-            unsigned short year = lexical_cast<unsigned short>(line.substr(hdrDate.length() + 4, 2));
+            unsigned short year = lexical_cast<unsigned short>(line.substr(hdrDate.length() + 4, 2)) + 2000;
             date_ = bgreg::date(year, mon, day);
         }
         else if(line.substr(0, hdrPilot.length()) == hdrPilot)
@@ -58,8 +62,9 @@ void inout_igc::read(const boost::filesystem::path &source)
             comment_ = line.substr(hdrComment.length(), line.length());
         else if(line.substr(0, hdrGpsDatum.length()) == hdrGpsDatum)
         {
-            if(line.substr(hdrGpsDatum.length(), line.length()) != "WGS-84")
-                throw std::runtime_error("unsupported map datum");
+            const string mapdat = line.substr(hdrGpsDatum.length() + 1, line.length());
+            if(mapdat.substr(0, 6) != "WGS-84" && mapdat.substr(0, 7) != " WGS-84")
+                throw std::runtime_error("unsupported map datum : \"" + mapdat + "\"");
         }
        else if(line[0] == 'B')
         {
@@ -72,7 +77,7 @@ void inout_igc::read(const boost::filesystem::path &source)
             char eastwest;
             char valid;
 
-            if(sscanf(linec,
+            if(sscanf(line.c_str(),
                     "%*c%2d%2d%2d%2d%2d%3d%c%3d%2d%3d%c%c%5d%5d",
                     &hh, &mm, &ss, &latdeg, &latminute, &latmindec, &northsouth, &londeg,
                     &lonminute, &lonmindec, &eastwest, &valid, &altPress, &altGPS) == 14)

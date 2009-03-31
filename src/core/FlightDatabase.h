@@ -20,11 +20,11 @@ class FlightDatabase
 {
 	friend class boost::serialization::access;
 	typedef std::vector<boost::shared_ptr<Glider> >		SeqGliders;
-	typedef std::vector<boost::shared_ptr<Location> >   SeqLocations;
 public:
 	// typedefs
 	typedef std::set   <boost::shared_ptr<Flight> >		SeqFlights;
 	typedef std::vector<boost::shared_ptr<FlightArea> > SeqFlightAreas;
+	typedef std::vector<boost::shared_ptr<Location> >   SeqLocations;
 public:
 	FlightDatabase(const std::string &PilotName, const std::string &pwd = "")
 	  : PilotName_(PilotName), Password_(encryptPassword(pwd)), FlightAreas(*this), Locations(*this), Gliders(*this)  {}

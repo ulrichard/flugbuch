@@ -31,11 +31,11 @@ void Location::setPosition(double lat, double lon)
     longitude_ = lon;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-double Location::getDistance(const Location &rhs) const
+double Location::getDistance(const std::pair<double, double> &latlon) const
 {
-	const double lat1 = latitude_      * M_PI / 180.0;
-	const double lat2 = rhs.latitude() * M_PI / 180.0;
-	const double deltaLong = (rhs.longitude() - longitude_) * M_PI / 180.0;
+	const double lat1 = latitude_    * M_PI / 180.0;
+	const double lat2 = latlon.first * M_PI / 180.0;
+	const double deltaLong = (latlon.second - longitude_) * M_PI / 180.0;
 	const double angle = sinl(lat1) * sinl(lat2) + cosl(lat1) * cosl(lat2) * cosl(deltaLong);
     const double earthRadius = 6371.0; // km
 	const double dist = earthRadius * acosl(angle);
@@ -49,7 +49,7 @@ bool Location::isEquivalent(const Location &rhs) const
         return false;
     if(name_ != rhs.name())
         return false;
-    if(getDistance(rhs) > 0.1)
+    if(getDistance(rhs.pos()) > 0.1)
         return false;
     return true;
 }
@@ -68,7 +68,7 @@ double Flight::calcDistance() const
     vector<shared_ptr<Location> >::const_iterator it1 = locations.begin(), it2 = locations.begin();
     ++it2;
     for( ; it2 != locations.end(); ++it1, ++it2)
-        legLengths.push_back((*it1)->getDistance(**it2));
+        legLengths.push_back((*it1)->getDistance((*it2)->pos()));
     // summm the legs
     return std::accumulate(legLengths.begin(), legLengths.end(), 0);
 }

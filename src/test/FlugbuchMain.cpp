@@ -1,18 +1,20 @@
+// flugbuch
 #include "FlightDatabase.h"
 #include "inout_xml.h"
 #include "inout_mdb.h"
+#include "inout_igc.h"
 #include "SystemInformation.h"
-
-#include <stdlib.h>
-#include <iostream>
-
+// boost
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK
-
-//#include <boost/test/auto_unit_test.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+// standard library
+#include <stdlib.h>
+#include <iostream>
+
 
 using namespace boost::unit_test;
 using boost::shared_ptr;
@@ -34,10 +36,10 @@ BOOST_AUTO_TEST_CASE(SerialisationTestXml)
 {
     shared_ptr<flb::FlightDatabase> fldb = flb::FlightDatabase::makeTestDb();
 
-	BOOST_CHECK_EQUAL(fldb->flights().size(),      8);
-	BOOST_CHECK_EQUAL(fldb->flightAreas ().size(), 5);
-	BOOST_CHECK_EQUAL(fldb->locations().size(),    8);
-	BOOST_CHECK_EQUAL(fldb->gliders().size(),      3);
+	BOOST_CHECK_EQUAL(fldb->flights().size(),   12);
+	BOOST_CHECK_EQUAL(fldb->FlightAreas.size(),  9);
+	BOOST_CHECK_EQUAL(fldb->Locations.size(),   16);
+	BOOST_CHECK_EQUAL(fldb->Gliders.size(),      6);
 
 	flb::inout_xml ioxml;
 
@@ -46,16 +48,16 @@ BOOST_AUTO_TEST_CASE(SerialisationTestXml)
 
 	flb::FlightDatabase fldb2 = ioxml.read(tmpfile);
 
-	BOOST_CHECK_EQUAL(fldb2.flights().size(),      8);
-	BOOST_CHECK_EQUAL(fldb2.flightAreas ().size(), 5);
-	BOOST_CHECK_EQUAL(fldb2.locations().size(),    8);
-	BOOST_CHECK_EQUAL(fldb2.gliders().size(),      3);
+	BOOST_CHECK_EQUAL(fldb2.flights().size(),   12);
+	BOOST_CHECK_EQUAL(fldb2.FlightAreas.size(),  9);
+	BOOST_CHECK_EQUAL(fldb2.Locations.size(),   16);
+	BOOST_CHECK_EQUAL(fldb2.Gliders.size(),      6);
 
 
     // location selection
     shared_ptr<flb::FlightArea> arSchwyz = fldb->getArea("Schwyz");
     flb::FlightDatabase::SeqLocations selSchwyz = fldb->getLocationsEx(arSchwyz, flb::Location::UA_LANDING);
-    BOOST_CHECK_EQUAL(1, selSchwyz.size());
+    BOOST_CHECK_EQUAL(2, selSchwyz.size());
     BOOST_CHECK_EQUAL("Steisteg", selSchwyz[0]->name());
 
     shared_ptr<flb::FlightArea> arSteinen = fldb->getArea("Steinen");
@@ -77,14 +79,34 @@ BOOST_AUTO_TEST_CASE(SerialisationTestXml)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 BOOST_AUTO_TEST_CASE(ReadMdbTest)
 {
-    flb::inout_mdb iomdb;
     bfs::path flbfile = flb::SystemInformation::homeDir() / "Flugbuch.mdb";
     BOOST_REQUIRE(bfs::exists(flbfile));
+    flb::inout_mdb iomdb;
 	boost::shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(flbfile)));
 
-    BOOST_CHECK_GE(fldb->gliders().size(),      59);
-    BOOST_CHECK_GE(fldb->flightAreas().size(), 150);
-    BOOST_CHECK_GE(fldb->locations().size(),  1173);
-    BOOST_CHECK_GE(fldb->flights().size(),    1580);
+    BOOST_CHECK_GE(fldb->Gliders.size(),      59);
+    BOOST_CHECK_GE(fldb->FlightAreas.size(), 150);
+    BOOST_CHECK_GE(fldb->Locations.size(),  1173);
+    BOOST_CHECK_GE(fldb->flights().size(),  1580);
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+BOOST_AUTO_TEST_CASE(ReadIgcTest)
+{
+    bfs::path igcfile = flb::SystemInformation::homeDir() / "gipsy/Richard Ulrich/2008/2008-09-13-XPG-RIC-01.igc";
+    BOOST_REQUIRE(bfs::exists(igcfile));
+    shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase("tester"));
+    flb::inout_igc ioigc(fldb);
+    ioigc.read(igcfile);
+
+    BOOST_CHECK_EQUAL(ioigc.pilotName(),        "Richard Ulrich");
+    BOOST_CHECK_EQUAL(ioigc.gliderName(),       "MAC PARA Magus 5");
+    BOOST_CHECK_EQUAL(ioigc.callsign(),         "");
+    BOOST_CHECK_EQUAL(ioigc.takeoffName(),      "Piedrahita Pena Negra (ES)");
+    BOOST_CHECK_EQUAL(ioigc.comment(),          "Deutsche Meisterschaft. Einziger gueltiger Task");
+    BOOST_CHECK_EQUAL(ioigc.date(),             boost::gregorian::date(2008, 9, 13));
+    BOOST_CHECK_EQUAL(ioigc.Trackpoints.size(), 2981);
+
 
 }
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+

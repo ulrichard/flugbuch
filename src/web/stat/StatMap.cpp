@@ -92,6 +92,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     gmap->enableScrollWheelZoom();
     gmap->addHierarchicalMapTypeControl();
 
+    // if we have multiple flights with the same takeoff/waypoints/landing zone, draw it only once.
     vector<shared_ptr<flb::Flight> > vFlights;
     copy(flights.begin(), flights.end(), back_inserter(vFlights));
     sort(vFlights.begin(), vFlights.end(), FlightSorterPlaces(flightDb_));

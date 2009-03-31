@@ -9,6 +9,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 // standard library
 #include <fstream>
 #include <vector>
@@ -30,30 +32,32 @@ using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
 namespace bfs = boost::filesystem;
+namespace bll = boost::lambda;
+using namespace boost::lambda;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_mdb::read(const bfs::path &source)
 {
 	FlightDatabase fldb("");
     // the areas can be used as is
-	parse_csv(export_csv(source, "Laender"),       bind(&inout_mdb::readCountry,    this, _1));
-	parse_csv(export_csv(source, "Fluggebiete"),   bind(&inout_mdb::readFlightArea, this, _1));
+	parse_csv(export_csv(source, "Laender"),       ::bind(&inout_mdb::readCountry,    this, ::_1));
+	parse_csv(export_csv(source, "Fluggebiete"),   ::bind(&inout_mdb::readFlightArea, this, ::_1));
     for(map<unsigned int, shared_ptr<FlightArea> >::iterator it = areas_.begin(); it != areas_.end(); ++it)
         fldb.addFlightArea(it->second);
     // the gliders can be used as is
-	parse_csv(export_csv(source, "Gleitschirme"),  bind(&inout_mdb::readGlider,     this, _1));
+	parse_csv(export_csv(source, "Gleitschirme"),  ::bind(&inout_mdb::readGlider,     this, ::_1));
     for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
         fldb.addGlider(it->second);
     // we have to consolidate the locations
-	parse_csv(export_csv(source, "Startplaetze"),  bind(&inout_mdb::readLocation,   this, _1, ref(takeoffs_)));
-	parse_csv(export_csv(source, "Landeplaetze"),  bind(&inout_mdb::readLocation,   this, _1, ref(landings_)));
-	parse_csv(export_csv(source, "Wegpunkte"),     bind(&inout_mdb::readLocation,   this, _1, ref(waypoints_)));
-	parse_csv(export_csv(source, "lnkWegpFluege"), bind(&inout_mdb::readWptLink,    this, _1));
-    for_each(takeoffs_.begin(),  takeoffs_.end(),  bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_TAKEOFF, ref(fldb)));
-    for_each(landings_.begin(),  landings_.end(),  bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_LANDING, ref(fldb)));
-    for_each(waypoints_.begin(), waypoints_.end(), bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_WAYPNT,  ref(fldb)));
+	parse_csv(export_csv(source, "Startplaetze"),  ::bind(&inout_mdb::readLocation,   this, ::_1, ref(takeoffs_)));
+	parse_csv(export_csv(source, "Landeplaetze"),  ::bind(&inout_mdb::readLocation,   this, ::_1, ref(landings_)));
+	parse_csv(export_csv(source, "Wegpunkte"),     ::bind(&inout_mdb::readLocation,   this, ::_1, ref(waypoints_)));
+	parse_csv(export_csv(source, "lnkWegpFluege"), ::bind(&inout_mdb::readWptLink,    this, ::_1));
+    for_each(takeoffs_.begin(),  takeoffs_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_TAKEOFF, ref(fldb)));
+    for_each(landings_.begin(),  landings_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_LANDING, ref(fldb)));
+    for_each(waypoints_.begin(), waypoints_.end(), ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_WAYPNT,  ref(fldb)));
     // flights
-	parse_csv(export_csv(source, "Fluege"),        bind(&inout_mdb::readFlight,     this, _1));
+	parse_csv(export_csv(source, "Fluege"),        ::bind(&inout_mdb::readFlight,     this, ::_1));
     for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
         fldb.addFlight(it->second);
     // find gaps in the flight number sequence, and calculate the flown distance
@@ -211,7 +215,7 @@ void inout_mdb::readWptLink(const vector<string> &tokens)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)
 {
-    FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
+    FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bll::bind(&Location::isEquivalent,  *locp.second, *bll::_1));
     if(fit == fldb.Locations.end())
     {
         // we didn't find an equivalent location, but there might still exist one with the same name
