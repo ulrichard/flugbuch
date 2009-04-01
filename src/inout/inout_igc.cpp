@@ -5,12 +5,14 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/trim.hpp>
 // standard library
 #include <stdexcept>
 
 using namespace flb;
 using boost::shared_ptr;
 using boost::lexical_cast;
+using boost::algorithm::trim_copy;
 using namespace boost::lambda;
 namespace bfs   = boost::filesystem;
 namespace bgreg = boost::gregorian;
@@ -45,25 +47,26 @@ void inout_igc::read(const boost::filesystem::path &source)
 
         if(line.substr(0, hdrDate.length()) == hdrDate)
         {
-            unsigned short day  = lexical_cast<unsigned short>(line.substr(hdrDate.length(),     2));
-            unsigned short mon  = lexical_cast<unsigned short>(line.substr(hdrDate.length() + 2, 2));
-            unsigned short year = lexical_cast<unsigned short>(line.substr(hdrDate.length() + 4, 2)) + 2000;
+            const string datestr = trim_copy(line.substr(hdrDate.length(), line.length()));
+            unsigned short day  = lexical_cast<unsigned short>(datestr.substr(0, 2));
+            unsigned short mon  = lexical_cast<unsigned short>(datestr.substr(2, 2));
+            unsigned short year = lexical_cast<unsigned short>(datestr.substr(4, 2)) + 2000;
             date_ = bgreg::date(year, mon, day);
         }
         else if(line.substr(0, hdrPilot.length()) == hdrPilot)
-            pilot_    = line.substr(hdrPilot.length(), line.length());
+            pilot_    = trim_copy(line.substr(hdrPilot.length(), line.length()));
         else if(line.substr(0, hdrGlider.length()) == hdrGlider)
-            glider_   = line.substr(hdrGlider.length(), line.length());
+            glider_   = trim_copy(line.substr(hdrGlider.length(), line.length()));
         else if(line.substr(0, hdrCallsign.length()) == hdrCallsign)
-            callsign_ = line.substr(hdrCallsign.length(), line.length());
+            callsign_ = trim_copy(line.substr(hdrCallsign.length(), line.length()));
          else if(line.substr(0, hdrTakeoff.length()) == hdrTakeoff)
-            takeoff_ = line.substr(hdrTakeoff.length(), line.length());
+            takeoff_ = trim_copy(line.substr(hdrTakeoff.length(), line.length()));
         else if(line.substr(0, hdrComment.length()) == hdrComment)
-            comment_ = line.substr(hdrComment.length(), line.length());
+            comment_ = trim_copy(line.substr(hdrComment.length(), line.length()));
         else if(line.substr(0, hdrGpsDatum.length()) == hdrGpsDatum)
         {
-            const string mapdat = line.substr(hdrGpsDatum.length() + 1, line.length());
-            if(mapdat.substr(0, 6) != "WGS-84" && mapdat.substr(0, 7) != " WGS-84")
+            const string mapdat = trim_copy(line.substr(hdrGpsDatum.length() + 1, line.length()));
+            if(mapdat.substr(0, 6) != "WGS-84")
                 throw std::runtime_error("unsupported map datum : \"" + mapdat + "\"");
         }
        else if(line[0] == 'B')

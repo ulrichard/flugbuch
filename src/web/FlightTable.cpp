@@ -481,18 +481,16 @@ FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     cbArea_->activated().connect(SLOT(this, FlightPanel::filter));
 
     // header
-    Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
-    topBar->setLayout(new Wt::WHBoxLayout());
+    Wt::WTable *topBar = new Wt::WTable();
+    topBar->setStyleClass("FilterBar");
     WText *wtFilt = new WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
     WText *wtArea = new WText("Fluggebiet");
     wtArea->setStyleClass("FilterSubTitle");
-
-    topBar->layout()->addWidget(wtFilt);
-    topBar->layout()->addWidget(wtArea);
-    topBar->layout()->addWidget(cbArea_);
-    topBar->layout()->addWidget(pglist_);
-    topBar->resize(topBar->width(), 40);
+    topBar->elementAt(0, 0)->addWidget(wtFilt);
+    topBar->elementAt(0, 1)->addWidget(wtArea);
+    topBar->elementAt(0, 2)->addWidget(cbArea_);
+    topBar->elementAt(0, 3)->addWidget(pglist_);
 
     Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
     impl_->setLayout(borderLayout);

@@ -377,41 +377,23 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
     cbLanding_->unChecked().connect(SLOT(this, LocationPanel::filter));
     cbWayPnt_->unChecked().connect(SLOT(this, LocationPanel::filter));
 
-/*
-    cbTakeoff_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbTakeoff_->unChecked.connect(SLOT(this, LocationPanel::filter));
-    cbLanding_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbLanding_->unChecked.connect(SLOT(this, LocationPanel::filter));
-    cbWayPnt_->checked.connect(SLOT(this, LocationPanel::filter));
-    cbWayPnt_->unChecked.connect(SLOT(this, LocationPanel::filter));
-*/
     // header
-    Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
-    topBar->setLayout(new Wt::WGridLayout());
+    Wt::WTable *topBar = new Wt::WTable();
+    topBar->setStyleClass("FilterBar");
     WText *wtFilt = new WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
     WText *wtArea = new WText("Fluggebiet");
     wtArea->setStyleClass("FilterSubTitle");
-//    WText *wtTakeoff = new WText("Startplaetze");
-//    wtTakeoff->setStyleClass("tableFilter");
-//    WText *wtLanding = new WText("Landeplaetze");
-//    wtLanding->setStyleClass("tableFilter");
-//    WText *wtWaypoint = new WText("Wegpunkte");
-//    wtWaypoint->setStyleClass("tableFilter");
     cbTakeoff_->setText("Startplaetze");
     cbLanding_->setText("Landeplaetze");
     cbWayPnt_->setText("Wegpunkte");
-    topBar->layout()->addWidget(wtFilt);
-    topBar->layout()->addWidget(wtArea);
-    topBar->layout()->addWidget(cbArea_);
-//    topBar->layout()->addWidget(wtTakeoff);
-    topBar->layout()->addWidget(cbTakeoff_);
-//    topBar->layout()->addWidget(wtLanding);
-    topBar->layout()->addWidget(cbLanding_);
-//    topBar->layout()->addWidget(wtWaypoint);
-    topBar->layout()->addWidget(cbWayPnt_);
-    topBar->layout()->addWidget(pglist_);
-    topBar->resize(topBar->width(), 40);
+    topBar->elementAt(0, 0)->addWidget(wtFilt);
+    topBar->elementAt(0, 1)->addWidget(wtArea);
+    topBar->elementAt(0, 2)->addWidget(cbArea_);
+    topBar->elementAt(0, 3)->addWidget(cbTakeoff_);
+    topBar->elementAt(0, 4)->addWidget(cbLanding_);
+    topBar->elementAt(0, 5)->addWidget(cbWayPnt_);
+    topBar->elementAt(0, 6)->addWidget(pglist_);
 
     Wt::WContainerWidget *botBar = new Wt::WContainerWidget();
 
@@ -423,7 +405,6 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
 
     load();
     filter();
-
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationPanel::load()

@@ -50,7 +50,6 @@ protected:
     boost::filesystem::path getPersistFileName(const std::string &usr);
 private:
    WelcomeScreen                            *welcomeScreen_;
-   Wt::WContainerWidget                     *mainScreen_;
    flbwt::TabControl                        *tabCtrl_;
    boost::shared_ptr<flb::FlightDatabase>   flightDb_;
 

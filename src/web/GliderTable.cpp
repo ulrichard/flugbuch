@@ -307,22 +307,20 @@ GliderPanel::GliderPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     cbBrand_->activated().connect(SLOT(this, GliderPanel::filter));
     cbClassi_->activated().connect(SLOT(this, GliderPanel::filter));
     // header
-    Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
-    topBar->setLayout(new Wt::WHBoxLayout());
+    Wt::WTable *topBar = new Wt::WTable();
+    topBar->setStyleClass("FilterBar");
     WText *wtFilt = new WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
     WText *wtBrand = new WText("Hersteller");
     wtBrand->setStyleClass("FilterSubTitle");
     WText *wtClassi = new WText("Klassierung");
     wtClassi->setStyleClass("FilterSubTitle");
-
-    topBar->layout()->addWidget(wtFilt);
-    topBar->layout()->addWidget(wtBrand);
-    topBar->layout()->addWidget(cbBrand_);
-    topBar->layout()->addWidget(wtClassi);
-    topBar->layout()->addWidget(cbClassi_);
-    topBar->layout()->addWidget(pglist_);
-    topBar->resize(topBar->width(), 40);
+    topBar->elementAt(0, 0)->addWidget(wtFilt);
+    topBar->elementAt(0, 1)->addWidget(wtBrand);
+    topBar->elementAt(0, 2)->addWidget(cbBrand_);
+    topBar->elementAt(0, 3)->addWidget(wtClassi);
+    topBar->elementAt(0, 4)->addWidget(cbClassi_);
+    topBar->elementAt(0, 5)->addWidget(pglist_);
 
     Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
     impl_->setLayout(borderLayout);

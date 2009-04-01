@@ -6,6 +6,12 @@ table.tableFlights
 	padding: 3px 2px 3px 2px;
 }
 
+table.FilterBar
+{
+	width: 100%;
+	padding: 3px 2px 3px 2px;
+}
+
 tr.title
 {
 	background-color: #e5e5f8;
@@ -85,4 +91,5 @@ img.operationImg
 	width: 16px;
 	height: 16px;
 }
+
 

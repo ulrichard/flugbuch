@@ -30,7 +30,7 @@ WelcomeScreen::WelcomeScreen(Wt::WContainerWidget *parent)
 
  //   setContentAlignment(AlignMiddle | AlignCenter);
     resize(400, 300);
-//    setStyleClass("WelcomeScreen");
+ //   setStyleClass("WelcomeScreen");
 
     addTab(makeNormalLoginTab(),  "Login");
     addTab(makeRegistrationTab(), "Registrieren");
