@@ -220,7 +220,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\web\IgcImportForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\inout\inout_flyhigh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inout\inout_igc.cpp"
 				>
 			</File>
 			<File
@@ -307,6 +315,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\GliderTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\web\IgcImportForm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\inout\inout_igc.h"
 				>
 			</File>
 			<File

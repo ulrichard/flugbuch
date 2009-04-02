@@ -12,6 +12,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
 // standard library
 #include <fstream>
 #include <vector>
@@ -20,7 +22,12 @@
 #include <iostream>
 
 using namespace flb;
-//using namespace boost::lambda;
+using namespace boost::lambda;
+namespace bll = boost::lambda;
+using boost::lexical_cast;
+using boost::bind;
+using boost::ref;
+namespace bfs = boost::filesystem;
 using std::string;
 using std::vector;
 using std::map;
@@ -29,10 +36,6 @@ using std::back_inserter;
 using std::pair;
 using std::make_pair;
 using std::count;
-using boost::lexical_cast;
-using boost::bind;
-using boost::ref;
-namespace bfs = boost::filesystem;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 // db definitions
@@ -128,34 +131,33 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 
         // the flight areas can be used as is
         dtl::DynamicDBView<> viewArea("Fluggebiete", "*");
-        transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.end()), bind(&inout_mdb::GetArea, this, _1));
-//		for_each(areas_.begin(), areas_.end(), bind(&FlightDatabase::addFlightArea, fldb, ret<shared_ptr<FlightArea> >(bind(&pair<unsigned int, shared_ptr<FlightArea> >::second, _1))));
+		transform(viewArea.begin(), viewArea.end(), inserter(areas_, areas_.end()), ::bind(&inout_mdb::GetArea, this, ::_1));
 		for(map<unsigned int, shared_ptr<FlightArea> >::iterator it = areas_.begin(); it != areas_.end(); ++it)
 			fldb.addFlightArea(it->second);
 
         // the gliders can be used as is
         dtl::DynamicDBView<> viewGlider("Gleitschirme", "*");
-        transform(viewGlider.begin(), viewGlider.end(), inserter(gliders_, gliders_.end()), bind(&inout_mdb::GetGlider, this, _1));
+		transform(viewGlider.begin(), viewGlider.end(), inserter(gliders_, gliders_.end()), ::bind(&inout_mdb::GetGlider, this, ::_1));
         for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
             fldb.addGlider(it->second);
 
         // we have to consolidate the locations
         dtl::DynamicDBView<> viewTakeoff("Startplaetze", "*");
-        transform(viewTakeoff.begin(), viewTakeoff.end(), inserter(takeoffs_, takeoffs_.end()), bind(&inout_mdb::GetLocation, this, _1, "StartplatzId"));
+		transform(viewTakeoff.begin(), viewTakeoff.end(), inserter(takeoffs_, takeoffs_.end()), ::bind(&inout_mdb::GetLocation, this, ::_1, "StartplatzId"));
         dtl::DynamicDBView<> viewLanding("Landeplaetze", "*");
-        transform(viewLanding.begin(), viewLanding.end(), inserter(landings_, landings_.end()), bind(&inout_mdb::GetLocation, this, _1, "LandeplatzId"));
+		transform(viewLanding.begin(), viewLanding.end(), inserter(landings_, landings_.end()), ::bind(&inout_mdb::GetLocation, this, ::_1, "LandeplatzId"));
         dtl::DynamicDBView<> viewWaypnt("Wegpunkte", "*");
-        transform(viewWaypnt.begin(), viewWaypnt.end(), inserter(waypoints_, waypoints_.end()), bind(&inout_mdb::GetLocation, this, _1, "WegpunktId"));
+		transform(viewWaypnt.begin(), viewWaypnt.end(), inserter(waypoints_, waypoints_.end()), ::bind(&inout_mdb::GetLocation, this, ::_1, "WegpunktId"));
         dtl::DynamicDBView<> viewLink("lnkWegpFluege", "*");
         for(dtl::DynamicDBView<>::select_iterator it = viewLink.begin(); it != viewLink.end(); ++it)
             wptlinks_[(*it)["LnkId"]] = make_pair((*it)["FlugId"], (*it)["WegpunktId"]);
-        for_each(takeoffs_.begin(),  takeoffs_.end(),  bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_TAKEOFF, ref(fldb)));
-        for_each(landings_.begin(),  landings_.end(),  bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_LANDING, ref(fldb)));
-        for_each(waypoints_.begin(), waypoints_.end(), bind(&inout_mdb::consolidateLocation, this, _1, Location::UA_WAYPNT,  ref(fldb)));
+		for_each(takeoffs_.begin(),  takeoffs_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_TAKEOFF, ref(fldb)));
+		for_each(landings_.begin(),  landings_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_LANDING, ref(fldb)));
+		for_each(waypoints_.begin(), waypoints_.end(), ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_WAYPNT,  ref(fldb)));
 
         // flights
         dtl::DynamicDBView<> viewFlight("Fluege", "*");
-        transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), bind(&inout_mdb::GetFlight, this, _1));
+		transform(viewFlight.begin(), viewFlight.end(), inserter(flights_, flights_.end()), ::bind(&inout_mdb::GetFlight, this, ::_1));
         for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
             fldb.addFlight(it->second);
 
@@ -240,7 +242,7 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::v
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location> > &locp, Location::UseAs usage, FlightDatabase &fldb)
 {
-    FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bind(&Location::isEquivalentSp,  *locp.second, _1));
+	FlightDatabase::Locations::const_iterator fit = find_if(fldb.Locations.begin(), fldb.Locations.end(), bll::bind(&Location::isEquivalent, *locp.second, *bll::_1));
     if(fit == fldb.Locations.end())
     {
         // we didn't find an equivalent location, but there might still exist one with the same name
@@ -262,7 +264,7 @@ void inout_mdb::consolidateLocation(pair<const unsigned int, shared_ptr<Location
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 string inout_mdb::normalize_str(string str)
 {
-	transform(str.begin(), str.end(), str.begin(), bind(&inout_mdb::normalize_char, this, _1));
+	transform(str.begin(), str.end(), str.begin(), bind(&inout_mdb::normalize_char, this, ::_1));
 	return str;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

@@ -33,9 +33,6 @@ public:
     };
 
 private:
-	inout_mdb(const inout &cpy);
-	const inout_mdb & operator=(const inout_mdb &cpy);
-
     std::pair<unsigned int, boost::shared_ptr<FlightArea> > GetArea(const dtl::variant_row &row);
     std::pair<unsigned int, boost::shared_ptr<Glider> >     GetGlider(const dtl::variant_row &row);
     std::pair<unsigned int, boost::shared_ptr<Location> >   GetLocation(const dtl::variant_row &row, const std::string &idname);

@@ -117,6 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\..\..\src\web\stat"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -186,7 +187,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\web\stat\Wt\WGoogleMap.cpp"
+				RelativePath="..\..\..\src\web\stat\Wt\WGeoPosEdit.cpp"
 				>
 			</File>
 			<File
