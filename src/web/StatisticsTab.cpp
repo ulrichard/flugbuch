@@ -15,6 +15,7 @@
 #include <Wt/WText>
 #include <Wt/WStandardItemModel>
 #include <Wt/WSelectionBox>
+#include <Wt/WTable>
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -62,16 +63,19 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     addStatistic(auto_ptr<StatBase>(new StatFlightReport(flightDb_)));
 
     // header
-    Wt::WContainerWidget *topBar = new Wt::WContainerWidget();
-    topBar->setLayout(new Wt::WHBoxLayout());
+    Wt::WTable *topBar = new Wt::WTable();
+    topBar->setStyleClass("FilterBar");
     // statistic type
     Wt::WText *wtStat = new Wt::WText("Auswertung");
     wtStat->setStyleClass("FilterSubTitle");
     cbStatSel_ = new Wt::Ext::ComboBox();
+    cbStatSel_->resize(150, cbStatSel_->height());
     cbStatSel_->activated().connect(SLOT(this, StatisticsPanel::load));
     for(boost::ptr_map<std::string, StatBase>::iterator it = stats_.begin(); it != stats_.end(); ++it)
         cbStatSel_->addItem(it->first);
-    //for_each(stats_.begin(), stats_.end(), bind(&Wt::Ext::ComboBox::addItem, cbStatSel_, bind(pair<string, StatBase*>::first)));
+//    for_each(stats_.begin(), stats_.end(), bind(&Wt::Ext::ComboBox::addItem, cbStatSel_, bind(&pair<string, StatBase*>::first, ::_1)));
+    topBar->elementAt(0, 0)->addWidget(wtStat);
+    topBar->elementAt(0, 0)->addWidget(cbStatSel_);
     // countries
     Wt::WText *wtCountry = new Wt::WText("Land");
     wtCountry->setStyleClass("FilterSubTitle");
@@ -88,6 +92,8 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbCountry_->setSelectedIndexes(selind);
     sbCountry_->setVerticalSize(5);
     sbCountry_->clicked().connect(SLOT(this, StatisticsPanel::load));
+    topBar->elementAt(0, 1)->addWidget(wtCountry);
+    topBar->elementAt(0, 2)->addWidget(sbCountry_);
     // years
     Wt::WText *wtYear = new Wt::WText("Jahr");
     wtYear->setStyleClass("FilterSubTitle");
@@ -104,6 +110,8 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbYear_->setSelectedIndexes(selind);
     sbYear_->setVerticalSize(5);
     sbYear_->clicked().connect(SLOT(this, StatisticsPanel::load));
+    topBar->elementAt(0, 3)->addWidget(wtYear);
+    topBar->elementAt(0, 4)->addWidget(sbYear_);
     // glider class
     Wt::WText *wtClassi = new Wt::WText("Schirmklasse");
     wtClassi->setStyleClass("FilterSubTitle");
@@ -120,31 +128,21 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     sbClassi_->setSelectedIndexes(selind);
     sbClassi_->setVerticalSize(5);
     sbClassi_->clicked().connect(SLOT(this, StatisticsPanel::load));
-
-
-    topBar->layout()->addWidget(wtStat);
-    topBar->layout()->addWidget(cbStatSel_);
-    topBar->layout()->addWidget(wtCountry);
-    topBar->layout()->addWidget(sbCountry_);
-    topBar->layout()->addWidget(wtYear);
-    topBar->layout()->addWidget(sbYear_);
-    topBar->layout()->addWidget(wtClassi);
-    topBar->layout()->addWidget(sbClassi_);
-    topBar->resize(topBar->width(), 100);
-    cbStatSel_->resize(150, cbStatSel_->height());
-
-    // body
-    report_ = new Wt::WContainerWidget();
+    topBar->elementAt(0, 5)->addWidget(wtClassi);
+    topBar->elementAt(0, 6)->addWidget(sbClassi_);
 
     Wt::WBorderLayout *blayout = new Wt::WBorderLayout();
     impl_->setLayout(blayout);
     blayout->addWidget(topBar, Wt::WBorderLayout::North);
-    blayout->addWidget(report_, Wt::WBorderLayout::Center);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::load()
 {
-    report_->clear();
+    Wt::WBorderLayout *blayout = dynamic_cast<Wt::WBorderLayout*>(impl_->layout());
+    if(Wt::WWidget *wid = blayout->widgetAt(Wt::WBorderLayout::Center))
+        blayout->removeWidget(wid);
+    Wt::WContainerWidget *cont = new Wt::WContainerWidget();
+    blayout->addWidget(cont, Wt::WBorderLayout::Center);
 
     initFilter();
     set<shared_ptr<flb::Flight> > flights;
@@ -154,7 +152,7 @@ void StatisticsPanel::load()
     const string statname = cbStatSel_->text().narrow();
     boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
     if(fit != stats_.end())
-        fit->second->draw(report_, flights);
+        fit->second->draw(cont, flights);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::initFilter()

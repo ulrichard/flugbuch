@@ -44,7 +44,6 @@ private:
     Wt::WSelectionBox         *sbCountry_;
     Wt::WSelectionBox         *sbYear_;
     Wt::WSelectionBox         *sbClassi_;
-    Wt::WContainerWidget      *report_;
     boost::ptr_map<std::string, StatBase> stats_;
 
     std::set<std::string> filtCountries_;
