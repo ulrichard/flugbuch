@@ -40,6 +40,7 @@ public slots:
     size_t selectArea(const std::string &area);
     void   fillLocations(int idx);
     size_t selectLocation(const std::string &loc);
+    void   setLocation(const flb::Location &loc);
 
 private:
     const boost::shared_ptr<flb::FlightDatabase>  flightDb_;

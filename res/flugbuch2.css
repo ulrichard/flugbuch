@@ -102,7 +102,12 @@ div.maximized
 div.WelcomeScreen
 {
 	background-position: center;
-	background-image: url("welcome_back.jpg");
 	
 }
+
+body
+{
+//	background-image: url("/img/welcome_back.jpg");
+}
+
 

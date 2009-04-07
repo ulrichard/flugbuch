@@ -100,6 +100,14 @@ bool LocationField::hasLocation() const
     return (cbArea_->currentText().narrow().length() && cbLocation_->currentText().narrow().length());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void LocationField::setLocation(const flb::Location &loc)
+{
+    fillAreas();
+    selectArea(loc.area()->name());
+    fillLocations(0);
+    selectLocation(loc.name());
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const boost::shared_ptr<flb::Location> LocationField::getLocation() const
 {
     shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());

@@ -207,7 +207,9 @@ public:
 		ar & BOOST_SERIALIZATION_NVP(takeoff_);
 		ar & BOOST_SERIALIZATION_NVP(landing_);
 		ar & BOOST_SERIALIZATION_NVP(waypoints_);
+		ar & BOOST_SERIALIZATION_NVP(distance_);
 		ar & BOOST_SERIALIZATION_NVP(story_);
+		ar & BOOST_SERIALIZATION_NVP(igcfile_);
 	}
 	// getters
 	unsigned int					  number()	  const { return number_; }
@@ -246,6 +248,7 @@ public:
 	SeqWaypoints   				waypoints_;
 	double						distance_;
 	std::string                 story_;
+	std::string                 igcfile_;
 
 public:
     // memberspace for the waypoints
@@ -267,6 +270,7 @@ public:
     }Waypoints;
 };
 BOOST_SERIALIZATION_SHARED_PTR(Flight);
+// the following operator causes lots of warnings. It would compile without, but then the flights are sorted randomly in the set.
 static bool operator<(const boost::shared_ptr<Flight> lhs, const boost::shared_ptr<Flight> rhs) { return *lhs < *rhs; }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 } // namespace flb

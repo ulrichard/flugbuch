@@ -28,6 +28,8 @@ inout_igc::inout_igc(shared_ptr<flb::FlightDatabase> flightDb) : inout_flight(),
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_igc::read(const boost::filesystem::path &source)
 {
+    if(!bfs::exists(source))
+        throw std::runtime_error("igc file not found");
     bfs::ifstream ifs(source);
     static const string hdrDate     = "HFDTE";
     static const string hdrPilot    = "HPPLTPILOT:";
@@ -38,7 +40,7 @@ void inout_igc::read(const boost::filesystem::path &source)
     static const string hdrComment  = "LPLT ";
 
     string line;
-    while(std::getline(ifs, line))
+    while(!std::getline(ifs, line).eof())
     {
         if(!line.length())
             continue;

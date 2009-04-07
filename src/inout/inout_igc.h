@@ -54,13 +54,19 @@ public:
     // memberspace for the trackpoints
     struct Trackpoints
 	{
-	    typedef std::vector<track_point>::const_iterator       iterator;
-	    typedef std::vector<track_point>::const_iterator const_iterator;
+	    typedef std::vector<track_point>::const_iterator         iterator;
+	    typedef std::vector<track_point>::const_iterator         const_iterator;
+	    typedef std::vector<track_point>::const_reverse_iterator reverse_iterator;
+	    typedef std::vector<track_point>::const_reverse_iterator const_reverse_iterator;
 
-        iterator       begin()        { return ioigc_.track_points_.begin(); }
-        const_iterator begin() const  { return ioigc_.track_points_.begin(); }
-        iterator       end()          { return ioigc_.track_points_.end(); }
-        const_iterator end()   const  { return ioigc_.track_points_.end(); }
+        iterator       begin()         { return ioigc_.track_points_.begin(); }
+        const_iterator begin()  const  { return ioigc_.track_points_.begin(); }
+        iterator       end()           { return ioigc_.track_points_.end(); }
+        const_iterator end()    const  { return ioigc_.track_points_.end(); }
+        reverse_iterator       rbegin()        { return ioigc_.track_points_.rbegin(); }
+        const_reverse_iterator rbegin() const  { return ioigc_.track_points_.rbegin(); }
+        reverse_iterator       rend()          { return ioigc_.track_points_.rend(); }
+        const_reverse_iterator rend()   const  { return ioigc_.track_points_.rend(); }
 
         size_t size() const { return ioigc_.track_points_.size(); }
     private:
