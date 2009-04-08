@@ -322,6 +322,9 @@ void FlightTableRow::save()
         assert(ndDuration_);
         flight_->setDuration(ndDuration_->value());
 
+        // recalculate the distance
+        flight_->setDistance(flight_->calcDistance());
+
 
     	// display the information as text without the edit fields
         show();

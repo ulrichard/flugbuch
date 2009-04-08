@@ -25,6 +25,12 @@ public:
 
     void reload(boost::shared_ptr<flb::FlightDatabase> flightDb);
 
+    FlightPanel     * flightPanel() { return flightPanel_; }
+    GliderPanel     * gliderPanel() { return gliderPanel_; }
+    AreaPanel       * areaPanel()   { return areaPanel_; }
+    LocationPanel   * locPanel()    { return locPanel_; }
+    StatisticsPanel * statPanel()   {return statPanel_; }
+
 private:
     boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     FlightPanel     *flightPanel_;

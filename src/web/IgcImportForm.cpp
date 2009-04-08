@@ -2,6 +2,7 @@
 #include "IgcImportForm.h"
 #include "FormatStr.h"
 #include "FlightTable.h"
+#include "TabControl.h"
 // witty
 #include <Wt/WFileUpload>
 #include <Wt/WContainerWidget>
@@ -9,6 +10,8 @@
 #include <Wt/WPushButton>
 #include <Wt/WApplication>
 #include <Wt/WHBoxLayout>
+#include <Wt/WTabWidget>
+#include <Wt/WTable>
 #include <Wt/Ext/MessageBox>
 #include <Wt/Ext/Button>
 #include <Wt/Ext/LineEdit>
@@ -59,6 +62,12 @@ size_t NewLocationField::selectArea(const string &area)
     return 0;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+const shared_ptr<flb::FlightArea> NewLocationField::getArea() const
+{
+    shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
+    return area;
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool NewLocationField::hasLocation() const
 {
     return (cbArea_->currentText().narrow().length() && leLocation_->text().narrow().length());
@@ -80,7 +89,7 @@ IgcImportForm::IgcImportForm(shared_ptr<flb::FlightDatabase> flightDb)
   : Wt::Ext::Dialog("Igc file import"), flightDb_(flightDb), igcfile_(flightDb_),
     lfTakeoff_(NULL), lfLanding_(NULL), nlfTakeoff_(NULL), nlfLanding_(NULL)
 {
-    resize(555, 150);
+    resize(555, 300);
     setSizeGripEnabled(false);
 
     fileuploader_ = new Wt::WFileUpload();
@@ -93,6 +102,11 @@ IgcImportForm::IgcImportForm(shared_ptr<flb::FlightDatabase> flightDb)
     Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
     btnCancel->clicked().connect(SLOT(this, IgcImportForm::accept));
     addButton(btnCancel);
+
+    btnAddFlight_ = new Wt::Ext::Button("Flug hinzufügen");
+    btnAddFlight_->clicked().connect(SLOT(this, IgcImportForm::addFlight));
+    btnAddFlight_->setEnabled(false);
+    addButton(btnAddFlight_);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 IgcImportForm::~IgcImportForm()
@@ -126,12 +140,8 @@ void IgcImportForm::fileReceived()
         }
         else
         {
-            resize(550, 300);
             contents()->clear();
-
-            Wt::Ext::Button *btnAddFlight = new Wt::Ext::Button("Flug hinzufügen");
-            btnAddFlight->clicked().connect(SLOT(this, IgcImportForm::addFlight));
-            addButton(btnAddFlight);
+            btnAddFlight_->setEnabled(true);
 
             Wt::WTable *table = new Wt::WTable(contents());
 
@@ -141,8 +151,6 @@ void IgcImportForm::fileReceived()
             remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
                 !ret<bool>(bind(&Location::usage, *bll::_1) & Location::UA_TAKEOFF) ||
                 bind(&Location::getDistance, *bll::_1, igcfile_.Trackpoints.begin()->pos_) > distThreshold);
-//            tmploc.erase(remove_if(tmploc.begin(), tmploc.end(),
-//                bind(&Location::getDistance, *bll::_1, igcfile_.Trackpoints.begin()->pos_) > distThreshold), tmploc.end());
             if(tmploc.size())
             {
                 sort(tmploc.begin(), tmploc.end(), bind(&Location::getDistance, *bll::_1, igcfile_.Trackpoints.begin()->pos_)
@@ -180,13 +188,9 @@ void IgcImportForm::fileReceived()
                 nlfLanding_ = new NewLocationField(flightDb_);
                 nlfLanding_->fillAreas();
 
-                table->elementAt(0, 1)->addWidget(nlfLanding_);
+                table->elementAt(1, 1)->addWidget(nlfLanding_);
             }
-
-
-
         }
-
     }
     catch(std::exception &ex)
     {
@@ -207,12 +211,57 @@ void IgcImportForm::addFlight()
         newFlight->clearWaypoints();
         if(lfTakeoff_)
             newFlight->setTakeoff(lfTakeoff_->getLocation());
+        else if(nlfTakeoff_)
+        {
+            shared_ptr<Location> locTakeoff(new Location(nlfTakeoff_->getArea(),
+                                                        nlfTakeoff_->getLocationName(),
+                                                        igcfile_.Trackpoints.begin()->alt_,
+                                                        igcfile_.Trackpoints.begin()->pos_.first,
+                                                        igcfile_.Trackpoints.begin()->pos_.second,
+                                                        Location::UA_TAKEOFF));
+            flightDb_->addLocation(locTakeoff);
+            newFlight->setTakeoff(locTakeoff);
+        }
+        else
+            throw std::runtime_error("Wether existing not new location for takeoff");
+        // landing
         if(lfLanding_)
             newFlight->setLanding(lfLanding_->getLocation());
+        else if(nlfLanding_)
+        {
+            shared_ptr<Location> locLanding(new Location(nlfLanding_->getArea(),
+                                                        nlfLanding_->getLocationName(),
+                                                        igcfile_.Trackpoints.rbegin()->alt_,
+                                                        igcfile_.Trackpoints.rbegin()->pos_.first,
+                                                        igcfile_.Trackpoints.rbegin()->pos_.second,
+                                                        Location::UA_LANDING));
+            flightDb_->addLocation(locLanding);
+            newFlight->setLanding(locLanding);
+        }
+        else
+            throw std::runtime_error("Wether existing not new location for landing");
+//        flightDb_->addFlight(newFlight);
 
-        flightDb_->addFlight(newFlight);
-
+        // close the dialog
         accept();
+
+        // edit the new flight
+        assert(Wt::WApplication::instance()->root()->count() == 2);
+        TabControl *tabCtrl = dynamic_cast<TabControl*>(Wt::WApplication::instance()->root()->widget(1));
+        if(!tabCtrl)
+            throw std::runtime_error("Tab control not found");
+        FlightPanel *flightPanel = tabCtrl->flightPanel();
+        assert(flightPanel);
+        tabCtrl->setCurrentWidget(flightPanel);
+        assert(tabCtrl->currentIndex() == tabCtrl->indexOf(flightPanel));
+        FlightTable *flightTable = flightPanel->flightTable();
+        const unsigned int pagesCount = 1 + flightTable->entriesCount() / flightTable->entriesPerPage();
+        flightTable->loadPage(pagesCount);
+        FlightTableRow *flrow = flightTable->addFlight(newFlight, flightTable->rowCount() - 1, true);
+        flrow->edit();
+//        flightTable->createFooterRow();
+
+
     }
     catch(std::exception &ex)
     {

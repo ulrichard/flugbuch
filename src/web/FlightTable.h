@@ -101,10 +101,10 @@ public:
     void addNewFlight();
     virtual unsigned int entriesCount() const { return flights_.size(); };
     void filter(const std::string &area);
+	void createFooterRow();
 
 private:
 	void createHeaderRow();
-	void createFooterRow();
 	std::vector<shared_ptr<flb::Flight> > flights_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -116,6 +116,8 @@ public:
 
     void load();
     void filter();
+
+    FlightTable * flightTable() {return table_; }
 private:
     boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     FlightTable          *table_;

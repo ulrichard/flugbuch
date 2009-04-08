@@ -18,6 +18,7 @@ namespace Wt
     {
         class ComboBox;
         class LineEdit;
+        class Button;
     };
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
@@ -68,6 +69,7 @@ private:
     LocationField   *lfTakeoff_, *lfLanding_;
     std::vector<LocationField*> vlfWaypoints_;
     NewLocationField *nlfTakeoff_, *nlfLanding_;
+    Wt::Ext::Button *btnAddFlight_;
 
 
 };
