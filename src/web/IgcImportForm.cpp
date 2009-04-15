@@ -240,7 +240,6 @@ void IgcImportForm::addFlight()
         }
         else
             throw std::runtime_error("Wether existing not new location for landing");
-//        flightDb_->addFlight(newFlight);
 
         // close the dialog
         accept();
@@ -252,15 +251,15 @@ void IgcImportForm::addFlight()
             throw std::runtime_error("Tab control not found");
         FlightPanel *flightPanel = tabCtrl->flightPanel();
         assert(flightPanel);
-        tabCtrl->setCurrentWidget(flightPanel);
-        assert(tabCtrl->currentIndex() == tabCtrl->indexOf(flightPanel));
+        tabCtrl->setCurrentIndex(0);
+//        assert(tabCtrl->currentIndex() == tabCtrl->indexOf(flightPanel));
         FlightTable *flightTable = flightPanel->flightTable();
         const unsigned int pagesCount = 1 + flightTable->entriesCount() / flightTable->entriesPerPage();
         flightTable->loadPage(pagesCount);
+        flightPanel->pagesList()->load();
+        flightDb_->addFlight(newFlight);
         FlightTableRow *flrow = flightTable->addFlight(newFlight, flightTable->rowCount() - 1, true);
         flrow->edit();
-//        flightTable->createFooterRow();
-
 
     }
     catch(std::exception &ex)

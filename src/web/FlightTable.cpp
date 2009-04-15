@@ -80,7 +80,7 @@ void LocationField::fillLocations(int idx)
     const string area = cbArea_->text().narrow();
     vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_);
     for_each(locations.begin(), locations.end(), bind(&Wt::Ext::ComboBox::addItem, cbLocation_,
-        bind(&Location::name, *boost::lambda::_1)));
+        bind(&Location::name, *bll::_1)));
     cbLocation_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -113,7 +113,7 @@ const boost::shared_ptr<flb::Location> LocationField::getLocation() const
     shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
     vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(area, useAs_);
     FlightDatabase::Locations::iterator fit = find_if(locations.begin(), locations.end(),
-                cbLocation_->currentText() == bind(&Location::name, *boost::lambda::_1));
+                cbLocation_->currentText() == bind(&Location::name, *bll::_1));
     if(fit == locations.end())
         throw std::invalid_argument("Unknown location");
     return *fit;
@@ -299,7 +299,7 @@ void FlightTableRow::save()
         assert(cbGlider_);
 //        const string glddesc = cbGlider_->currentText().narrow();
 //        FlightDatabase::SeqGliders::const_iterator fitGld = std::find_if(flightDb_->getGliders().begin(), flightDb_->getGliders().end(),
-//                bind(&Glider::getDescription, *boost::lambda::_1) == glddesc);
+//                bind(&Glider::getDescription, *bll::_1) == glddesc);
 //        if(fitGld == flightDb_->getGliders().end())
 //            throw std::invalid_argument("Unknown glider");
 //        flight_->setGlider(*fitGld);
@@ -451,9 +451,9 @@ void FlightTable::addNewFlight()
         }
         // find the first takeoff and the first landing place
         FlightDatabase::Locations::const_iterator itTo = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
-                            bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_TAKEOFF));
+                            bind(&Location::usage, *bll::_1) & static_cast<int>(Location::UA_TAKEOFF));
         FlightDatabase::Locations::const_iterator itLa = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
-                            bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_LANDING));
+                            bind(&Location::usage, *bll::_1) & static_cast<int>(Location::UA_LANDING));
         if(itTo == flightDb_->Locations.end())
         {
             Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::WFlags<Wt::StandardButton>(), true);
@@ -517,9 +517,9 @@ void FlightPanel::load()
     cbArea_->clear();
     cbArea_->addItem("alle");
     vector<string> areaNames;
-    std::transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
+    std::transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *bll::_1));
     std::sort(areaNames.begin(), areaNames.end());
-    for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, boost::lambda::_1));
+    for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bll::_1));
     cbArea_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

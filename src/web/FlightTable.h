@@ -117,7 +117,8 @@ public:
     void load();
     void filter();
 
-    FlightTable * flightTable() {return table_; }
+    FlightTable * flightTable() { return table_;  }
+    PagesList   * pagesList()   { return pglist_; }
 private:
     boost::shared_ptr<flb::FlightDatabase>  flightDb_;
     FlightTable          *table_;
