@@ -141,7 +141,7 @@ void IgcImportForm::fileReceived()
         else
         {
             contents()->clear();
-            btnAddFlight_->setEnabled(true);
+
 
             Wt::WTable *table = new Wt::WTable(contents());
 
@@ -190,6 +190,8 @@ void IgcImportForm::fileReceived()
 
                 table->elementAt(1, 1)->addWidget(nlfLanding_);
             }
+
+            btnAddFlight_->setEnabled(true);
         }
     }
     catch(std::exception &ex)
@@ -252,7 +254,6 @@ void IgcImportForm::addFlight()
         FlightPanel *flightPanel = tabCtrl->flightPanel();
         assert(flightPanel);
         tabCtrl->setCurrentIndex(0);
-//        assert(tabCtrl->currentIndex() == tabCtrl->indexOf(flightPanel));
         FlightTable *flightTable = flightPanel->flightTable();
         const unsigned int pagesCount = 1 + flightTable->entriesCount() / flightTable->entriesPerPage();
         flightTable->loadPage(pagesCount);
@@ -260,6 +261,7 @@ void IgcImportForm::addFlight()
         flightDb_->addFlight(newFlight);
         FlightTableRow *flrow = flightTable->addFlight(newFlight, flightTable->rowCount() - 1, true);
         flrow->edit();
+        flightTable->createFooterRow();
 
     }
     catch(std::exception &ex)

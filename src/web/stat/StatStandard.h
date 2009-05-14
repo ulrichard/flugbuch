@@ -66,6 +66,18 @@ private:
     size_t numArea_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+class StatGeneralOverview : public StatBase
+{
+public:
+    StatGeneralOverview (const shared_ptr<flb::FlightDatabase> flightDb) : StatBase(flightDb) {}
+    virtual ~StatGeneralOverview() {}
+
+    virtual std::string name() const { return "General Overview"; }
+    virtual void draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const;
+
+
+};
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 #endif // STATSTANDARD_H_INCLUDED

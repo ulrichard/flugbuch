@@ -22,6 +22,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 // std lib
 #include <stdexcept>
+#include <iomanip>
 
 using namespace flbwt;
 using namespace flb;
@@ -177,7 +178,7 @@ void FlightTableRow::show()
 	vsText.push_back(flight_->landing()->identity());
 	vsText.push_back(FormatStr() << flight_->duration());
 	vsText.push_back(FormatStr() << (flight_->takeoff()->height() - flight_->landing()->height()) << "m");
-	vsText.push_back(FormatStr() << flight_->distance() << " km");
+	vsText.push_back(FormatStr() << std::fixed << std::setprecision(2) << flight_->distance() << " km");
 	// add the text widgets
 	for(size_t i=0; i<vsText.size(); ++i)
 	{
@@ -415,7 +416,7 @@ void FlightTable::createFooterRow()
     WImage *wiAdd = new WImage("img/add.png");
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Flug hinzufuegen");
-	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
+	elementAt(insertRowNr_++, 0)->addWidget(wiAdd);
 	wiAdd->clicked().connect(SLOT(this, FlightTable::addNewFlight));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -424,6 +425,7 @@ FlightTableRow* FlightTable::addFlight(shared_ptr<Flight> fl, size_t row, bool n
 	FlightTableRow *flr = new FlightTableRow(fl, this, flightDb_, row, newEntry);
 	flr->show();
 	rows_.push_back(flr);
+	insertRowNr_ = row + 1;
 	return flr;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

@@ -6,13 +6,18 @@
 #include <Wt/Chart/WCartesianChart>
 #include <Wt/Chart/WPieChart>
 #include <Wt/Ext/TableView>
+#include <Wt/WTable>
+#include <Wt/WText>
 // boost
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/lexical_cast.hpp>
 // standard library
 #include <algorithm>
 #include <iterator>
+#include <limits>
+#include <numeric>
 
 using namespace flbwt;
 using Wt::WStandardItemModel;
@@ -25,6 +30,7 @@ using boost::gregorian::months;
 using boost::gregorian::weeks;
 using boost::shared_ptr;
 using boost::any;
+using boost::lexical_cast;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
 using std::string;
@@ -346,7 +352,47 @@ void FlightsPerArea::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
     tabview->setColumnSortable(1, true);
     tabview->setColumnSortable(2, true);
  //   tabview->setRenderer(2, "function change(val) { return (val / 60.0;) + 'h'; }");
- }
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
+{
+    Wt::WTable *table = new Wt::WTable(parent);
+
+    string captions[5] = {"What", "Min", "Max", "Avg", "Sum"};
+
+    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    {
+        Wt::WText *labelText = new Wt::WText(captions[i]);
+        labelText->setStyleClass("tableHeader");
+        table->elementAt(0, i)->addWidget(labelText);
+    }
+    table->rowAt(0)->setStyleClass("title");
+
+    // airtime
+    vector<string> vsText;
+
+    vsText.push_back("AirTime");
+    vsText.push_back(lexical_cast<string>((*std::min_element(flights.begin(), flights.end(),
+        bll::bind(&flb::Flight::duration, *bll::_1) < bll::bind(&flb::Flight::duration, *bll::_2)))->duration()));
+    vsText.push_back(lexical_cast<string>((*std::max_element(flights.begin(), flights.end(),
+        bll::bind(&flb::Flight::duration, *bll::_1) < bll::bind(&flb::Flight::duration, *bll::_2)))->duration()));
+    int sum = std::accumulate(flights.begin(), flights.end(), 0, bll::_1 + bll::bind(&flb::Flight::duration, *bll::_2));
+    vsText.push_back(lexical_cast<string>(sum / std::distance(flights.begin(), flights.end())));
+    vsText.push_back(lexical_cast<string>(sum));
+
+    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    {
+        Wt::WText *labelText = new Wt::WText(vsText[i]);
+        labelText->setStyleClass("tableContent");
+        table->elementAt(1, i)->addWidget(labelText);
+    }
+
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+
+
+

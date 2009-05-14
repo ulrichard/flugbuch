@@ -61,6 +61,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_WEEK)));
     addStatistic(auto_ptr<StatBase>(new StatMap(flightDb_)));
     addStatistic(auto_ptr<StatBase>(new StatFlightReport(flightDb_)));
+    addStatistic(auto_ptr<StatBase>(new StatGeneralOverview(flightDb_)));
 
     // header
     Wt::WTable *topBar = new Wt::WTable();
