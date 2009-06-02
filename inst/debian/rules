@@ -28,7 +28,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	# $(MAKE)
-	codeblocks --build $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release"
+	codeblocks --build $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release_fcgi_static"
 	#docbook-to-man debian/flugbuch2.sgml > flugbuch2.1
 
 	touch $@
@@ -40,7 +40,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	# $(MAKE) clean
-	codeblocks --clean $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release"
+	codeblocks --clean $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release_fcgi_static"
 
 	dh_clean 
 
@@ -87,7 +87,7 @@ binary-arch: install
 #	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
-	dh_gencontrol
+#	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 

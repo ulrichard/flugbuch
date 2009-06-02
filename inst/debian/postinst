@@ -1,0 +1,19 @@
+#!/bin/bash
+
+. /usr/share/debconf/confmodule
+
+set -e
+
+case "$1" in
+	configure)
+		# register with apache
+		echo "register flugbuch2 with apache"
+		#a2ensite ... 
+		;;
+	*)
+		#
+		# Unknown action - do nothing.
+		#
+		exit 0
+		;;
+esac
