@@ -13,6 +13,9 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/function.hpp>
+#include <boost/array.hpp>
+#include <boost/ref.hpp>
 // standard library
 #include <algorithm>
 #include <iterator>
@@ -31,6 +34,9 @@ using boost::gregorian::weeks;
 using boost::shared_ptr;
 using boost::any;
 using boost::lexical_cast;
+using boost::function;
+using boost::array;
+using boost::ref;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
 using std::string;
@@ -39,6 +45,9 @@ using std::vector;
 using std::pair;
 using std::make_pair;
 using std::auto_ptr;
+using std::max;
+using std::numeric_limits;
+using std::min;
 using std::max;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 auto_ptr<WStandardItemModel> FlightlessTime::model(const flb::FlightDatabase::SeqFlights &flights) const
@@ -356,13 +365,68 @@ void FlightsPerArea::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+template<typename NT>
+struct mmas_data
+{
+    mmas_data(NT min = numeric_limits<NT>::max(), NT max = 0) : cnt_(0), min_(min), max_(max), sum_(0) { }
+
+    double avg() const { return cnt_ ? static_cast<double>(sum_) / cnt_ : 0; }
+
+    typedef NT nt;
+
+    size_t cnt_;
+    NT min_, max_, sum_;
+};
+
+template<typename NT>
+struct mmas_collector
+{
+    mmas_collector(mmas_data<NT> &mmd, boost::function<NT(const shared_ptr<flb::Flight> &)> getter)
+        : mmd_(mmd), getter_(getter) {}
+
+    void operator() (const shared_ptr<flb::Flight> &flt)
+    {
+        NT currval = getter_(flt);
+        ++mmd_.cnt_;
+        mmd_.min_  = min(mmd_.min_, currval);
+        mmd_.max_  = max(mmd_.max_, currval);
+        mmd_.sum_ += currval;
+    }
+
+    static void add_line(const size_t row, const string &txt, Wt::WTable *table, bool withSum,
+                         const flb::FlightDatabase::SeqFlights &flights,
+                         boost::function<NT(const shared_ptr<flb::Flight> &)> getter)
+    {
+        mmas_data<NT> data;
+        std::for_each(flights.begin(), flights.end(), mmas_collector(data, getter));
+
+        // airtime
+        array<string, 5> vsText;
+
+        vsText[0] = txt;
+        vsText[1] = lexical_cast<string>(data.min_);
+        vsText[2] = lexical_cast<string>(data.max_);
+        vsText[3] = lexical_cast<string>(data.avg());
+        vsText[4] = lexical_cast<string>(data.sum_);
+        for(size_t i=0; i<(withSum ? vsText.size() : vsText.size() - 1); ++i)
+        {
+            Wt::WText *labelText = new Wt::WText(vsText[i]);
+            labelText->setStyleClass("tableContent");
+            table->elementAt(row, i)->addWidget(labelText);
+        }
+    }
+
+    mmas_data<NT> &mmd_;
+    boost::function<NT(const shared_ptr<flb::Flight> &)> getter_;
+};
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
     Wt::WTable *table = new Wt::WTable(parent);
 
-    string captions[5] = {"What", "Min", "Max", "Avg", "Sum"};
+    array<string, 5> captions = {"What", "Min", "Max", "Avg", "Sum"};
 
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    for(size_t i=0; i<captions.size(); ++i)
     {
         Wt::WText *labelText = new Wt::WText(captions[i]);
         labelText->setStyleClass("tableHeader");
@@ -370,24 +434,19 @@ void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDa
     }
     table->rowAt(0)->setStyleClass("title");
 
-    // airtime
-    vector<string> vsText;
 
-    vsText.push_back("AirTime");
-    vsText.push_back(lexical_cast<string>((*std::min_element(flights.begin(), flights.end(),
-        bll::bind(&flb::Flight::duration, *bll::_1) < bll::bind(&flb::Flight::duration, *bll::_2)))->duration()));
-    vsText.push_back(lexical_cast<string>((*std::max_element(flights.begin(), flights.end(),
-        bll::bind(&flb::Flight::duration, *bll::_1) < bll::bind(&flb::Flight::duration, *bll::_2)))->duration()));
-    int sum = std::accumulate(flights.begin(), flights.end(), 0, bll::_1 + bll::bind(&flb::Flight::duration, *bll::_2));
-    vsText.push_back(lexical_cast<string>(sum / std::distance(flights.begin(), flights.end())));
-    vsText.push_back(lexical_cast<string>(sum));
+    Wt::WText *labelText = new Wt::WText("Flights");
+    labelText->setStyleClass("tableContent");
+    table->elementAt(1, 0)->addWidget(labelText);
+    labelText = new Wt::WText(lexical_cast<string>(std::distance(flights.begin(), flights.end())));
+    labelText->setStyleClass("tableContent");
+    table->elementAt(1, 4)->addWidget(labelText);
+    mmas_collector<size_t>::add_line(2, "AirTime",       table, true,  flights, bll::bind(&flb::Flight::duration, *bll::_1));
+    mmas_collector<double>::add_line(3, "Distance",      table, true,  flights, bll::bind(&flb::Flight::distance, *bll::_1));
+    mmas_collector<double>::add_line(4, "TakeoffHeight", table, false, flights, bll::bind(&flb::Location::height, *bll::bind(&flb::Flight::takeoff, *bll::_1)));
 
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
-    {
-        Wt::WText *labelText = new Wt::WText(vsText[i]);
-        labelText->setStyleClass("tableContent");
-        table->elementAt(1, i)->addWidget(labelText);
-    }
+
+
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
