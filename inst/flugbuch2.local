@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+	
+	ServerName flugbuch2.local
+	DocumentRoot /home/richi/sourcecode/flugbuch2/res/
+	
+	<Directory /home/richi/sourcecode/flugbuch2/res/>
+		Options FollowSymLinks MultiViews ExecCGI
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog /home/richi/sourcecode/flugbuch2/log/error.log
+	CustomLog /home/richi/sourcecode/flugbuch2/log/access.log combined
+
+</VirtualHost>
