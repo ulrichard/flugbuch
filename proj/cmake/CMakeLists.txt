@@ -117,7 +117,10 @@ include_directories (${Wt_INCLUDE_DIR})
 
 # Make sure the linker can find the required libraries once it is built.
 #link_directories (${HELLO_BINARY_DIR}/Hello)
-LINK_DIRECTORIES(${BOOST_LIB_DIRS})
+LINK_DIRECTORIES(
+	${BOOST_LIB_DIRS}
+)
+
 IF(WIN32)
   IF(BOOST_DYNAMIC)
     ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
@@ -189,8 +192,8 @@ PROPERTIES
   DEBUG_POSTFIX "d"
 )
 
-INSTALL(FILES ${PROJECT_SOURCE_DIR}../../../inst/wt_config.xml DESTINATION ${CONFIGDIR} )
-INSTALL(FILES ${PROJECT_SOURCE_DIR}../../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml DESTINATION ${CONFIGDIR} )
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 
 
 
