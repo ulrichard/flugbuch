@@ -35,11 +35,11 @@ ENDIF(WIN32)
 
 # Make sure the compiler can find include files.
 include_directories (${PROJECT_SOURCE_DIR}/../../src) 
-include_directories (${PROJECT_SOURCE_DIR}/../../../src/core)
-include_directories (${PROJECT_SOURCE_DIR}/../../../src/inout)
-include_directories (${PROJECT_SOURCE_DIR}/../../../src/web)
-include_directories (${PROJECT_SOURCE_DIR}/../../../src/util)
-include_directories (${PROJECT_SOURCE_DIR}/../../../src/web/stat)
+include_directories (${PROJECT_SOURCE_DIR}/../../src/core)
+include_directories (${PROJECT_SOURCE_DIR}/../../src/inout)
+include_directories (${PROJECT_SOURCE_DIR}/../../src/web)
+include_directories (${PROJECT_SOURCE_DIR}/../../src/util)
+include_directories (${PROJECT_SOURCE_DIR}/../../src/web/stat)
 include_directories (${BOOST_INCLUDE_DIRS})
 
 # Make sure the linker can find the required libraries once it is built.
@@ -60,29 +60,29 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 # Add executable called "flugbuch2_wt.fcgi" that is built from the source files
 # "demo.cxx" and "demo_b.cxx". The extensions are automatically found.
 add_executable(flugbuch2_wt.fcgi 
-	${PROJECT_SOURCE_DIR}/../../../src/core/CoreStructures.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/core/FlightDatabase.cpp
-#	${PROJECT_SOURCE_DIR}/../../../src/inout/inout_flyhigh.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/inout/inout_igc.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/inout/inout_mdb.cpp
-#	${PROJECT_SOURCE_DIR}/../../../src/inout/inout_mdb_win.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/inout/inout_xml.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/util/SystemInformation.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/AreaTable.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/DetailTableBase.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/FlightTable.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/GliderTable.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/IgcImportForm.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/LocationTable.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/MainMenu.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/StatisticsTab.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/TabControl.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/WelcomeScreen.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/main.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/stat/StatFlightReport.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/stat/StatMap.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/stat/StatStandard.cpp
-	${PROJECT_SOURCE_DIR}/../../../src/web/stat/Wt/WGeoPosEdit.cpp
+	${PROJECT_SOURCE_DIR}/../../src/core/CoreStructures.cpp
+	${PROJECT_SOURCE_DIR}/../../src/core/FlightDatabase.cpp
+#	${PROJECT_SOURCE_DIR}/../../src/inout/inout_flyhigh.cpp
+	${PROJECT_SOURCE_DIR}/../../src/inout/inout_igc.cpp
+	${PROJECT_SOURCE_DIR}/../../src/inout/inout_mdb.cpp
+#	${PROJECT_SOURCE_DIR}/../../src/inout/inout_mdb_win.cpp
+	${PROJECT_SOURCE_DIR}/../../src/inout/inout_xml.cpp
+	${PROJECT_SOURCE_DIR}/../../src/util/SystemInformation.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/AreaTable.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/DetailTableBase.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/FlightTable.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/GliderTable.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/IgcImportForm.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/LocationTable.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/MainMenu.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/StatisticsTab.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/TabControl.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/WelcomeScreen.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/main.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/stat/StatFlightReport.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/stat/StatMap.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/stat/StatStandard.cpp
+	${PROJECT_SOURCE_DIR}/../../src/web/stat/Wt/WGeoPosEdit.cpp
 )
 
 # Link the executable to the Hello library.
