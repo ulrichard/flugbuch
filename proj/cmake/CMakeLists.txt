@@ -1,9 +1,37 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 OLD)
+ENDIF(COMMAND CMAKE_POLICY)
+
 PROJECT(flugbuch2)
 
 SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 0)
 SET(VERSION_MINOR 5)
+
+SET(FLB_CONNECTOR "The wt connector" wtfcgi)
+
+IF(NOT SHARED_LIBS)
+  IF(WIN32)
+    OPTION(SHARED_LIBS "Compile shared libraries" OFF)
+  ELSE(WIN32)
+    OPTION(SHARED_LIBS "Compile shared libraries" ON)
+  ENDIF(WIN32)
+ENDIF(NOT SHARED_LIBS)
+
+# Fixup Windows declspec stuff
+IF(NOT SHARED_LIBS)
+  SET(WT_STATIC true)
+  SET(WTHTTP_STATIC true)
+  SET(WT_EXT_STATIC true)
+ENDIF(NOT SHARED_LIBS)
+
+IF(NOT MULTI_THREADED)
+  OPTION(MULTI_THREADED "Build multi-threaded httpd deamon (if possible)" ON)
+ENDIF(NOT MULTI_THREADED)
+
+SET(BUILD_SHARED_LIBS ${SHARED_LIBS})
 
 IF(WIN32)
   SET(USERLIB_ROOT "c:/libraries" CACHE PATH "directory containing the dependency libraries")
@@ -33,6 +61,50 @@ ELSE(WIN32)
 #  SET(GD_DIR "/usr/lib" CACHE PATH "Search path for libgd2")
 ENDIF(WIN32)
 
+MARK_AS_ADVANCED( CONFIGDIR )
+SET(CONFIGURATION "${CONFIGDIR}/wt_config.xml" CACHE PATH "Path to the wt configuration file")
+
+SET(WEBUSER apache CACHE STRING "Webserver username (e.g. apache or www)")
+SET(WEBGROUP apache CACHE STRING "Webserver groupname (e.g. apache or www or users)")
+
+
+INCLUDE(FindThreads)
+INCLUDE(WtFindBoost.txt)
+INCLUDE(WtFindFcgi.txt)
+#INCLUDE(WtFindAsio.txt)
+#INCLUDE(WtFindSsl.txt)
+INCLUDE(FindWt.cmake)
+INCLUDE(FindDtl.txt)
+
+IF(NOT DTL_FOUND)
+  MESSAGE("** Error finding Flugbuch2 required library: ")
+  MESSAGE("** Could not find a database template library installation.")
+  MESSAGE("** Please get the library from dtemplatelib.sourceforge.net.")
+  MESSAGE(FATAL_ERROR "** Flugbuch2 requires the following C++ libraries: dtl")
+ENDIF(NOT DTL_FOUND)
+
+IF(NOT BOOST_WT_FOUND)
+  MESSAGE("** Error finding Flugbuch2 required library: ")
+  MESSAGE("** Could not find a boost installation in " ${BOOST_DIR} ".")
+  MESSAGE("** It may be necessary to set appropriate values for the")
+  MESSAGE("   variables BOOST_DIR, BOOST_COMPILER, and BOOST_VERSION")
+  MESSAGE(FATAL_ERROR "** Flugbuch2 requires the following C++ boost libraries: boost_date_time, boost_regex, boost_program_options, boost_signals, and optionally boost_thread")
+ENDIF(NOT BOOST_WT_FOUND)
+
+IF(BOOST_WT_MT_FOUND)
+  IF(MULTI_THREADED)
+    ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
+    MESSAGE("** Enabling multi threading.")
+  ELSE(MULTI_THREADED)
+    MESSAGE("** Disabling multi threading.")
+    ADD_DEFINITIONS(-DBOOST_DISABLE_THREADS)
+  ENDIF(MULTI_THREADED)
+ELSE(BOOST_WT_MT_FOUND)
+  MESSAGE("** Disabling multi threading.")
+  ADD_DEFINITIONS(-DBOOST_DISABLE_THREADS)
+ENDIF(BOOST_WT_MT_FOUND)
+
+
 # Make sure the compiler can find include files.
 include_directories (${PROJECT_SOURCE_DIR}/../../src) 
 include_directories (${PROJECT_SOURCE_DIR}/../../src/core)
@@ -41,6 +113,7 @@ include_directories (${PROJECT_SOURCE_DIR}/../../src/web)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/util)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/web/stat)
 include_directories (${BOOST_INCLUDE_DIRS})
+include_directories (${Wt_INCLUDE_DIR})
 
 # Make sure the linker can find the required libraries once it is built.
 #link_directories (${HELLO_BINARY_DIR}/Hello)
@@ -87,28 +160,37 @@ add_executable(flugbuch2_wt.fcgi
 
 # Link the executable to the Hello library.
 target_link_libraries(flugbuch2_wt.fcgi 
-	libboost_date_time-mt
-	libboost_serialization-mt
-	libboost_signals-mt
-	libboost_filesystem-mt
-	libwt
-	libwtext
-	libwtfcgi
+	${BOOST_WT_LIBRARIES}
+	${DTL_LIB}
+	${FLB_CONNECTOR}
+	${Wt_LIBRARIES}
+	boost_date_time-mt
+	boost_serialization-mt
+	boost_signals-mt
+	boost_filesystem-mt
 	libfcgi
 	libboost_thread-mt
 	libboost_program_options-mt
 	libboost_regex-mt
 	libboost_system-mt
 	libpthread
-	wt
-	wtext
-	wthttp
-	DTL
 	odbc
 ) 
 
+IF(WIN32)
+  TARGET_LINK_LIBRARIES(flugbuch2_wt.fcgi winmm wsock32)
+ENDIF(WIN32)
+
+SET_TARGET_PROPERTIES(
+  flugbuch2_wt.fcgi
+PROPERTIES
+#  POST_INSTALL_SCRIPT ${WT_BINARY_DIR}/WtInstall.cmake
+  VERSION ${VERSION_SERIES}.${VERSION_MAJOR}.${VERSION_MINOR}
+  DEBUG_POSTFIX "d"
+)
+
 INSTALL(FILES ${PROJECT_SOURCE_DIR}../../../inst/wt_config.xml DESTINATION ${CONFIGDIR} )
-INSTALL(FILES ${PROJECT_SOURCE_DIR}../../../inst/wt_config.xml DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES ${PROJECT_SOURCE_DIR}../../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 
 
 

@@ -1,0 +1,31 @@
+# This file sets:
+# - DTL_INCLUDE_DIRS
+# - DTL_LIBRARIES
+# - DTL_FOUND
+
+
+FIND_PATH(DTL_INCLUDE_DIR
+    DTL.h
+  PATHS
+    /usr/include
+    /usr/local/include
+    /usr/include/dtl
+    /usr/local/include/dtl
+)
+
+FIND_LIBRARY(DTL_LIB DTL
+  /usr/lib
+  /usr/local/lib
+  ${USERLIB_ROOT}/lib
+)
+
+
+SET(DTL_FOUND FALSE)
+
+IF(DTL_INCLUDE_DIR
+    AND DTL_LIB)
+  SET(DTL_FOUND TRUE)
+  SET(DTL_LIBRARIES ${DTL_LIB})
+  SET(DTL_INCLUDE_DIRS ${DTL_INCLUDE_DIR})
+ENDIF(DTL_INCLUDE_DIR
+    AND DTL_LIB)
