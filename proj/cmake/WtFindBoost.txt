@@ -3,8 +3,6 @@
 # - BOOST_LIB_DIRS
 # - BOOST_WT_FOUND  // All dependencies for wt found
 # - BOOST_WT_MT_FOUND
-# - BOOST_WTHTTP_FOUND // All dependencies for wthttp found
-# - BOOST_WTHTTP_MT_FOUND
 # - BOOST_SUPPORT_LIBRARIES (should always be added to the boost libs)
 #
 # Separate compiled boost libraries are also discovered:
@@ -14,12 +12,8 @@
 # - BOOST_PO_LIBRARY
 # - BOOST_SIGNALS_LIBRARY
 # - BOOST_SYSTEM_LIBRARY
-# - BOOST_THREAD_LIBRARY (only if BOOST_MT_FOUND)
-# Boost will try to find the same kind (mt or not) of library for all three
-# of these libraries. Boost is considered to be found successfully only
-# when the libraries are all of the same kind (mt or not). If the mt
-# libraries exits, the mt versions will be used unless MULTI_THREADED is
-# set to OFF. Otherwise, the non-mt versions will be used.
+# - BOOST_THREAD_LIBRARY
+# Boost will try to find the mt libraries. 
 
 FIND_PATH(BOOST_INCLUDE_DIRS
     boost/lexical_cast.hpp
