@@ -104,6 +104,7 @@ ELSE(BOOST_WT_MT_FOUND)
   ADD_DEFINITIONS(-DBOOST_DISABLE_THREADS)
 ENDIF(BOOST_WT_MT_FOUND)
 
+FIND_PACKAGE(Wt REQUIRED)
 
 # Make sure the compiler can find include files.
 include_directories (${PROJECT_SOURCE_DIR}/../../src) 
@@ -167,6 +168,9 @@ target_link_libraries(flugbuch2_wt.fcgi
 	${BOOST_WT_LIBRARIES}
 	${DTL_LIBRARIES}
 	${Wt_LIBRARIES}
+	${Wt_LIBRARY}
+	${Wt_FCGI_LIBRARY}
+	${Wt_EXT_LIBRARY}
 	boost_date_time-mt
 	boost_serialization-mt
 	boost_signals-mt
