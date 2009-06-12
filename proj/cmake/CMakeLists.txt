@@ -70,7 +70,7 @@ SET(WEBGROUP apache CACHE STRING "Webserver groupname (e.g. apache or www or use
 
 INCLUDE(FindThreads)
 INCLUDE(WtFindBoost.txt)
-INCLUDE(WtFindFcgi.txt)
+#INCLUDE(WtFindFcgi.txt)
 #INCLUDE(WtFindAsio.txt)
 #INCLUDE(WtFindSsl.txt)
 INCLUDE(FindWt.cmake)
@@ -114,6 +114,7 @@ include_directories (${PROJECT_SOURCE_DIR}/../../src/util)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/web/stat)
 include_directories (${BOOST_INCLUDE_DIRS})
 include_directories (${Wt_INCLUDE_DIR})
+include_directories (${DTL_INCLUDE_DIRS})
 
 # Make sure the linker can find the required libraries once it is built.
 #link_directories (${HELLO_BINARY_DIR}/Hello)
@@ -164,19 +165,18 @@ add_executable(flugbuch2_wt.fcgi
 # Link the executable to the Hello library.
 target_link_libraries(flugbuch2_wt.fcgi 
 	${BOOST_WT_LIBRARIES}
-	${DTL_LIB}
-	${FLB_CONNECTOR}
+	${DTL_LIBRARIES}
 	${Wt_LIBRARIES}
 	boost_date_time-mt
 	boost_serialization-mt
 	boost_signals-mt
 	boost_filesystem-mt
-	libfcgi
+#	libfcgi
 	libboost_thread-mt
 	libboost_program_options-mt
 	libboost_regex-mt
 	libboost_system-mt
-	libpthread
+#	libpthread
 	odbc
 ) 
 

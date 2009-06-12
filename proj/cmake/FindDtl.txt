@@ -11,12 +11,23 @@ FIND_PATH(DTL_INCLUDE_DIR
     /usr/local/include
     /usr/include/dtl
     /usr/local/include/dtl
+	${USERLIB_ROOT}/include
+	${USERLIB_ROOT}/dtl/lib
+	${USERLIB_ROOT}/dtl/include
+	c:/libraries/dtl/lib
+	c:/dtl/lib
 )
 
 FIND_LIBRARY(DTL_LIB DTL
   /usr/lib
   /usr/local/lib
   ${USERLIB_ROOT}/lib
+  ${USERLIB_ROOT}/dtl/lib
+  ${USERLIB_ROOT}/dtl/lib/release
+	c:/libraries/dtl/lib/release
+	c:/dtl/lib/release
+	c:/libraries/dtl/lib
+	c:/dtl/lib
 )
 
 
