@@ -5,7 +5,6 @@
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/utility.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/set.hpp>

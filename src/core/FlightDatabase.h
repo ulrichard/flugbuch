@@ -6,7 +6,6 @@
 #include "CoreStructures.h"
 // boost
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/utility.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 // standard library
