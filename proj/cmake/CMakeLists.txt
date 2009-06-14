@@ -184,6 +184,7 @@ target_link_libraries(flugbuch2_wt.fcgi
 	${Wt_LIBRARY}
 	${Wt_FCGI_LIBRARY}
 	${Wt_EXT_LIBRARY}	
+	${FCGI_LIBRARIES}
 #	libfcgi
 #	libpthread
 	odbc

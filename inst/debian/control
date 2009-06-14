@@ -7,7 +7,7 @@ Architecture: i386
 Essential: no
 standards-Version: 3.8.0
 Homepage: http://sourceforge.net/projects/flugbuch2
-Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl
+Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl, libboost-regex1.35.0, libboost-program-options1.35.0, libboost-date-time1.35.0, libboost-signals1.35.0, libboost-thread1.35.0, libboost-system1.35.0, libboost-filesystem1.35.0, libboost-serialization1.35.0
 Provides: flugbuch2
 Recommends: mozilla | netscape | firefox  
 Installed-Size: 1024
