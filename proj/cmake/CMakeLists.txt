@@ -28,9 +28,6 @@ IF(NOT SHARED_LIBS)
   SET(WT_EXT_STATIC true)
 ENDIF(NOT SHARED_LIBS)
 
-IF(NOT MULTI_THREADED)
-  OPTION(MULTI_THREADED "Build multi-threaded httpd deamon (if possible)" ON)
-ENDIF(NOT MULTI_THREADED)
 
 SET(BUILD_SHARED_LIBS ${SHARED_LIBS})
 
@@ -174,20 +171,20 @@ add_executable(flugbuch2_wt.fcgi
 # Link the executable to the Hello library.
 target_link_libraries(flugbuch2_wt.fcgi 
 	${BOOST_WT_LIBRARIES}
+	${BOOST_THREAD_LIB_MT}
+	${BOOST_REGEX_LIB_MT}
+	${BOOST_SIGNALS_LIB_MT}
+	${BOOST_PO_LIB_MT}
+	${BOOST_DT_LIB_MT}
+	${BOOST_SER_LIB_MT}
+	${BOOST_SYSTEM_LIB_MT}
+	${BOOST_FS_LIB_MT}
 	${DTL_LIBRARIES}
 	${Wt_LIBRARIES}
 	${Wt_LIBRARY}
 	${Wt_FCGI_LIBRARY}
-	${Wt_EXT_LIBRARY}
-	boost_date_time-mt
-	boost_serialization-mt
-	boost_signals-mt
-	boost_filesystem-mt
+	${Wt_EXT_LIBRARY}	
 #	libfcgi
-	libboost_thread-mt
-	libboost_program_options-mt
-	libboost_regex-mt
-	libboost_system-mt
 #	libpthread
 	odbc
 ) 
