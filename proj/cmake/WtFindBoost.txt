@@ -5,16 +5,8 @@
 # - BOOST_WT_MT_FOUND
 # - BOOST_SUPPORT_LIBRARIES (should always be added to the boost libs)
 #
-# Separate compiled boost libraries are also discovered:
-# - BOOST_DT_LIBRARY
-# - BOOST_FS_LIBRARY
-# - BOOST_REGEX_LIBRARY
-# - BOOST_PO_LIBRARY
-# - BOOST_SIGNALS_LIBRARY
-# - BOOST_SYSTEM_LIBRARY
-# - BOOST_THREAD_LIBRARY
-# - BOOST_SER_LIB
-# Boost will try to find the mt libraries. 
+# Separate compiled boost libraries are also discovered
+
 
 FIND_PATH(BOOST_INCLUDE_DIRS
     boost/lexical_cast.hpp

@@ -68,7 +68,7 @@ SET(WEBGROUP apache CACHE STRING "Webserver groupname (e.g. apache or www or use
 
 INCLUDE(FindThreads)
 INCLUDE(WtFindBoost.txt)
-#INCLUDE(WtFindFcgi.txt)
+INCLUDE(WtFindFcgi.txt)
 #INCLUDE(WtFindAsio.txt)
 #INCLUDE(WtFindSsl.txt)
 INCLUDE(FindWt.cmake)
