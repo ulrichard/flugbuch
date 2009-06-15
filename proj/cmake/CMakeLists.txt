@@ -137,10 +137,10 @@ target_link_libraries(flugbuch2_wt.fcgi
 #	${BOOST_SYSTEM_LIB_MT}
 #	${BOOST_FS_LIB_MT}
 	${DTL_LIBRARIES}
-	${Wt_LIBRARIES}
-#	${Wt_LIBRARY}
-#	${Wt_FCGI_LIBRARY}
-#	${Wt_EXT_LIBRARY}	
+#	${Wt_LIBRARIES}
+	${Wt_LIBRARY}
+	${Wt_FCGI_LIBRARY}
+	${Wt_EXT_LIBRARY}	
 	${FCGI_LIBRARIES}
 #	libfcgi
 #	libpthread

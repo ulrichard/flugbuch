@@ -25,7 +25,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	mkdir $(CURDIR)/../proj/cmake/build-release
+	mkdir -p $(CURDIR)/../proj/cmake/build-release
 	(cd $(CURDIR)/../proj/cmake/build-release; cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=1 -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCONFIGDIR:PATH=/etc/flugbuch2/ -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.6/Modules -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_SKIP_RPATH:BOOL=1 -DWEBUSER:STRING=www-data -DWEBGROUP:STRING=www-data ..)
 
 	(cd $(CURDIR)/../proj/cmake/build-release; $(MAKE) )
