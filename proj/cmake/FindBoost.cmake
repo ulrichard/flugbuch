@@ -168,6 +168,20 @@ IF(BOOST_INCLUDE_DIRS)
      AND BOOST_DT_LIB_MT
      AND BOOST_SER_LIB_MT)
 
+  IF(BOOST_FLB_FOUND)
+    IF(NOT Boost_FIND_QUIETLY)
+      MESSAGE(STATUS "Found the Boost libraries at ${BOOST_FLB_LIBRARIES}")
+      MESSAGE(STATUS "Found the Boost headers at ${BOOST_INCLUDE_DIRS}")
+    ENDIF (NOT Boost_FIND_QUIETLY)
+  ELSE(BOOST_FLB_FOUND)
+    IF(Boost_FIND_REQUIRED)
+      MESSAGE(FATAL_ERROR "Could NOT find required boost libraries")
+      MESSAGE("** Could not find a boost installation in " ${BOOST_DIR} ".")
+      MESSAGE("** It may be necessary to set appropriate values for the")
+      MESSAGE("   variables BOOST_DIR, BOOST_COMPILER, and BOOST_VERSION")
+      MESSAGE(FATAL_ERROR "Flugbuch2 requires the following C++ boost libraries: boost_date_time, boost_regex, boost_program_options, boost_signals, and optionally boost_thread")
+    ENDIF(Boost_FIND_REQUIRED)
+  ENDIF(BOOST_FLB_FOUND)
 ENDIF(BOOST_INCLUDE_DIRS)
 
 
