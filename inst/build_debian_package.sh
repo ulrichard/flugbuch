@@ -1,1 +1,1 @@
-dpkg-buildpackage
+dpkg-buildpackage -rfakeroot
