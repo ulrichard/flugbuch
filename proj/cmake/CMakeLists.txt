@@ -1,15 +1,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-IF(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 OLD)
-ENDIF(COMMAND CMAKE_POLICY)
+#IF(COMMAND CMAKE_POLICY)
+#  CMAKE_POLICY(SET CMP0003 OLD)
+#ENDIF(COMMAND CMAKE_POLICY)
 
 PROJECT(flugbuch2)
 SET(CMAKE_MODULE_PATH ${flugbuch2_SOURCE_DIR})
 
 SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 0)
-SET(VERSION_MINOR 5)
+SET(VERSION_MINOR 6)
 
 SET(FLB_CONNECTOR "The wt connector" wtfcgi)
 
@@ -21,32 +21,24 @@ IF(NOT SHARED_LIBS)
   ENDIF(WIN32)
 ENDIF(NOT SHARED_LIBS)
 
-# Fixup Windows declspec stuff
-IF(NOT SHARED_LIBS)
-  SET(WT_STATIC true)
-  SET(WTHTTP_STATIC true)
-  SET(WT_EXT_STATIC true)
-ENDIF(NOT SHARED_LIBS)
-
-
 SET(BUILD_SHARED_LIBS ${SHARED_LIBS})
 
 IF(WIN32)
   SET(USERLIB_ROOT "c:/libraries" CACHE PATH "directory containing the dependency libraries")
-  SET(LIB_INSTALL_DIR "lib" CACHE STRING "Default path for libraries within ${CMAKE_INSTALL_PREFIX}")
+#  SET(LIB_INSTALL_DIR "lib" CACHE STRING "Default path for libraries within ${CMAKE_INSTALL_PREFIX}")
   SET(RUNDIR "c:/flugbuch2" CACHE PATH "Not really used in WIN32")
   IF( NOT DEFINED CONFIGDIR )
     SET(CONFIGDIR ${RUNDIR} CACHE STRING "Path for the configuration files")
   ENDIF( NOT DEFINED CONFIGDIR )
   SET(CONFIGDIRAPACHE ${RUNDIR} CACHE STRING "Path for the apache2 configuration files")
-#  SET(DEPLOYROOT c:/witty/wt-examples CACHE PATH "Path to deploy examples into")
+  SET(DEPLOYROOT c:/program files/flugbuch2 CACHE PATH "Path to deploy examples into")
   SET(BOOST_DIR ${USERLIB_ROOT} CACHE PATH "Use boost in directory")
   SET(BOOST_VERSION "1_35" CACHE STRING "Use boost version in BOOST_DIR")
 #  SET(GD_DIR ${USERLIB_ROOT} CACHE PATH "Search path for libgd")
   OPTION(BOOST_DYNAMIC "Link to boost DLLs (OFF means static link)" OFF)
 ELSE(WIN32)
   SET(USERLIB_ROOT /usr CACHE PATH "Other installation prefix for dependent libraries")
-  SET(LIB_INSTALL_DIR "lib" CACHE STRING "Default path for libraries within ${CMAKE_INSTALL_PREFIX}")
+#  SET(LIB_INSTALL_DIR "lib" CACHE STRING "Default path for libraries within ${CMAKE_INSTALL_PREFIX}")
   SET(RUNDIR "/usr/flugbuch2/run" CACHE PATH "Default path for wt session management (only used by FCGI connector; not relative to CMAKE_INSTALL_PREFIX)")
   IF( NOT DEFINED CONFIGDIR )
     SET(CONFIGDIR "/etc/flugbuch2" CACHE STRING "Path for the configuration files")
@@ -89,18 +81,7 @@ IF(NOT BOOST_WT_FOUND)
   MESSAGE(FATAL_ERROR "** Flugbuch2 requires the following C++ boost libraries: boost_date_time, boost_regex, boost_program_options, boost_signals, and optionally boost_thread")
 ENDIF(NOT BOOST_WT_FOUND)
 
-IF(BOOST_WT_MT_FOUND)
-  IF(MULTI_THREADED)
-    ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
-    MESSAGE("** Enabling multi threading.")
-  ELSE(MULTI_THREADED)
-    MESSAGE("** Disabling multi threading.")
-    ADD_DEFINITIONS(-DBOOST_DISABLE_THREADS)
-  ENDIF(MULTI_THREADED)
-ELSE(BOOST_WT_MT_FOUND)
-  MESSAGE("** Disabling multi threading.")
-  ADD_DEFINITIONS(-DBOOST_DISABLE_THREADS)
-ENDIF(BOOST_WT_MT_FOUND)
+ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
 
 FIND_PACKAGE(Wt REQUIRED)
 
@@ -116,10 +97,7 @@ include_directories (${Wt_INCLUDE_DIR})
 include_directories (${DTL_INCLUDE_DIRS})
 
 # Make sure the linker can find the required libraries once it is built.
-#link_directories (${HELLO_BINARY_DIR}/Hello)
-LINK_DIRECTORIES(
-	${BOOST_LIB_DIRS}
-)
+LINK_DIRECTORIES(${BOOST_LIB_DIRS})
 
 IF(NOT WIN32)
 LINK_DIRECTORIES(
@@ -202,6 +180,8 @@ PROPERTIES
   DEBUG_POSTFIX "d"
 )
 
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/flugbuch2_wt.fcgi DESTINATION ${DEPLOYROOT} )
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../res/* DESTINATION ${DEPLOYROOT} )
 INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml DESTINATION ${CONFIGDIR} )
 INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 
