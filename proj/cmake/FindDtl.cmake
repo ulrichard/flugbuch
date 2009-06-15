@@ -40,3 +40,15 @@ IF(DTL_INCLUDE_DIR
   SET(DTL_INCLUDE_DIRS ${DTL_INCLUDE_DIR})
 ENDIF(DTL_INCLUDE_DIR
     AND DTL_LIB)
+
+IF(DTL_FOUND)
+    IF(NOT Dtl_FIND_QUIETLY)
+      MESSAGE(STATUS "Found the Dtl libraries at ${DTL_LIBRARIES}")
+      MESSAGE(STATUS "Found the Dtl headers at ${DTL_INCLUDE_DIRS}")
+    ENDIF (NOT Dtl_FIND_QUIETLY)
+ELSE(DTL_FOUND)
+    IF(Dtl_FIND_REQUIRED)
+      MESSAGE(FATAL_ERROR "Could NOT find required dtl libraries")
+      MESSAGE(FATAL_ERROR "Please get the library from dtemplatelib.sourceforge.net.")
+    ENDIF(Dtl_FIND_REQUIRED)
+ENDIF(DTL_FOUND)

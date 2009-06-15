@@ -8,6 +8,7 @@ case "$1" in
 		# do here pre removes
 		#
 		echo "remove flugbuch2 from apache"
+		a2dissite /etc/apache2/sites-available/flugbuch2
 		;;
 	failed-upgrade)
 		;;

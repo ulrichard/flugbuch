@@ -57,33 +57,12 @@ SET(CONFIGURATION "${CONFIGDIR}/wt_config.xml" CACHE PATH "Path to the wt config
 SET(WEBUSER apache CACHE STRING "Webserver username (e.g. apache or www)")
 SET(WEBGROUP apache CACHE STRING "Webserver groupname (e.g. apache or www or users)")
 
-
-INCLUDE(FindThreads)
-INCLUDE(WtFindBoost.txt)
-INCLUDE(WtFindFcgi.txt)
-#INCLUDE(WtFindAsio.txt)
-#INCLUDE(WtFindSsl.txt)
-INCLUDE(FindWt.cmake)
-INCLUDE(FindDtl.txt)
-
-IF(NOT DTL_FOUND)
-  MESSAGE("** Error finding Flugbuch2 required library: ")
-  MESSAGE("** Could not find a database template library installation.")
-  MESSAGE("** Please get the library from dtemplatelib.sourceforge.net.")
-  MESSAGE(FATAL_ERROR "** Flugbuch2 requires the following C++ libraries: dtl")
-ENDIF(NOT DTL_FOUND)
-
-IF(NOT BOOST_WT_FOUND)
-  MESSAGE("** Error finding Flugbuch2 required library: ")
-  MESSAGE("** Could not find a boost installation in " ${BOOST_DIR} ".")
-  MESSAGE("** It may be necessary to set appropriate values for the")
-  MESSAGE("   variables BOOST_DIR, BOOST_COMPILER, and BOOST_VERSION")
-  MESSAGE(FATAL_ERROR "** Flugbuch2 requires the following C++ boost libraries: boost_date_time, boost_regex, boost_program_options, boost_signals, and optionally boost_thread")
-ENDIF(NOT BOOST_WT_FOUND)
+FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Fcgi REQUIRED)
+FIND_PACKAGE(Wt REQUIRED)
+FIND_PACKAGE(Dtl REQUIRED)
 
 ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
-
-FIND_PACKAGE(Wt REQUIRED)
 
 # Make sure the compiler can find include files.
 include_directories (${PROJECT_SOURCE_DIR}/../../src) 
@@ -97,14 +76,14 @@ include_directories (${Wt_INCLUDE_DIR})
 include_directories (${DTL_INCLUDE_DIRS})
 
 # Make sure the linker can find the required libraries once it is built.
-LINK_DIRECTORIES(${BOOST_LIB_DIRS})
+#LINK_DIRECTORIES(${BOOST_LIB_DIRS})
 
-IF(NOT WIN32)
-LINK_DIRECTORIES(
-	/usr/lib
-	/usr/local/lib
-)
-ENDIF(NOT WIN32)
+#IF(NOT WIN32)
+#LINK_DIRECTORIES(
+#	/usr/lib
+#	/usr/local/lib
+#)
+#ENDIF(NOT WIN32)
 
 IF(WIN32)
   IF(BOOST_DYNAMIC)
@@ -148,20 +127,20 @@ add_executable(flugbuch2_wt.fcgi
 
 # Link the executable to the Hello library.
 target_link_libraries(flugbuch2_wt.fcgi 
-	${BOOST_WT_LIBRARIES}
-	${BOOST_THREAD_LIB_MT}
-	${BOOST_REGEX_LIB_MT}
-	${BOOST_SIGNALS_LIB_MT}
-	${BOOST_PO_LIB_MT}
-	${BOOST_DT_LIB_MT}
-	${BOOST_SER_LIB_MT}
-	${BOOST_SYSTEM_LIB_MT}
-	${BOOST_FS_LIB_MT}
+	${BOOST_FLB_LIBRARIES}
+#	${BOOST_THREAD_LIB_MT}
+#	${BOOST_REGEX_LIB_MT}
+#	${BOOST_SIGNALS_LIB_MT}
+#	${BOOST_PO_LIB_MT}
+#	${BOOST_DT_LIB_MT}
+#	${BOOST_SER_LIB_MT}
+#	${BOOST_SYSTEM_LIB_MT}
+#	${BOOST_FS_LIB_MT}
 	${DTL_LIBRARIES}
 	${Wt_LIBRARIES}
-	${Wt_LIBRARY}
-	${Wt_FCGI_LIBRARY}
-	${Wt_EXT_LIBRARY}	
+#	${Wt_LIBRARY}
+#	${Wt_FCGI_LIBRARY}
+#	${Wt_EXT_LIBRARY}	
 	${FCGI_LIBRARIES}
 #	libfcgi
 #	libpthread
