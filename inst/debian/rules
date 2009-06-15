@@ -11,8 +11,6 @@
 
 
 
-
-
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
@@ -27,10 +25,10 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	# $(MAKE)
-	codeblocks --build $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release_fcgi_static"
-	#docbook-to-man debian/flugbuch2.sgml > flugbuch2.1
+	mkdir $(CURDIR)/../proj/cmake/build-release
+	(cd $(CURDIR)/../proj/cmake/build-release; cmake -DCMAKE_VERBOSE_MAKEFILE:BOOL=1 -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCONFIGDIR:PATH=/etc/flugbuch2/ -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.6/Modules -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_SKIP_RPATH:BOOL=1 -DWEBUSER:STRING=www-data -DWEBGROUP:STRING=www-data ..)
 
+	(cd $(CURDIR)/../proj/cmake/build-release; $(MAKE) )
 	touch $@
 
 clean: 
@@ -40,7 +38,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	# $(MAKE) clean
-	codeblocks --clean $(CURDIR)/../proj/CodeBlocks/Flugbuch2_wt/Flugbuch2_wt.cbp --target="Release_fcgi_static"
+	rm -rf build-release
 
 	dh_clean 
 
@@ -52,22 +50,22 @@ install: build
 
 	# Add here commands to install the package into debian/flugbuch2.
 	# $(MAKE) DESTDIR=$(CURDIR)/debian/flugbuch2 install
-	cp $(CURDIR)/../res $(CURDIR)/debian/flugbuch2/usr/share/flugbuch2/www -r
+	(cd $(CURDIR)/../proj/cmake/build-release; $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/ )
 
-
+	cp -R $(CURDIR)/../res $(CURDIR)/debian/tmp/usr/share/flugbuch2/
 
 # Build architecture-independent files here.
-binary-indep: install
+binary-indep: build install
 # We have nothing to do by default.
 
 # Build architecture-dependent files here.
-binary-arch: install
+binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs 
 	dh_installdocs
 	dh_installexamples
-#	dh_install
+	dh_install --sourcedir=debian/tmp/
 #	dh_installmenu
 #	dh_installdebconf
 #	dh_installlogrotate
@@ -79,15 +77,16 @@ binary-arch: install
 #	dh_installcron
 #	dh_installinfo
 	dh_installman
+	dh_lintian
 	dh_link
 	dh_strip
 	dh_compress
-	dh_fixperms
 #	dh_perl
-#	dh_makeshlibs
+	dh_makeshlibs -pflugbuch2 -V'flugbuch2 (>= 2.0.5)'
+	dh_shlibdeps -a
+	dh_fixperms
 	dh_installdeb
-	dh_shlibdeps
-#	dh_gencontrol
+	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
