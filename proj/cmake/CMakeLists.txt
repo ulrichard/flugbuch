@@ -75,16 +75,6 @@ include_directories (${BOOST_INCLUDE_DIRS})
 include_directories (${Wt_INCLUDE_DIR})
 include_directories (${DTL_INCLUDE_DIRS})
 
-# Make sure the linker can find the required libraries once it is built.
-#LINK_DIRECTORIES(${BOOST_LIB_DIRS})
-
-#IF(NOT WIN32)
-#LINK_DIRECTORIES(
-#	/usr/lib
-#	/usr/local/lib
-#)
-#ENDIF(NOT WIN32)
-
 IF(WIN32)
   IF(BOOST_DYNAMIC)
     ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
@@ -128,22 +118,12 @@ add_executable(flugbuch2_wt.fcgi
 # Link the executable to the Hello library.
 target_link_libraries(flugbuch2_wt.fcgi 
 	${BOOST_FLB_LIBRARIES}
-#	${BOOST_THREAD_LIB_MT}
-#	${BOOST_REGEX_LIB_MT}
-#	${BOOST_SIGNALS_LIB_MT}
-#	${BOOST_PO_LIB_MT}
-#	${BOOST_DT_LIB_MT}
-#	${BOOST_SER_LIB_MT}
-#	${BOOST_SYSTEM_LIB_MT}
-#	${BOOST_FS_LIB_MT}
+	${Wt_LIBRARIES}
+#	${Wt_LIBRARY}
+#	${Wt_FCGI_LIBRARY}
+#	${Wt_EXT_LIBRARY}	
 	${DTL_LIBRARIES}
-#	${Wt_LIBRARIES}
-	${Wt_LIBRARY}
-	${Wt_FCGI_LIBRARY}
-	${Wt_EXT_LIBRARY}	
 	${FCGI_LIBRARIES}
-#	libfcgi
-#	libpthread
 	odbc
 ) 
 
@@ -159,10 +139,13 @@ PROPERTIES
   DEBUG_POSTFIX "d"
 )
 
-INSTALL(FILES ${PROJECT_SOURCE_DIR}/flugbuch2_wt.fcgi DESTINATION ${DEPLOYROOT} )
-INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../res/* DESTINATION ${DEPLOYROOT} )
-INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml DESTINATION ${CONFIGDIR} )
-INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES     ${PROJECT_BINARY_DIR}/flugbuch2_wt.fcgi          DESTINATION ${DEPLOYROOT} )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml   DESTINATION ${CONFIGDIR} )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 
 
 
