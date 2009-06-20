@@ -88,8 +88,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # Add executable called "flugbuch2_wt.fcgi" that is built from the source files
-# "demo.cxx" and "demo_b.cxx". The extensions are automatically found.
-add_executable(flugbuch2_wt.fcgi 
+set(FLUGBUCH2_SOURCE_FILES 
 	${PROJECT_SOURCE_DIR}/../../src/core/CoreStructures.cpp
 	${PROJECT_SOURCE_DIR}/../../src/core/FlightDatabase.cpp
 #	${PROJECT_SOURCE_DIR}/../../src/inout/inout_flyhigh.cpp
@@ -115,13 +114,32 @@ add_executable(flugbuch2_wt.fcgi
 	${PROJECT_SOURCE_DIR}/../../src/web/stat/Wt/WGeoPosEdit.cpp
 )
 
-# Link the executable to the Hello library.
+add_executable(flugbuch2_wt.fcgi 
+	${FLUGBUCH2_SOURCE_FILES}
+)
+
+add_executable(flugbuch2_wt_http 
+	${FLUGBUCH2_SOURCE_FILES}
+)
+
+# Link the executable library.
 target_link_libraries(flugbuch2_wt.fcgi 
 	${BOOST_FLB_LIBRARIES}
 	${Wt_LIBRARIES}
 #	${Wt_LIBRARY}
 #	${Wt_FCGI_LIBRARY}
 #	${Wt_EXT_LIBRARY}	
+	${DTL_LIBRARIES}
+	${FCGI_LIBRARIES}
+	odbc
+) 
+
+target_link_libraries(flugbuch2_wt_http
+	${BOOST_FLB_LIBRARIES}
+#	${Wt_LIBRARIES}
+	${Wt_LIBRARY}
+	${Wt_HTTP_LIBRARY}
+	${Wt_EXT_LIBRARY}	
 	${DTL_LIBRARIES}
 	${FCGI_LIBRARIES}
 	odbc
