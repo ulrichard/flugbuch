@@ -141,7 +141,6 @@ target_link_libraries(flugbuch2_wt_http
 	${Wt_HTTP_LIBRARY}
 	${Wt_EXT_LIBRARY}	
 	${DTL_LIBRARIES}
-	${FCGI_LIBRARIES}
 	odbc
 ) 
 
