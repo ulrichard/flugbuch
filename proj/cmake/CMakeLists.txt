@@ -11,8 +11,6 @@ SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 0)
 SET(VERSION_MINOR 6)
 
-SET(FLB_CONNECTOR "The wt connector" wtfcgi)
-
 IF(NOT SHARED_LIBS)
   IF(WIN32)
     OPTION(SHARED_LIBS "Compile shared libraries" OFF)
@@ -129,9 +127,9 @@ target_link_libraries(flugbuch2_wt.fcgi
 #	${Wt_LIBRARY}
 #	${Wt_FCGI_LIBRARY}
 #	${Wt_EXT_LIBRARY}	
-	${DTL_LIBRARIES}
+#	${DTL_LIBRARIES}
 	${FCGI_LIBRARIES}
-	odbc
+#	odbc
 ) 
 
 target_link_libraries(flugbuch2_wt_http
@@ -140,8 +138,8 @@ target_link_libraries(flugbuch2_wt_http
 	${Wt_LIBRARY}
 	${Wt_HTTP_LIBRARY}
 	${Wt_EXT_LIBRARY}	
-	${DTL_LIBRARIES}
-	odbc
+#	${DTL_LIBRARIES}
+#	odbc
 ) 
 
 IF(WIN32)
