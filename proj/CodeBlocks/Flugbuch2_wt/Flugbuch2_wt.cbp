@@ -90,8 +90,6 @@
 					<Add library="wt" />
 					<Add library="wtext" />
 					<Add library="wtfcgi" />
-					<Add library="DTL" />
-					<Add library="odbc" />
 				</Linker>
 			</Target>
 			<Target title="Release_http">
@@ -226,9 +224,14 @@
 			<Option target="Release_http" />
 			<Option target="Debug_MSVC" />
 			<Option target="Release_MSVC" />
-			<Option target="Release_fcgi" />
 		</Unit>
-		<Unit filename="../../../src/inout/inout_flyhigh.h" />
+		<Unit filename="../../../src/inout/inout_flyhigh.h">
+			<Option target="Debug" />
+			<Option target="Release_fcgi_static" />
+			<Option target="Release_http" />
+			<Option target="Debug_MSVC" />
+			<Option target="Release_MSVC" />
+		</Unit>
 		<Unit filename="../../../src/inout/inout_igc.cpp" />
 		<Unit filename="../../../src/inout/inout_igc.h" />
 		<Unit filename="../../../src/inout/inout_mdb.cpp">
