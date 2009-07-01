@@ -440,7 +440,7 @@ void FlightTable::addNewFlight()
         newFlight->setDuration(0);
         newFlight->clearWaypoints();
         flightDb_->addFlight(newFlight);
-        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++, true);
+        FlightTableRow *newRow = addFlight(newFlight, --insertRowNr_, true);
         newRow->edit();
     }
     else

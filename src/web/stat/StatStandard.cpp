@@ -21,6 +21,7 @@
 #include <iterator>
 #include <limits>
 #include <numeric>
+#include <iomanip>
 
 using namespace flbwt;
 using Wt::WStandardItemModel;
@@ -404,10 +405,10 @@ struct mmas_collector
         array<string, 5> vsText;
 
         vsText[0] = txt;
-        vsText[1] = lexical_cast<string>(data.min_);
-        vsText[2] = lexical_cast<string>(data.max_);
-        vsText[3] = lexical_cast<string>(data.avg());
-        vsText[4] = lexical_cast<string>(data.sum_);
+        vsText[1] = FormatStr() << std::fixed << std::setprecision(2) << data.min_;
+        vsText[2] = FormatStr() << std::fixed << std::setprecision(2) << data.max_;
+        vsText[3] = FormatStr() << std::fixed << std::setprecision(2) << data.avg();
+        vsText[4] = FormatStr() << std::fixed << std::setprecision(2) << data.sum_;
         for(size_t i=0; i<(withSum ? vsText.size() : vsText.size() - 1); ++i)
         {
             Wt::WText *labelText = new Wt::WText(vsText[i]);
@@ -423,6 +424,7 @@ struct mmas_collector
 void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
     Wt::WTable *table = new Wt::WTable(parent);
+    table->setStyleClass("tableFlights");
 
     array<string, 5> captions = {"What", "Min", "Max", "Avg", "Sum"};
 
@@ -441,10 +443,12 @@ void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDa
     labelText = new Wt::WText(lexical_cast<string>(std::distance(flights.begin(), flights.end())));
     labelText->setStyleClass("tableContent");
     table->elementAt(1, 4)->addWidget(labelText);
-    mmas_collector<size_t>::add_line(2, "AirTime",       table, true,  flights, bll::bind(&flb::Flight::duration, *bll::_1));
-    mmas_collector<double>::add_line(3, "Distance",      table, true,  flights, bll::bind(&flb::Flight::distance, *bll::_1));
-    mmas_collector<double>::add_line(4, "TakeoffHeight", table, false, flights, bll::bind(&flb::Location::height, *bll::bind(&flb::Flight::takeoff, *bll::_1)));
-
+    mmas_collector<double>::add_line(2, "AirTime [h]",         table, true,  flights,
+                bll::bind(&flb::Flight::duration, *bll::_1) / 60.0);
+    mmas_collector<double>::add_line(3, "Distance [km]",       table, true,  flights,
+                bll::bind(&flb::Flight::distance, *bll::_1));
+    mmas_collector<double>::add_line(4, "TakeoffHeight [MüM]", table, false, flights,
+                bll::bind(&flb::Location::height, *bll::bind(&flb::Flight::takeoff, *bll::_1)));
 
 
 

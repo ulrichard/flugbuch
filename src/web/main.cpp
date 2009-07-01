@@ -128,6 +128,7 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 	Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
 //	borderLayout->setLayoutHint("table-layout", "fixed");
 	root()->setLayout(borderLayout);
+	root()->setStyleClass("scrolling");
 
     flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
 	borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);

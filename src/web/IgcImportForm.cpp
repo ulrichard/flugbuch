@@ -225,7 +225,7 @@ void IgcImportForm::addFlight()
             newFlight->setTakeoff(locTakeoff);
         }
         else
-            throw std::runtime_error("Wether existing not new location for takeoff");
+            throw std::runtime_error("Wether existing nor new location for takeoff");
         // landing
         if(lfLanding_)
             newFlight->setLanding(lfLanding_->getLocation());
@@ -241,7 +241,7 @@ void IgcImportForm::addFlight()
             newFlight->setLanding(locLanding);
         }
         else
-            throw std::runtime_error("Wether existing not new location for landing");
+            throw std::runtime_error("Wether existing nor new location for landing");
 
         // close the dialog
         accept();
@@ -253,10 +253,10 @@ void IgcImportForm::addFlight()
             throw std::runtime_error("Tab control not found");
         FlightPanel *flightPanel = tabCtrl->flightPanel();
         assert(flightPanel);
-        tabCtrl->setCurrentIndex(0);
+        tabCtrl->setCurrentIndex(0);       // switch to the flight table
         FlightTable *flightTable = flightPanel->flightTable();
         const unsigned int pagesCount = 1 + flightTable->entriesCount() / flightTable->entriesPerPage();
-        flightTable->loadPage(pagesCount);
+        flightTable->loadPage(pagesCount); // switch to the last page
         flightPanel->pagesList()->load();
         flightDb_->addFlight(newFlight);
         FlightTableRow *flrow = flightTable->addFlight(newFlight, flightTable->rowCount() - 1, true);

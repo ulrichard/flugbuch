@@ -6,6 +6,11 @@ table.tableFlights
 	padding: 3px 2px 3px 2px;
 }
 
+div.scrolling
+{
+	overflow:scroll;
+}
+
 table.FilterBar
 {
 	width: 100%;
@@ -105,9 +110,5 @@ div.WelcomeScreen
 	
 }
 
-body
-{
-//	background-image: url("/img/welcome_back.jpg");
-}
 
 
