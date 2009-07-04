@@ -486,6 +486,8 @@ FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
+    setStyleClass("flb_detail_panel");
+    impl_->setStyleClass("flb_detail_panel");
 
     cbArea_ = new Wt::Ext::ComboBox(impl_);
     table_  = new FlightTable(flightDb, impl_);
@@ -506,6 +508,7 @@ FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     topBar->elementAt(0, 3)->addWidget(pglist_);
 
     Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
+    borderLayout->setLayoutHint("table-layout", "fixed");
     impl_->setLayout(borderLayout);
     borderLayout->addWidget(topBar, Wt::WBorderLayout::North);
     borderLayout->addWidget(table_, Wt::WBorderLayout::Center);

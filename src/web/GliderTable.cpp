@@ -298,6 +298,7 @@ GliderPanel::GliderPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
+    impl_->setStyleClass("flb_detail_panel");
 
     cbBrand_  = new Wt::Ext::ComboBox(impl_);
     cbClassi_ = new Wt::Ext::ComboBox(impl_);

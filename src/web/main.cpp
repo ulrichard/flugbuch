@@ -125,16 +125,23 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
     flightDb_ = fldb;
 
     root()->clear();
+    root()->setStyleClass("flb_root");
 	Wt::WBorderLayout *borderLayout = new Wt::WBorderLayout();
-//	borderLayout->setLayoutHint("table-layout", "fixed");
+	borderLayout->setLayoutHint("table-layout", "fixed");
 	root()->setLayout(borderLayout);
-	root()->setStyleClass("scrolling");
 
     flbwt::MainMenu  *mainMenu = new flbwt::MainMenu();
 	borderLayout->addWidget(mainMenu, Wt::WBorderLayout::North);
 
     flbwt::TabControl *tabCtrl = new flbwt::TabControl(fldb);
+    tabCtrl->setStyleClass("flb_tab_control");
 	borderLayout->addWidget(tabCtrl,  Wt::WBorderLayout::Center);
+
+    string footerText;
+    if(!readConfigurationProperty("footerText", footerText))
+        footerText = "flugbuch2 ist opensource software im alpha stadium.";
+	Wt::WText *txtFooter = new Wt::WText(footerText);
+	borderLayout->addWidget(txtFooter, Wt::WBorderLayout::South);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightLogApp::loadTestDb()

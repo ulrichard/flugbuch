@@ -361,6 +361,7 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
+    impl_->setStyleClass("flb_detail_panel");
 
     cbArea_ = new Wt::Ext::ComboBox(impl_);
     cbTakeoff_ = new Wt::Ext::CheckBox(impl_);

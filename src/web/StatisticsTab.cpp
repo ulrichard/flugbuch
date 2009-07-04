@@ -51,6 +51,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
+    impl_->setStyleClass("flb_detail_panel");
 
     // add new statistics classes here
     addStatistic(auto_ptr<StatBase>(new FlightsPerGlider(flightDb_)));
