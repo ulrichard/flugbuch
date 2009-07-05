@@ -1,0 +1,17 @@
+<VirtualHost *:80>	
+	ServerName flugbuch2.homelinux.org
+#	ServerAlias paraeasy.dynalias.net
+	DocumentRoot /home/paraeasy/flugbuch2
+	ServerAdmin richi@paraeasy.ch
+	
+	<Directory /home/paraeasy/flugbuch2>
+		Options FollowSymLinks MultiViews ExecCGI
+		DirectoryIndex flugbuch2_wt.fcgi
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+#	ErrorLog /home/richi/paraeasy/flugbuch2/error.log
+#	CustomLog /home/richi/paraeasy/flugbuch2/access.log combined
+</VirtualHost>
