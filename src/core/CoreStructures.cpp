@@ -70,7 +70,7 @@ double Flight::calcDistance() const
     for( ; it2 != locations.end(); ++it1, ++it2)
         legLengths.push_back((*it1)->getDistance((*it2)->pos()));
     // summm the legs
-    return std::accumulate(legLengths.begin(), legLengths.end(), 0);
+    return std::accumulate(legLengths.begin(), legLengths.end(), 0.0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool Flight::samePlaces(const Flight &other) const
