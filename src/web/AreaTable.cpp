@@ -131,7 +131,7 @@ void AreaTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -144,7 +144,7 @@ void AreaTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

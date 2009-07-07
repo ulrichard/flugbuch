@@ -121,7 +121,7 @@ void IgcImportForm::uploadTooBig(int size)
                                 << "Upload  : " << size / 1024 << " kB\n"
                                 << "Maximum : " << maxreqsize / 1024 << " kB");
 //    im_txt_->setText(msg);
-    Wt::Ext::MessageBox::show("Error", msg, Wt::WFlags<Wt::StandardButton>(), true);
+    Wt::Ext::MessageBox::show("Error", msg, Wt::Ok, true);
     accept();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -135,7 +135,7 @@ void IgcImportForm::fileReceived()
 
         if(!igcfile_.Trackpoints.size())
         {
-            Wt::Ext::MessageBox::show("Error", "No trackpoints read from the file!", Wt::WFlags<Wt::StandardButton>(), true);
+            Wt::Ext::MessageBox::show("Error", "No trackpoints read from the file!", Wt::Ok, true);
             accept();
         }
         else
@@ -196,7 +196,7 @@ void IgcImportForm::fileReceived()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
         accept();
     }
 }
@@ -266,7 +266,7 @@ void IgcImportForm::addFlight()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

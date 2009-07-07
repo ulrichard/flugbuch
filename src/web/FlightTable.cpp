@@ -129,6 +129,7 @@ void FlightTableRow::clearRow()
 	dateEdit_ = NULL;
 	cbGlider_ = NULL;
 	lfTakeoff_ = lfLanding_ = NULL;
+	taStory_ = NULL;
 
 	// clear the previous content from the row
 	for(int i=0; i<9; ++i)
@@ -264,6 +265,12 @@ void FlightTableRow::edit()
 	lfLanding_->fillLocations(lfLanding_->selectArea(flight_->landing()->area()->name()));
 	lfLanding_->selectLocation(flight_->landing()->name());
 	table_->elementAt(rowNr_, colLanding)->addWidget(lfLanding_);
+	// story
+	Wt::WTextArea *taStory_ = new Wt::WTextArea("");
+	taStory_->setText(flight_->story());
+	taStory_->setColumns(50);
+	taStory_->setRows(5);
+	table_->elementAt(rowNr_, colLanding)->addWidget(taStory_);
 	// duration
 	ndDuration_ = new Wt::Ext::NumberField();
 	ndDuration_->setValue(flight_->duration());
@@ -319,6 +326,8 @@ void FlightTableRow::save()
         // landing
         assert(lfLanding_);
         flight_->setLanding(lfLanding_->getLocation());
+        // story
+        flight_->setStory(taStory_->text().narrow());
         // duration
         assert(ndDuration_);
         flight_->setDuration(ndDuration_->value());
@@ -334,7 +343,7 @@ void FlightTableRow::save()
     }
     catch(std::exception &ex)
     {
-		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+		Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
 
     }
 
@@ -349,7 +358,7 @@ void FlightTableRow::remove()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -448,7 +457,7 @@ void FlightTable::addNewFlight()
         // first make sure, we have gliders and locations defined
         if(!flightDb_->Gliders.size())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggeraet.", Wt::WFlags<Wt::StandardButton>(), true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggeraet.", Wt::Ok, true);
             return;
         }
         // find the first takeoff and the first landing place
@@ -458,12 +467,12 @@ void FlightTable::addNewFlight()
                             bind(&Location::usage, *bll::_1) & static_cast<int>(Location::UA_LANDING));
         if(itTo == flightDb_->Locations.end())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::WFlags<Wt::StandardButton>(), true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::Ok, true);
             return;
         }
         if(itLa == flightDb_->Locations.end())
         {
-            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Landeplatz.", Wt::WFlags<Wt::StandardButton>(), true);
+            Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Landeplatz.", Wt::Ok, true);
             return;
         }
         // create the new flight

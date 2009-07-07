@@ -139,7 +139,7 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 
     string footerText;
     if(!readConfigurationProperty("footerText", footerText))
-        footerText = "flugbuch2 ist opensource software im alpha stadium.";
+        footerText = "flugbuch2 ist opensource software im alpha stadium. http://www.sourceforge.net/projects/flugbuch2";
 	Wt::WText *txtFooter = new Wt::WText(footerText);
 	borderLayout->addWidget(txtFooter, Wt::WBorderLayout::South);
 }
@@ -152,7 +152,7 @@ void FlightLogApp::loadTestDb()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -173,7 +173,7 @@ void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string 
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -188,7 +188,7 @@ void FlightLogApp::saveDb()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error saving flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error saving flight db", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -209,7 +209,7 @@ void FlightLogApp::reload()
     }
     catch(std::exception &ex)
     {
-        Wt::Ext::MessageBox::show("Error reloading flight db", ex.what(), Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Error reloading flight db", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

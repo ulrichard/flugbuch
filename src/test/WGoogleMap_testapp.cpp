@@ -147,7 +147,7 @@ public:
     void positionPopup(Wt::WGoogleMap::Coordinate lalo)
     {
         string latlonstr = lexical_cast<string>(lalo.latitude()) + ", " + lexical_cast<string>(lalo.longitude());
-        Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::WFlags<Wt::StandardButton>(), true);
+        Wt::Ext::MessageBox::show("Clicked at position", latlonstr, Wt::Ok, true);
     }
 
     void mapType(int ind)

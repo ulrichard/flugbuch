@@ -9,6 +9,7 @@
 #include <Wt/WContainerWidget>
 #include <Wt/WCompositeWidget>
 #include <Wt/WTable>
+#include <Wt/WTextArea>
 // std lib
 #include <vector>
 #include <string>
@@ -74,6 +75,7 @@ private:
 	LocationField        *lfLanding_;
 	Wt::Ext::NumberField *ndDuration_;
 	std::vector<LocationField*> vlfWaypoints_;
+	Wt::WTextArea        *taStory_;
 
 
 	enum ColPositons
