@@ -13,6 +13,7 @@ using namespace flb;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::algorithm::trim_copy;
+using boost::posix_time::time_duration;
 using namespace boost::lambda;
 namespace bfs   = boost::filesystem;
 namespace bgreg = boost::gregorian;
@@ -117,9 +118,9 @@ shared_ptr<flb::Flight> inout_igc::flight(void) // throws std::exception
         throw std::runtime_error("no landing zone found");
 
     // create the new flight
-    shared_ptr<Flight> flight(new Flight(1,                              // number
+    shared_ptr<Flight> flight(new Flight(1,                                 // number
                                             boost::gregorian::day_clock::local_day(), // date
-                                            0,                              // airtime
+                                            time_duration(0, 0, 0),         // airtime
                                             *flightDb_->Gliders.begin(),    // glider
                                             *itTo,                          // takeoff
                                             *itLa));                        // landing

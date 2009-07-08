@@ -3,6 +3,7 @@
 
 // boost
 #include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/string.hpp>
@@ -182,7 +183,7 @@ class Flight
 	friend class boost::serialization::access;
 	typedef std::vector<boost::shared_ptr<Location> > SeqWaypoints;
 public:
-	Flight(unsigned int number, const boost::gregorian::date &date, unsigned int airtime,
+	Flight(unsigned int number, const boost::gregorian::date &date, const boost::posix_time::time_duration &airtime,
 			boost::shared_ptr<Glider> glider, boost::shared_ptr<Location> takeoff,
             boost::shared_ptr<Location> landing, const std::string story = "",
             const SeqWaypoints &waypoints = SeqWaypoints()):
@@ -211,24 +212,24 @@ public:
 		ar & BOOST_SERIALIZATION_NVP(igcfile_);
 	}
 	// getters
-	unsigned int					  number()	  const { return number_; }
-	const boost::gregorian::date	& date()	  const { return date_; }
-	const boost::shared_ptr<Location> takeoff()	  const { return takeoff_; }
-	const boost::shared_ptr<Location> landing()	  const { return landing_; }
-	const boost::shared_ptr<Glider>   glider()	  const { return glider_; }
-	const unsigned int &			  duration()  const { return airtime_; }
-	double							  distance()  const { return distance_; }
-	const std::string &               story()     const { return story_; }
-	bool							  hasTrack()  const { return false; }
+	unsigned int					         number()	const { return number_; }
+	const boost::gregorian::date	       & date()	    const { return date_; }
+	const boost::shared_ptr<Location>        takeoff()	const { return takeoff_; }
+	const boost::shared_ptr<Location>        landing()	const { return landing_; }
+	const boost::shared_ptr<Glider>          glider()	const { return glider_; }
+	const boost::posix_time::time_duration & duration() const { return airtime_; }
+	double							         distance() const { return distance_; }
+	const std::string &                      story()    const { return story_; }
+	bool							         hasTrack() const { return false; }
 	// setters
-	void setNumber(unsigned int nbr)                  { number_  = nbr; }
-	void setDate(const boost::gregorian::date &ndate) { date_    = ndate; }
-	void setGlider(boost::shared_ptr<Glider> gld)     { glider_  = gld; }
-    void setTakeoff(boost::shared_ptr<Location> to)   { takeoff_ = to; }
-    void setLanding(boost::shared_ptr<Location> la)   { landing_ = la; }
-    void setDuration(unsigned int dur)                { airtime_ = dur; }
-    void setDistance(double dist)                     { distance_ = dist; }
-    void setStory(const std::string &story)           { story_   = story; }
+	void setNumber(unsigned int nbr)                       { number_  = nbr; }
+	void setDate(const boost::gregorian::date &ndate)      { date_    = ndate; }
+	void setGlider(boost::shared_ptr<Glider> gld)          { glider_  = gld; }
+    void setTakeoff(boost::shared_ptr<Location> to)        { takeoff_ = to; }
+    void setLanding(boost::shared_ptr<Location> la)        { landing_ = la; }
+    void setDuration(boost::posix_time::time_duration dur) { airtime_ = dur; }
+    void setDistance(double dist)                          { distance_ = dist; }
+    void setStory(const std::string &story)                { story_   = story; }
     // waypoints
     void clearWaypoints()                             { waypoints_.clear(); }
     void addWaypoint(boost::shared_ptr<Location> wpt) { waypoints_.push_back(wpt); }
@@ -238,16 +239,16 @@ public:
  private:
 	 Flight() : Waypoints(*this) {}
 	 // members
-	unsigned int				number_;
-	boost::gregorian::date    	date_;
-	unsigned int               	airtime_;
-	boost::shared_ptr<Glider>   glider_;
-	boost::shared_ptr<Location> takeoff_;
-	boost::shared_ptr<Location> landing_;
-	SeqWaypoints   				waypoints_;
-	double						distance_;
-	std::string                 story_;
-	std::string                 igcfile_;
+	unsigned int				     number_;
+	boost::gregorian::date    	     date_;
+	boost::posix_time::time_duration airtime_;
+	boost::shared_ptr<Glider>        glider_;
+	boost::shared_ptr<Location>      takeoff_;
+	boost::shared_ptr<Location>      landing_;
+	SeqWaypoints   				     waypoints_;
+	double						     distance_;
+	std::string                      story_;
+	std::string                      igcfile_;
 
 public:
     // memberspace for the waypoints

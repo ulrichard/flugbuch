@@ -26,6 +26,8 @@ using namespace boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::gregorian::date;
+using boost::posix_time::time_duration;
+using boost::posix_time::minutes;
  /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addFlightArea(shared_ptr<FlightArea> flar)
 {
@@ -231,18 +233,18 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	shared_ptr<flb::Glider> glBiGolden(new flb::Glider("Gradient", "Bi Golden", "42", "blue", 2004, "DHV 1-2 Bi") );
 	fldb->addGlider(glBiGolden);
 	// flights
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2007,  3, 22), 120, glMagus4, locFamatina, locFamaLande)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(2,  date(2008,  9, 10),  15, glMagus5, locWeststart, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(3,  date(2008,  9, 26),   5, glHellracer, locBietstoeckli, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(4,  date(2008,  9, 27),  25, glMagus5, locBietstoeckli, locFrauholz)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(5,  date(2008, 10, 12),   5, glHellracer, locKlMythen, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(6,  date(2008, 10, 20),  30, glU4Sport, locWeststart, locSteisteg)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(7,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(8,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(9,  date(2008, 12,  7),   5, glHellracer, locHockenhorn, locWiler)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 10),  15, glBiGolden,  locBrunni, locOchsenmatte)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 11),   5, glAspen, locFronalpstock, locStoosSki)));
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(12, date(2009,  1, 15),  10, glMagus5, locEngelstock, locBormPoint)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2007,  3, 22), minutes(120), glMagus4, locFamatina, locFamaLande)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(2,  date(2008,  9, 10), minutes( 15), glMagus5, locWeststart, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(3,  date(2008,  9, 26), minutes(  5), glHellracer, locBietstoeckli, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(4,  date(2008,  9, 27), minutes( 25), glMagus5, locBietstoeckli, locFrauholz)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(5,  date(2008, 10, 12), minutes(  5), glHellracer, locKlMythen, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(6,  date(2008, 10, 20), minutes( 30), glU4Sport, locWeststart, locSteisteg)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(7,  date(2008, 12,  7), minutes(  5), glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(8,  date(2008, 12,  7), minutes(  5), glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(9,  date(2008, 12,  7), minutes(  5), glHellracer, locHockenhorn, locWiler)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 10), minutes( 15), glBiGolden,  locBrunni, locOchsenmatte)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 11), minutes(  5), glAspen, locFronalpstock, locStoosSki)));
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(12, date(2009,  1, 15), minutes( 10), glMagus5, locEngelstock, locBormPoint)));
 
 	return fldb;
 }

@@ -273,7 +273,7 @@ void FlightTableRow::edit()
 	table_->elementAt(rowNr_, colLanding)->addWidget(taStory_);
 	// duration
 	ndDuration_ = new Wt::Ext::NumberField();
-	ndDuration_->setValue(flight_->duration());
+	ndDuration_->setValue(flight_->duration().total_seconds() / 60);
 	ndDuration_->resize(40, ndDuration_->height());
 	table_->elementAt(rowNr_, colDuration)->addWidget(ndDuration_);
 //	Wt::WText *txtMin = new Wt::WText("min");
@@ -330,7 +330,7 @@ void FlightTableRow::save()
         flight_->setStory(taStory_->text().narrow());
         // duration
         assert(ndDuration_);
-        flight_->setDuration(ndDuration_->value());
+        flight_->setDuration(boost::posix_time::minutes(ndDuration_->value()));
 
         // recalculate the distance
         flight_->setDistance(flight_->calcDistance());

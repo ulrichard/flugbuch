@@ -7,6 +7,7 @@
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -31,6 +32,7 @@ using std::count;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
+using boost::posix_time::time_duration;
 namespace bfs = boost::filesystem;
 namespace bll = boost::lambda;
 using namespace boost::lambda;
@@ -191,7 +193,7 @@ void inout_mdb::readFlight(const vector<string> &tokens)
 
         flights_[flId] = shared_ptr<Flight>((new Flight(lexical_cast<unsigned int>(tokens[1]),    // flight number
                                                 boost::gregorian::from_string(tokens[2]),         // date
-                                                lexical_cast<unsigned int>(tokens[6]),            // airtime
+                                                time_duration(0, lexical_cast<unsigned int>(tokens[6]), 0), // airtime
                                                 gliders_[lexical_cast<unsigned int>(tokens[3])],  // glider
                                                 takeoffs_[lexical_cast<unsigned int>(tokens[4])], // takeoff
                                                 landings_[lexical_cast<unsigned int>(tokens[5])], // landing
