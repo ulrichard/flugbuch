@@ -18,7 +18,7 @@ TabControl::TabControl(shared_ptr<flb::FlightDatabase> flightDb, Wt::WContainerW
 // : Wt::Ext::TabWidget(parent), flightDb_(flightDb)
  : Wt::WTabWidget(parent), flightDb_(flightDb)
 {
-    setStyleClass("maximized");
+    setStyleClass("flb_tab_control");
 
     // add the flights
     flightPanel_ = new FlightPanel(flightDb_);

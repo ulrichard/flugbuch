@@ -9,6 +9,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 // standard library
 #include <algorithm>
 
@@ -55,7 +56,7 @@ void StatFlightReport::draw(Wt::WContainerWidget *parent, const flb::FlightDatab
         vsText.push_back((*it)->landing()->identity());
         vsText.push_back(FormatStr() << (*it)->duration());
         vsText.push_back(FormatStr() << ((*it)->takeoff()->height() - (*it)->landing()->height()) << "m");
-        vsText.push_back(FormatStr() << (*it)->distance() << " km");
+        vsText.push_back(FormatStr() << std::fixed << std::setprecision(2) << (*it)->distance() << " km");
         // add the text widgets
         for(size_t i=0; i<vsText.size(); ++i)
         {

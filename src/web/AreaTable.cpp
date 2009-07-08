@@ -240,6 +240,8 @@ AreaPanel::AreaPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget 
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
+    setStyleClass("flb_detail_panel");
+    impl_->setStyleClass("flb_detail_panel");
 
     cbCountry_ = new Wt::Ext::ComboBox(impl_);
     table_  = new AreaTable(flightDb, impl_);

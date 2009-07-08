@@ -155,7 +155,7 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_flyhigh::GetFlight(const dt
 
     shared_ptr<Flight> flt(new Flight(row["Number"],                // flight number
                                       bgdate,						// date
-                                      row["Duration"],              // airtime
+                                      boost::posix_time::minutes(row["Duration"]), // airtime
                                       gliders_[row["GliderId"]],    // glider
                                       waypoints_[row["StartPtId"]], // takeoff
                                       waypoints_[row["LandPtId"]],  // landing

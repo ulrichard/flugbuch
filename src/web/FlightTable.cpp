@@ -20,6 +20,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 // std lib
 #include <stdexcept>
 #include <iomanip>
@@ -446,7 +447,7 @@ void FlightTable::addNewFlight()
         shared_ptr<Flight> newFlight(new Flight(**flightDb_->flights().rbegin()));
         newFlight->setNumber(newFlight->number() + 1);
         newFlight->setDate(boost::gregorian::day_clock::local_day());
-        newFlight->setDuration(0);
+        newFlight->setDuration(boost::posix_time::time_duration(0, 0, 0));
         newFlight->clearWaypoints();
         flightDb_->addFlight(newFlight);
         FlightTableRow *newRow = addFlight(newFlight, --insertRowNr_, true);
@@ -477,8 +478,8 @@ void FlightTable::addNewFlight()
         }
         // create the new flight
         shared_ptr<Flight> newFlight(new Flight(1,                              // number
-                                                boost::gregorian::day_clock::local_day(), // date
-                                                0,                              // airtime
+                                                boost::gregorian::day_clock::local_day(),  // date
+                                                boost::posix_time::time_duration(0, 0, 0), // airtime
                                                 *flightDb_->Gliders.begin(),    // glider
                                                 *itTo,                          // takeoff
                                                 *itLa));                        // landing

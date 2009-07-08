@@ -19,6 +19,7 @@
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using namespace flbwt;
 using namespace flb;
@@ -209,7 +210,7 @@ void IgcImportForm::addFlight()
         shared_ptr<Flight> newFlight(new Flight(**flightDb_->flights().rbegin()));
         newFlight->setNumber(newFlight->number() + 1);
         newFlight->setDate(igcfile_.Trackpoints.begin()->timestamp_.date());
-        newFlight->setDuration((igcfile_.Trackpoints.rbegin()->timestamp_ - igcfile_.Trackpoints.begin()->timestamp_).total_seconds() / 60);
+        newFlight->setDuration(boost::posix_time::seconds((igcfile_.Trackpoints.rbegin()->timestamp_ - igcfile_.Trackpoints.begin()->timestamp_).total_seconds()));
         newFlight->clearWaypoints();
         if(lfTakeoff_)
             newFlight->setTakeoff(lfTakeoff_->getLocation());

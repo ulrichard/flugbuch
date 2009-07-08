@@ -147,7 +147,9 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
         int    cnt = std::count_if(flightDb_->flights().begin(), flightDb_->flights().end(),
             *it == boost::bind(&flb::Flight::glider, ::_1));
 */
-        int cnt = 0, dur = 0;
+        int cnt = 0;
+        boost::posix_time::time_duration dur(0, 0, 0);
+
         for(flb::FlightDatabase::SeqFlights::const_iterator itf = flights.begin(); itf != flights.end(); ++itf)
             if((*itf)->glider() == *it)
             {
@@ -198,24 +200,24 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     const date firstDay = (*flights.begin())->date();
     const date lastDay  = (*flights.rbegin())->date();
 
-    map<string, pair<int, int> > counts;
+    map<string, pair<int, boost::posix_time::time_duration> > counts;
 
     if(interval_ == FLP_YEAR)
     {
         for(int yy = firstDay.year(); yy <= lastDay.year(); ++yy)
-            counts[FormatStr() << yy] = make_pair(0, 0);
+            counts[FormatStr() << yy] = make_pair(0, boost::posix_time::time_duration(0, 0, 0));
     }
     else if(interval_ == FLP_MONTH)
     {
         const date lastMonth = date(lastDay.year(), lastDay.month(), 1);
         for(boost::gregorian::date mm = date(firstDay.year(), firstDay.month(), 1); mm < lastMonth; mm += months(1))
-            counts[FormatStr() << mm.year() << "." << mm.month()] = make_pair(0, 0);
+            counts[FormatStr() << mm.year() << "." << mm.month()] = make_pair(0, boost::posix_time::time_duration(0, 0, 0));
     }
     else if(interval_ == FLP_WEEK)
     {
         const date lastWeek = date(lastDay.year(), lastDay.month(), 1);
         for(date ww = date(firstDay.year(), firstDay.month(), 1); ww < lastWeek; ww += weeks(1))
-            counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, 0);
+            counts[FormatStr() << ww.year() << "." << ww.week_number()] = make_pair(0, boost::posix_time::time_duration(0, 0, 0));
     }
     else
         assert(!"unknown interval");
@@ -248,7 +250,7 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     model->setHeaderData(2, Wt::Horizontal, any(string("Flugzeit")));
 
     int i = 0;
-    for(map<std::string, pair<int, int> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
+    for(map<std::string, pair<int, boost::posix_time::time_duration> >::iterator it=counts.begin(); it!=counts.end(); ++it, ++i)
     {
         model->setData(i, 0, boost::any(it->first));
         model->setData(i, 1, boost::any(it->second.first));
@@ -287,13 +289,13 @@ void FlightsPerPeriod::draw(WContainerWidget *parent, const flb::FlightDatabase:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::SeqFlights &flights) const
 {
-    typedef pair<int, int> PairIntT;
+    typedef pair<int, boost::posix_time::time_duration> PairIntT;
     typedef vector<pair<shared_ptr<flb::FlightArea>, PairIntT> > AreaVectorT;
     AreaVectorT areas;
 
     for(flb::FlightDatabase::FlightAreas::const_iterator it = flightDb_->FlightAreas.begin(); it != flightDb_->FlightAreas.end(); ++it)
     {
-        AreaVectorT::value_type  flarInfo = make_pair(*it, make_pair(0, 0));
+        AreaVectorT::value_type  flarInfo = make_pair(*it, make_pair(0, boost::posix_time::time_duration(0, 0, 0)));
 
         for(flb::FlightDatabase::SeqFlights::const_iterator itf = flights.begin(); itf != flights.end(); ++itf)
             if((*itf)->takeoff()->area() == *it)
@@ -311,7 +313,8 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
     std::advance(endit, std::min(areas.size(), numArea_));
 
     // collect the remaining date in a special entry and then delete them
-    AreaVectorT::value_type  flarRest = make_pair(shared_ptr<flb::FlightArea>(new flb::FlightArea("Rest", "", "")), make_pair(0, 0));
+    AreaVectorT::value_type  flarRest = make_pair(shared_ptr<flb::FlightArea>(new flb::FlightArea("Rest", "", "")),
+                                            make_pair(0, boost::posix_time::time_duration(0, 0, 0)));
     for(AreaVectorT::const_iterator it = endit; it != areas.end(); ++it)
     {
         flarRest.second.first  += it->second.first;
@@ -444,7 +447,7 @@ void StatGeneralOverview::draw(Wt::WContainerWidget *parent, const flb::FlightDa
     labelText->setStyleClass("tableContent");
     table->elementAt(1, 4)->addWidget(labelText);
     mmas_collector<double>::add_line(2, "AirTime [h]",         table, true,  flights,
-                bll::bind(&flb::Flight::duration, *bll::_1) / 60.0);
+                bll::bind(&boost::posix_time::time_duration::hours, bll::bind(&flb::Flight::duration, *bll::_1)));
     mmas_collector<double>::add_line(3, "Distance [km]",       table, true,  flights,
                 bll::bind(&flb::Flight::distance, *bll::_1));
     mmas_collector<double>::add_line(4, "TakeoffHeight [MüM]", table, false, flights,
