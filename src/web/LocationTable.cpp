@@ -98,7 +98,7 @@ void LocationTableRow::show()
 	vsText.push_back(location_->area()->name());
 	vsText.push_back(location_->name());
 	vsText.push_back(lexical_cast<string>(location_->height()));
-	vsText.push_back(Wt::WGeoPosEdit::format(make_pair(location_->latitude(), location_->longitude()), Wt::WGeoPosEdit::WGS84_SEC));
+	vsText.push_back(Wt::WGeoPosEdit::format(make_pair(location_->pos().lat(), location_->pos().lon()), Wt::WGeoPosEdit::WGS84_SEC));
 	vsText.push_back(location_->usage() & Location::UA_TAKEOFF ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_LANDING ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_WAYPNT  ? "x" : "_");
@@ -149,7 +149,7 @@ void LocationTableRow::edit()
 	table_->elementAt(rowNr_, colHeight)->addWidget(nfHeight_);
     // position
     pfPosition_ = new Wt::WGeoPosEdit(0, Wt::WGeoPosEdit::WGS84_SEC);
-    pfPosition_->setPos(make_pair(location_->latitude(), location_->longitude()));
+    pfPosition_->setPos(make_pair(location_->pos().lat(), location_->pos().lon()));
 	table_->elementAt(rowNr_, colPosition)->addWidget(pfPosition_);
 	// use as takeoff
 	cbTakeoff_ = new Wt::Ext::CheckBox();
@@ -183,7 +183,7 @@ void LocationTableRow::save()
         location_->setHeight(nfHeight_->value());
         // position
         assert(pfPosition_);
-        location_->setPosition(pfPosition_->pos());
+        location_->setPosition(geometry::point_ll_deg(geometry::latitude<>(pfPosition_->pos().first), geometry::longitude<>(pfPosition_->pos().second)));
         // usage
         assert(cbTakeoff_ && cbLanding_ && cbWayPnt_);
         int usage = 0;
@@ -231,10 +231,10 @@ void LocationTableRow::map()
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
 	gmap->addHierarchicalMapTypeControl();
-    const pair<double, double> pdpos = location_->pos();
-    if(pdpos.first != 0.0 && pdpos.second != 0.0)
+    const geometry::point_ll_deg pdpos = location_->pos();
+    if(pdpos.lat() != 0.0 && pdpos.lon() != 0.0)
     {
-        Wt::WGoogleMap::Coordinate lalo(pdpos.first, pdpos.second);
+        Wt::WGoogleMap::Coordinate lalo(pdpos.lat(), pdpos.lon());
         gmap->setCenter(lalo, 13);
         gmap->addMarker(lalo);
     }
@@ -297,7 +297,8 @@ void LocationTable::addNewLocation()
     }
     shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
 
-    shared_ptr<Location> newLocation(new Location(area, "", 0, 0.0, 0.0, Location::UA_TAKEOFF));
+    shared_ptr<Location> newLocation(new Location(area, "", 0, geometry::point_ll_deg(geometry::latitude<>(0.0),
+                                                               geometry::longitude<>(0.0)), Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
     LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++, true);
     newRow->edit();

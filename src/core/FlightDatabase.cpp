@@ -13,21 +13,26 @@
 #include <stdexcept>
 #include <numeric>
 
-
-
+// flugbuch
 using namespace flb;
-using std::string;
-using std::runtime_error;
-using std::remove_copy_if;
-using std::remove_if;
-using std::copy;
-using std::endl;
+// ggl
+using geometry::point_ll_deg;
+using geometry::latitude;
+using geometry::longitude;
+// boost
 using namespace boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::gregorian::date;
 using boost::posix_time::time_duration;
 using boost::posix_time::minutes;
+// standard library
+using std::string;
+using std::runtime_error;
+using std::remove_copy_if;
+using std::remove_if;
+using std::copy;
+using std::endl;
  /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addFlightArea(shared_ptr<FlightArea> flar)
 {
@@ -187,37 +192,37 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	shared_ptr<flb::FlightArea> arFamatina(new flb::FlightArea("Famatina", "Argentinien", "vor-Anden"));
 	fldb->addFlightArea(arFamatina);
 	// locations
-	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1540, 47.018337296086003, 8.7019931164065607, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1540, point_ll_deg(latitude<>(47.018337296086003), longitude<>(8.7019931164065607)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locWeststart);
-	shared_ptr<flb::Location> locSteisteg(new flb::Location(arSchwyz, "Steisteg", 485, 47.018877777788397, 8.6518888889418708, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locSteisteg(new flb::Location(arSchwyz, "Steisteg", 485, point_ll_deg(latitude<>(47.018877777788397), longitude<>(8.6518888889418708)), flb::Location::UA_LANDING));
 	fldb->addLocation(locSteisteg);
-	shared_ptr<flb::Location> locFronalpstock(new flb::Location(arFronalpstock, "Fronalpstock", 1920, 46.9650366568072, 8.6389761374447307, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locFronalpstock(new flb::Location(arFronalpstock, "Fronalpstock", 1920, point_ll_deg(latitude<>(46.9650366568072), longitude<>(8.6389761374447307)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locFronalpstock);
-	shared_ptr<flb::Location> locBietstoeckli(new flb::Location(arFronalpstock, "Bietstoeckli", 1860, 46.9650366568072, 8.6389761374447307, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locBietstoeckli(new flb::Location(arFronalpstock, "Bietstoeckli", 1860, point_ll_deg(latitude<>(46.9650366568072), longitude<>(8.6389761374447307)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locBietstoeckli);
-	shared_ptr<flb::Location> locStoosSki(new flb::Location(arStoos, "Skischule", 1325, 46.977499999999999, 8.6627777777777801, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locStoosSki(new flb::Location(arStoos, "Skischule", 1325, point_ll_deg(latitude<>(46.977499999999999), longitude<>(8.6627777777777801)), flb::Location::UA_LANDING));
 	fldb->addLocation(locStoosSki);
-	shared_ptr<flb::Location> locFrauholz(new flb::Location(arSteinen, "Frauholz", 465, 47.045461111068697, 8.6064027775658491, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locFrauholz(new flb::Location(arSteinen, "Frauholz", 465, point_ll_deg(latitude<>(47.045461111068697), longitude<>(8.6064027775658491)), flb::Location::UA_LANDING));
 	fldb->addLocation(locFrauholz);
-	shared_ptr<flb::Location> locKlMythen(new flb::Location(arRothenflue, "kleiner Mythen", 1811, 47.041024816277201, 8.6839721295372101, flb::Location::UA_TAKEOFF | flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locKlMythen(new flb::Location(arRothenflue, "kleiner Mythen", 1811, point_ll_deg(latitude<>(47.041024816277201), longitude<>(8.6839721295372101)), flb::Location::UA_TAKEOFF | flb::Location::UA_WAYPNT));
 	fldb->addLocation(locKlMythen);
-	shared_ptr<flb::Location> locZwMythen(new flb::Location(arRothenflue, "Zwischenmythen", 1375, 47.034203693080499, 8.68249797236105, flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locZwMythen(new flb::Location(arRothenflue, "Zwischenmythen", 1375, point_ll_deg(latitude<>(47.034203693080499), longitude<>(8.68249797236105)), flb::Location::UA_WAYPNT));
 	fldb->addLocation(locZwMythen);
-	shared_ptr<flb::Location> locEngelstock(new flb::Location(arEngelstock, "Engelstock", 1210, 47.063547222349399, 8.6473694441053599, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locEngelstock(new flb::Location(arEngelstock, "Engelstock", 1210, point_ll_deg(latitude<>(47.063547222349399), longitude<>(8.6473694441053599)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locEngelstock);
-	shared_ptr<flb::Location> locBormPoint(new flb::Location(arSchwyz, "Borm Point", 600, 47.0475, 8.6294, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locBormPoint(new flb::Location(arSchwyz, "Borm Point", 600, point_ll_deg(latitude<>(47.0475), longitude<>(8.6294)), flb::Location::UA_LANDING));
 	fldb->addLocation(locBormPoint);
-	shared_ptr<flb::Location> locHockenhorn(new flb::Location(arLauchern, "HockenhornGrat", 3111, 46.42901, 7.7472, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locHockenhorn(new flb::Location(arLauchern, "HockenhornGrat", 3111, point_ll_deg(latitude<>(46.42901), longitude<>(7.7472)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locHockenhorn);
-	shared_ptr<flb::Location> locWiler(new flb::Location(arLauchern, "Wiler", 1000, 46.4003, 7.777, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locWiler(new flb::Location(arLauchern, "Wiler", 1000, point_ll_deg(latitude<>(46.4003), longitude<>(7.777)), flb::Location::UA_LANDING));
 	fldb->addLocation(locWiler);
-	shared_ptr<flb::Location> locBrunni(new flb::Location(arEngelberg, "Brunni", 1600, 46.84, 8.4053, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locBrunni(new flb::Location(arEngelberg, "Brunni", 1600, point_ll_deg(latitude<>(46.84), longitude<>(8.4053)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locBrunni);
-	shared_ptr<flb::Location> locOchsenmatte(new flb::Location(arEngelberg, "Ochsenmatte", 1100, 46.819, 8.416, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locOchsenmatte(new flb::Location(arEngelberg, "Ochsenmatte", 1100, point_ll_deg(latitude<>(46.819), longitude<>(8.416)), flb::Location::UA_LANDING));
 	fldb->addLocation(locOchsenmatte);
-	shared_ptr<flb::Location> locFamatina(new flb::Location(arFamatina, "Famatina", 1685, -28.9034, -67.4960, flb::Location::UA_TAKEOFF));
+	shared_ptr<flb::Location> locFamatina(new flb::Location(arFamatina, "Famatina", 1685, point_ll_deg(latitude<>(-28.9034), longitude<>(-67.4960)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locFamatina);
-	shared_ptr<flb::Location> locFamaLande(new flb::Location(arFamatina, "CHA154", 1100, -28.5819, -67.5928, flb::Location::UA_LANDING));
+	shared_ptr<flb::Location> locFamaLande(new flb::Location(arFamatina, "CHA154", 1100, point_ll_deg(latitude<>(-28.5819), longitude<>(-67.5928)), flb::Location::UA_LANDING));
 	fldb->addLocation(locFamaLande);
 	// gliders
 	shared_ptr<flb::Glider> glMagus4(new flb::Glider("MacPara", "Magus 4", "25", "yellow", 2006, "comp") );

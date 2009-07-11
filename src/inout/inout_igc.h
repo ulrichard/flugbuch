@@ -4,6 +4,8 @@
 // flugbuch
 #include "FlightDatabase.h"
 #include "inout.h"
+// ggl (boost sandbox)
+#include <geometry/geometries/latlong.hpp>
 // boost
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -20,13 +22,13 @@ class inout_igc : public inout_flight
 private:
     struct track_point
     {
-        track_point(const boost::posix_time::ptime &timestamp, double lat, double lon, unsigned short alt)
-            : timestamp_(timestamp), pos_(std::make_pair(lat, lon)), alt_(alt) { }
+        track_point(const boost::posix_time::ptime &timestamp, const geometry::point_ll_deg pos, unsigned short alt)
+            : timestamp_(timestamp), pos_(pos), alt_(alt) { }
         track_point(const track_point &tpnt)
             : timestamp_(tpnt.timestamp_), pos_(tpnt.pos_), alt_(tpnt.alt_) {}
 
         boost::posix_time::ptime timestamp_;
-        std::pair<double, double> pos_;
+        geometry::point_ll_deg pos_;
         unsigned short  alt_;
     };
 public:

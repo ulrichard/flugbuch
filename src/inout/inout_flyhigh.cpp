@@ -22,7 +22,13 @@
 #include <numeric>
 #include <iostream>
 
+// flugbuch
 using namespace flb;
+// ggl
+using geometry::point_ll_deg;
+using geometry::latitude;
+using geometry::longitude;
+// boost
 using namespace boost::lambda;
 using std::string;
 using std::vector;
@@ -138,8 +144,8 @@ pair<unsigned int, boost::shared_ptr<Location> > inout_flyhigh::GetLocation(cons
     shared_ptr<Location> loc(new Location(*itArea,          // area
                                           row["Name"],      // name
                                           row["Altitude"],  // height
-                                          row["Latitude"],  // latitude
-                                          row["Longitude"], // longitude
+                                          point_ll_deg(latitude<>(static_cast<double>(row["Latitude"])),
+                                                       longitude<>(static_cast<double>(row["Longitude"]))), // pos
                                           Location::UA_TAKEOFF | Location::UA_LANDING | Location::UA_WAYPNT)); // usage will be restricted later
 
     return make_pair(static_cast<int>(row["Id"]), loc);

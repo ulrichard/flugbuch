@@ -1,6 +1,8 @@
 #define _USE_MATH_DEFINES
 // flugbuch
 #include "CoreStructures.h"
+// ggl (boost sandbox)
+#include <geometry/algorithms/distance.hpp>
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -23,24 +25,9 @@ void Location::setHeight(unsigned short height)
     height_   = height;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void Location::setPosition(double lat, double lon)
+double Location::getDistance(const geometry::point_ll_deg &otherpos) const
 {
-    if(lat < -90.0 || lat > 90.0 || lon < -90.0 || lon > 90.0)
-        throw std::out_of_range("position not valid");
-    latitude_ = lat;
-    longitude_ = lon;
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-double Location::getDistance(const std::pair<double, double> &latlon) const
-{
-	const double lat1 = latitude_    * M_PI / 180.0;
-	const double lat2 = latlon.first * M_PI / 180.0;
-	const double deltaLong = (latlon.second - longitude_) * M_PI / 180.0;
-	const double angle = sinl(lat1) * sinl(lat2) + cosl(lat1) * cosl(lat2) * cosl(deltaLong);
-    const double earthRadius = 6371.0; // km
-	const double dist = earthRadius * acosl(angle);
-
-	return dist;
+    return geometry::distance(pos_, otherpos);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool Location::isEquivalent(const Location &rhs) const

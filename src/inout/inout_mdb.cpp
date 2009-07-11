@@ -19,8 +19,21 @@
 #include <numeric>
 #include <iostream>
 
+// flugbuch
 using namespace flb;
-//using namespace boost::lambda;
+// ggl
+using geometry::point_ll_deg;
+using geometry::latitude;
+using geometry::longitude;
+// boost
+using boost::lexical_cast;
+using boost::bind;
+using boost::ref;
+using boost::posix_time::time_duration;
+namespace bfs = boost::filesystem;
+namespace bll = boost::lambda;
+using namespace boost::lambda;
+// standard library
 using std::string;
 using std::vector;
 using std::map;
@@ -29,13 +42,6 @@ using std::back_inserter;
 using std::pair;
 using std::make_pair;
 using std::count;
-using boost::lexical_cast;
-using boost::bind;
-using boost::ref;
-using boost::posix_time::time_duration;
-namespace bfs = boost::filesystem;
-namespace bll = boost::lambda;
-using namespace boost::lambda;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_mdb::read(const bfs::path &source)
@@ -165,8 +171,8 @@ void inout_mdb::readLocation(const vector<string> &tokens, std::map<unsigned int
         shared_ptr<Location> loc(new Location(areas_[lexical_cast<unsigned int>(tokens[1])], // area
                                               tokens[2],                                     // name
                                               atoi(tokens[4].c_str()),                       // height
-                                              atof(tokens[6].c_str()),                       // latitude
-                                              atof(tokens[5].c_str()),                       // longitude
+                                              point_ll_deg(latitude<>(atof(tokens[6].c_str())),
+                                                           longitude<>(atof(tokens[5].c_str()))), // pos
                                               0));                                           // usage will be assigned later
         locations[lexical_cast<int>(tokens[0])] = loc;
     }

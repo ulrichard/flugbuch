@@ -219,8 +219,7 @@ void IgcImportForm::addFlight()
             shared_ptr<Location> locTakeoff(new Location(nlfTakeoff_->getArea(),
                                                         nlfTakeoff_->getLocationName(),
                                                         igcfile_.Trackpoints.begin()->alt_,
-                                                        igcfile_.Trackpoints.begin()->pos_.first,
-                                                        igcfile_.Trackpoints.begin()->pos_.second,
+                                                        igcfile_.Trackpoints.begin()->pos_,
                                                         Location::UA_TAKEOFF));
             flightDb_->addLocation(locTakeoff);
             newFlight->setTakeoff(locTakeoff);
@@ -235,8 +234,7 @@ void IgcImportForm::addFlight()
             shared_ptr<Location> locLanding(new Location(nlfLanding_->getArea(),
                                                         nlfLanding_->getLocationName(),
                                                         igcfile_.Trackpoints.rbegin()->alt_,
-                                                        igcfile_.Trackpoints.rbegin()->pos_.first,
-                                                        igcfile_.Trackpoints.rbegin()->pos_.second,
+                                                        igcfile_.Trackpoints.rbegin()->pos_,
                                                         Location::UA_LANDING));
             flightDb_->addLocation(locLanding);
             newFlight->setLanding(locLanding);

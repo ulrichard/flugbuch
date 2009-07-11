@@ -1,6 +1,10 @@
 #ifndef CORESTRUCTURES_H
 #define CORESTRUCTURES_H
 
+// flugbuch
+#include "GenGeomLibSerialize.h"
+// ggl (boost sandbox)
+#include <geometry/geometries/latlong.hpp>
 // boost
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -59,33 +63,30 @@ class Location
 {
 	friend class boost::serialization::access;
 public:
-	Location(boost::shared_ptr<FlightArea> area, const std::string &name, unsigned short height, double lat, double lon, int usage) : area_(area), name_(name), height_(height), latitude_(lat), longitude_(lon), usageas_(usage) {}
-	Location(const Location &cpy) :  name_(cpy.name_), height_(cpy.height_), latitude_(cpy.latitude_), longitude_(cpy.longitude_), usageas_(cpy.usageas_) {}
+	Location(boost::shared_ptr<FlightArea> area, const std::string &name, unsigned short height, const geometry::point_ll_deg &pos, int usage)
+	 : area_(area), name_(name), height_(height), pos_(pos), usageas_(usage) {}
+	Location(const Location &cpy) :  name_(cpy.name_), height_(cpy.height_), pos_(cpy.pos_), usageas_(cpy.usageas_) {}
     ~Location() {};
 	const Location & operator=(const Location &loc) { Location cpy(loc); std::swap(*this, cpy); return *this; };
 	bool operator==(const Location &loc) { return (loc.name() == name_ && loc.area() == area_); }
 	// getters
 	const boost::shared_ptr<FlightArea> area() const { return area_; }
-//	boost::shared_ptr<FlightArea>       getArea() { return area_; }
-	const std::string & name()      const { return name_; }
-	unsigned short      height()    const { return height_; }
-	double              latitude()  const { return latitude_; }
-	double              longitude() const { return longitude_; }
-	std::pair<double, double> pos() const { return std::make_pair(latitude_, longitude_); }
-	int                 usage()     const { return usageas_; }
-	std::string         identity()  const { return area_->name() + " " + name_; }
+	const std::string            & name()      const { return name_; }
+	unsigned short                 height()    const { return height_; }
+    const geometry::point_ll_deg & pos()       const { return pos_; }
+	int                            usage()     const { return usageas_; }
+	std::string                    identity()  const { return area_->name() + " " + name_; }
 
 	// setters
-	void setArea(boost::shared_ptr<FlightArea> flar) { area_     = flar; }
-	void setName(const std::string &nam)             { name_     = nam; }
+	void setArea(boost::shared_ptr<FlightArea> flar)    { area_     = flar; }
+	void setName(const std::string &nam)                { name_     = nam; }
 	void setHeight(unsigned short height);
-	void setPosition(double lat, double lon);
-	void setPosition(std::pair<double, double> pos)  { setPosition(pos.first, pos.second); }
-	void setUsage(int usg)                           { usageas_  = usg; }
-	void addUsage(int usg)                           { usageas_ |= usg; }
+	void setPosition(const geometry::point_ll_deg &pos) { pos_      = pos; }
+	void setUsage(int usg)                              { usageas_  = usg; }
+	void addUsage(int usg)                              { usageas_ |= usg; }
 
 	// calculation
-	double getDistance(const std::pair<double, double> &latlon) const;
+	double getDistance(const geometry::point_ll_deg &otherpos) const;
 	bool   isEquivalent(const Location &rhs) const;
 
 	template<class Archive> void serialize(Archive & ar, const unsigned int version)
@@ -93,8 +94,7 @@ public:
 		ar & BOOST_SERIALIZATION_NVP(area_);
 		ar & BOOST_SERIALIZATION_NVP(name_);
 		ar & BOOST_SERIALIZATION_NVP(height_);
-		ar & BOOST_SERIALIZATION_NVP(latitude_);
-		ar & BOOST_SERIALIZATION_NVP(longitude_);
+		ar & BOOST_SERIALIZATION_NVP(pos_);
 		ar & BOOST_SERIALIZATION_NVP(usageas_);
 	}
 
@@ -112,8 +112,7 @@ private:
 	boost::shared_ptr<FlightArea>  	area_;
 	std::string 					name_;
 	unsigned short					height_;
-	double      					latitude_;
-	double      					longitude_;
+	geometry::point_ll_deg          pos_;
 	int         					usageas_;
 };
 BOOST_SERIALIZATION_SHARED_PTR(Location);
