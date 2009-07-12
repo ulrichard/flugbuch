@@ -3,6 +3,7 @@
 #include "FormatStr.h"
 #include "FlightTable.h"
 #include "TabControl.h"
+#include "WaypointOptimizer.h"
 // witty
 #include <Wt/WFileUpload>
 #include <Wt/WContainerWidget>
@@ -20,6 +21,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 using namespace flbwt;
 using namespace flb;
@@ -191,6 +193,20 @@ void IgcImportForm::fileReceived()
 
                 table->elementAt(1, 1)->addWidget(nlfLanding_);
             }
+
+            // optimize the waypoints
+            typedef inout_igc::Trackpoints::iterator::value_type track_point_t;
+            vector<geometry::point_ll_deg> vecpos;
+            std::copy(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, ::_1)),
+                      boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, ::_1)),
+                      std::back_inserter(vecpos));
+
+            WaypointOptimizer wptopt;
+            wptopt.initialize(vecpos.begin(), vecpos.end());
+
+//            WaypointOptimizer wptopt(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), trp_pos_grabber()),
+//                                     boost::make_transform_iterator(igcfile_.Trackpoints.end(),   trp_pos_grabber()));
+
 
             btnAddFlight_->setEnabled(true);
         }
