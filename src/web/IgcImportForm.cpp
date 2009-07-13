@@ -4,6 +4,9 @@
 #include "FlightTable.h"
 #include "TabControl.h"
 #include "WaypointOptimizer.h"
+// ggl (boost sandbox)
+#include <geometry/algorithms/distance.hpp>
+#include <geometry/strategies/geographic/geo_distance.hpp>
 // witty
 #include <Wt/WFileUpload>
 #include <Wt/WContainerWidget>
@@ -13,6 +16,8 @@
 #include <Wt/WHBoxLayout>
 #include <Wt/WTabWidget>
 #include <Wt/WTable>
+#include <Wt/WButtonGroup>
+#include <Wt/WRadioButton>
 #include <Wt/Ext/MessageBox>
 #include <Wt/Ext/Button>
 #include <Wt/Ext/LineEdit>
@@ -22,6 +27,10 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/lexical_cast.hpp>
+// standard library
+#include <algorithm>
+#include <numeric>
 
 using namespace flbwt;
 using namespace flb;
@@ -31,6 +40,7 @@ using std::vector;
 using std::remove_copy_if;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
+using boost::lexical_cast;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 NewLocationField::NewLocationField(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -195,17 +205,40 @@ void IgcImportForm::fileReceived()
             }
 
             // optimize the waypoints
+            WaypointOptimizer::addOptStrategy(new WaypointOptimizerOpenDistance());
+            WaypointOptimizer::addOptStrategy(new WaypointOptimizerRichi());
+
             typedef inout_igc::Trackpoints::iterator::value_type track_point_t;
-            vector<geometry::point_ll_deg> vecpos;
-            std::copy(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, ::_1)),
-                      boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, ::_1)),
-                      std::back_inserter(vecpos));
-
             WaypointOptimizer wptopt;
-            wptopt.initialize(vecpos.begin(), vecpos.end());
+            wptopt.initialize(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, ::_1)),
+                              boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, ::_1)));
+            WaypointOptimizer::OptMap optres = wptopt.optimize();
 
-//            WaypointOptimizer wptopt(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), trp_pos_grabber()),
-//                                     boost::make_transform_iterator(igcfile_.Trackpoints.end(),   trp_pos_grabber()));
+            // use a button group to logically group the 3 options
+            Wt::WButtonGroup *group = new Wt::WButtonGroup(0);
+            for(WaypointOptimizer::OptMap::const_iterator it = optres.begin(); it != optres.end(); ++it)
+            {
+                // calculate the exact distance and score
+                vector<double> leglengths;
+                WaypointOptimizerStrategyBase::OptRes::const_iterator it0 = it->second.begin();
+                WaypointOptimizerStrategyBase::OptRes::const_iterator it1 = it0;
+                ++it1;
+                for(; it1 != it->second.end(); ++it0, ++it1)
+                {
+                    inout_igc::Trackpoints::iterator pit0 = igcfile_.Trackpoints.begin();
+                    inout_igc::Trackpoints::iterator pit1 = igcfile_.Trackpoints.begin();
+                    std::advance(pit0, *it0);
+                    std::advance(pit1, *it1);
+                    leglengths.push_back(geometry::distance(pit0->pos_, pit1->pos_,
+                                                            geometry::strategy::distance::vincenty<geometry::point_ll_deg>()));
+                }
+                const double dist = std::accumulate(leglengths.begin(), leglengths.end(), 0.0);
+
+                Wt::WRadioButton *button = new Wt::WRadioButton(it->first + " (" + lexical_cast<string>(dist) + "km)");
+                group->addButton(button, std::distance<WaypointOptimizer::OptMap::const_iterator>(optres.begin(), it));
+                table->elementAt(2, 1)->addWidget(button);
+            }
+
 
 
             btnAddFlight_->setEnabled(true);
