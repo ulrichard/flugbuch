@@ -42,9 +42,9 @@ private:
 class WaypointOptimizer : public boost::noncopyable
 {
 public:
-    WaypointOptimizer() {}
+    WaypointOptimizer();
     virtual ~WaypointOptimizer() { delete dist_mx_; }
-    static void addOptStrategy(WaypointOptimizerStrategyBase *strat) { strategies_.push_back(strat); }
+    void addOptStrategy(WaypointOptimizerStrategyBase *strat) { strategies_.push_back(strat); }
 
     template<class InputIteratorT>
     void initialize(InputIteratorT begin, InputIteratorT end)
@@ -58,7 +58,7 @@ public:
         {
             std::cout << "calc distance " << i << " of " << wpt_count << std::endl;
             for(InputIteratorT it2 = begin; it2 != it1; ++it2, ++j)
-                (*dist_mx_)(i, j) = 1000 * geometry::distance(*it1, *it2, geometry::strategy::distance::haversine<typename InputIteratorT::value_type>());
+                (*dist_mx_)(i, j) = geometry::distance(*it1, *it2, geometry::strategy::distance::haversine<typename InputIteratorT::value_type>());
         }
     }
 
@@ -66,7 +66,7 @@ public:
     OptMap optimize() const;
 
 private:
-    static boost::ptr_vector<WaypointOptimizerStrategyBase> strategies_;
+    boost::ptr_vector<WaypointOptimizerStrategyBase> strategies_;
     WaypointOptimizerStrategyBase::DistMatrixT *dist_mx_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

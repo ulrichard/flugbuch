@@ -23,6 +23,7 @@ using std::vector;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatFlightReport::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
+    parent->clear();
     Wt::WTable *table = new Wt::WTable(parent);
 
     string captions[8] = {"Nr",         "Datum", "Gleitschirm", "Startplatz",

@@ -8,6 +8,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
 // std lib
+#include <vector>
 #include <set>
 #include <algorithm>
 #include <stdexcept>
@@ -19,6 +20,9 @@ using namespace flb;
 using geometry::point_ll_deg;
 using geometry::latitude;
 using geometry::longitude;
+using geometry::dms;
+using geometry::south;
+using geometry::west;
 // boost
 using namespace boost::lambda;
 using boost::shared_ptr;
@@ -28,6 +32,7 @@ using boost::posix_time::time_duration;
 using boost::posix_time::minutes;
 // standard library
 using std::string;
+using std::vector;
 using std::runtime_error;
 using std::remove_copy_if;
 using std::remove_if;
@@ -224,6 +229,10 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addLocation(locFamatina);
 	shared_ptr<flb::Location> locFamaLande(new flb::Location(arFamatina, "CHA154", 1100, point_ll_deg(latitude<>(-28.5819), longitude<>(-67.5928)), flb::Location::UA_LANDING));
 	fldb->addLocation(locFamaLande);
+	shared_ptr<flb::Location> locFamaWp1(new flb::Location(arFamatina, "Pituil", 0, point_ll_deg(latitude<>(dms<south>(28, 34, 49.2)), longitude<>(dms<west>(68, 30, 44.2))), flb::Location::UA_WAYPNT));
+	fldb->addLocation(locFamaWp1);
+	shared_ptr<flb::Location> locFamaWp2(new flb::Location(arFamatina, "Campanas", 0, point_ll_deg(latitude<>(dms<south>(28, 32, 38)), longitude<>(dms<west>(68, 22, 36.1))), flb::Location::UA_WAYPNT));
+	fldb->addLocation(locFamaWp2);
 	// gliders
 	shared_ptr<flb::Glider> glMagus4(new flb::Glider("MacPara", "Magus 4", "25", "yellow", 2006, "comp") );
 	fldb->addGlider(glMagus4);
@@ -238,7 +247,10 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	shared_ptr<flb::Glider> glBiGolden(new flb::Glider("Gradient", "Bi Golden", "42", "blue", 2004, "DHV 1-2 Bi") );
 	fldb->addGlider(glBiGolden);
 	// flights
-	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2007,  3, 22), minutes(120), glMagus4, locFamatina, locFamaLande)));
+	vector<shared_ptr<flb::Location> > wptsFamatina;
+	wptsFamatina.push_back(locFamaWp1);
+	wptsFamatina.push_back(locFamaWp2);
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(1,  date(2007,  3, 22), minutes(120), glMagus4, locFamatina, locFamaLande, "Campeonato Argentino -> Tagessieg", wptsFamatina)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(2,  date(2008,  9, 10), minutes( 15), glMagus5, locWeststart, locSteisteg)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(3,  date(2008,  9, 26), minutes(  5), glHellracer, locBietstoeckli, locSteisteg)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(4,  date(2008,  9, 27), minutes( 25), glMagus5, locBietstoeckli, locFrauholz)));
@@ -250,6 +262,9 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 10), minutes( 15), glBiGolden,  locBrunni, locOchsenmatte)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 11), minutes(  5), glAspen, locFronalpstock, locStoosSki)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(12, date(2009,  1, 15), minutes( 10), glMagus5, locEngelstock, locBormPoint)));
+
+    for(FlightDatabase::SeqFlights::iterator it = fldb->flights().begin(); it != fldb->flights().end(); ++it)
+        (*it)->setDistance((*it)->calcDistance());
 
 	return fldb;
 }

@@ -3,6 +3,7 @@
 #include "CoreStructures.h"
 // ggl (boost sandbox)
 #include <geometry/algorithms/distance.hpp>
+#include <geometry/strategies/geographic/geo_distance.hpp>
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -27,7 +28,7 @@ void Location::setHeight(unsigned short height)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 double Location::getDistance(const geometry::point_ll_deg &otherpos) const
 {
-    return geometry::distance(pos_, otherpos);
+    return geometry::distance(pos_, otherpos, geometry::strategy::distance::vincenty<geometry::point_ll_deg>()) / 1000.0;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool Location::isEquivalent(const Location &rhs) const

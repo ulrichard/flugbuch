@@ -1,9 +1,10 @@
 // Flugbuch2
 #include "StatMap.h"
 #include "FormatStr.h"
-#include "Wt/WGoogleMap"
 // witty
+#include <Wt/WGoogleMap>
 #include <Wt/WStandardItemModel>
+#include <Wt/WContainerWidget>
 // boost
 #include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -87,10 +88,18 @@ private:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqFlights &flights) const
 {
-    Wt::WGoogleMap *gmap = new Wt::WGoogleMap(parent);
-    gmap->resize(700, 500);
-    gmap->enableScrollWheelZoom();
-    gmap->addHierarchicalMapTypeControl();
+
+    Wt::WGoogleMap *gmap = NULL;
+    if(parent->count())
+        gmap = dynamic_cast<Wt::WGoogleMap*>(parent->widget(0));
+    if(!gmap)
+    {
+        gmap = new Wt::WGoogleMap(parent);
+        gmap->resize(700, 500);
+        gmap->enableScrollWheelZoom();
+        gmap->addHierarchicalMapTypeControl();
+    }
+    gmap->clearOverlays();
 
     // if we have multiple flights with the same takeoff/waypoints/landing zone, draw it only once.
     vector<shared_ptr<flb::Flight> > vFlights;
@@ -119,6 +128,9 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
         gmap->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.7);
     }
 
+    gmap->setZoom(5);
+    gmap->panTo(Wt::WGoogleMap::Coordinate((bbox.first.latitude()  + bbox.second.latitude() / 2.0),
+                                           (bbox.first.longitude() + bbox.second.longitude() / 2.0)));
     gmap->zoomWindow(bbox);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

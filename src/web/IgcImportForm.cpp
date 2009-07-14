@@ -31,16 +31,18 @@
 // standard library
 #include <algorithm>
 #include <numeric>
+#include <iomanip>
 
 using namespace flbwt;
 using namespace flb;
-using boost::shared_ptr;
-using std::string;
-using std::vector;
-using std::remove_copy_if;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
 using boost::lexical_cast;
+using boost::shared_ptr;
+using std::string;
+using std::vector;
+using std::map;
+using std::remove_copy_if;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 NewLocationField::NewLocationField(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -156,10 +158,10 @@ void IgcImportForm::fileReceived()
             contents()->clear();
 
 
-            Wt::WTable *table = new Wt::WTable(contents());
+            table_ = new Wt::WTable(contents());
 
             // find the takeoff
-            table->elementAt(0, 0)->addWidget(new Wt::WText("Startplatz"));
+            table_->elementAt(0, 0)->addWidget(new Wt::WText("Startplatz"));
             vector<shared_ptr<Location> > tmploc;
             remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
                 !ret<bool>(bind(&Location::usage, *bll::_1) & Location::UA_TAKEOFF) ||
@@ -171,18 +173,18 @@ void IgcImportForm::fileReceived()
                 lfTakeoff_ = new LocationField(flightDb_, flb::Location::UA_TAKEOFF);
                 lfTakeoff_->setLocation(**tmploc.begin());
 
-                table->elementAt(0, 1)->addWidget(lfTakeoff_);
+                table_->elementAt(0, 1)->addWidget(lfTakeoff_);
             }
             else
             {
                 nlfTakeoff_ = new NewLocationField(flightDb_);
                 nlfTakeoff_->fillAreas();
 
-                table->elementAt(0, 1)->addWidget(nlfTakeoff_);
+                table_->elementAt(0, 1)->addWidget(nlfTakeoff_);
             }
 
             // find the landing zone
-            table->elementAt(1, 0)->addWidget(new Wt::WText("Landeplatz"));
+            table_->elementAt(1, 0)->addWidget(new Wt::WText("Landeplatz"));
             tmploc.clear();
             remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
                 !ret<bool>(bind(&Location::usage, *bll::_1) & Location::UA_LANDING) ||
@@ -194,29 +196,31 @@ void IgcImportForm::fileReceived()
                 lfLanding_ = new LocationField(flightDb_, flb::Location::UA_LANDING);
                 lfLanding_->setLocation(**tmploc.begin());
 
-                table->elementAt(1, 1)->addWidget(lfLanding_);
+                table_->elementAt(1, 1)->addWidget(lfLanding_);
             }
             else
             {
                 nlfLanding_ = new NewLocationField(flightDb_);
                 nlfLanding_->fillAreas();
 
-                table->elementAt(1, 1)->addWidget(nlfLanding_);
+                table_->elementAt(1, 1)->addWidget(nlfLanding_);
             }
 
             // optimize the waypoints
-            WaypointOptimizer::addOptStrategy(new WaypointOptimizerOpenDistance());
-            WaypointOptimizer::addOptStrategy(new WaypointOptimizerRichi());
-
             typedef inout_igc::Trackpoints::iterator::value_type track_point_t;
             WaypointOptimizer wptopt;
             wptopt.initialize(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, ::_1)),
                               boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, ::_1)));
-            WaypointOptimizer::OptMap optres = wptopt.optimize();
+            wptOpt_ = wptopt.optimize();
 
             // use a button group to logically group the 3 options
-            Wt::WButtonGroup *group = new Wt::WButtonGroup(0);
-            for(WaypointOptimizer::OptMap::const_iterator it = optres.begin(); it != optres.end(); ++it)
+            btnGrpOptStrategy_ = new Wt::WButtonGroup(0);
+            Wt::WRadioButton *btnNoWpt = new Wt::WRadioButton("No Waypoints");
+            btnNoWpt->setChecked(true);
+            btnNoWpt->checked().connect(SLOT(this, IgcImportForm::changeWptStrategy));
+            btnGrpOptStrategy_->addButton(btnNoWpt, 0);
+            table_->elementAt(2, 1)->addWidget(btnNoWpt);
+            for(WaypointOptimizer::OptMap::const_iterator it = wptOpt_.begin(); it != wptOpt_.end(); ++it)
             {
                 // calculate the exact distance and score
                 vector<double> leglengths;
@@ -232,12 +236,16 @@ void IgcImportForm::fileReceived()
                     leglengths.push_back(geometry::distance(pit0->pos_, pit1->pos_,
                                                             geometry::strategy::distance::vincenty<geometry::point_ll_deg>()));
                 }
-                const double dist = std::accumulate(leglengths.begin(), leglengths.end(), 0.0);
+                const double dist = std::accumulate(leglengths.begin(), leglengths.end(), 0.0) / 1000.0;
 
-                Wt::WRadioButton *button = new Wt::WRadioButton(it->first + " (" + lexical_cast<string>(dist) + "km)");
-                group->addButton(button, std::distance<WaypointOptimizer::OptMap::const_iterator>(optres.begin(), it));
-                table->elementAt(2, 1)->addWidget(button);
+                const string btntxt = FormatStr() << it->first << " (" << std::fixed << std::setprecision(3) << dist << " km)";
+                Wt::WRadioButton *button = new Wt::WRadioButton(btntxt);
+                button->checked().connect(SLOT(this, IgcImportForm::changeWptStrategy));
+                btnGrpOptStrategy_->addButton(button, 1 + std::distance<WaypointOptimizer::OptMap::const_iterator>(wptOpt_.begin(), it));
+                table_->elementAt(2, 1)->addWidget(button);
             }
+            table_->elementAt(3, 0)->addWidget(new Wt::WText("Wegpunkte"));
+            changeWptStrategy();
 
 
 
@@ -248,6 +256,48 @@ void IgcImportForm::fileReceived()
     {
         Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
         accept();
+    }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void IgcImportForm::changeWptStrategy()
+{
+    static const double distThreshold = 0.3; // km
+
+    Wt::WTableCell *cell = table_->elementAt(3, 1);
+    cell->clear();
+    const size_t optid = btnGrpOptStrategy_->checkedId();
+    if(!optid)
+        return;
+    map<string, vector<size_t> >::iterator mit = wptOpt_.begin();
+    std::advance(mit, optid - 1);
+    vector<size_t> &ids = mit->second;
+    for(std::vector<size_t>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+    {
+        assert(*it < igcfile_.Trackpoints.size());
+        inout_igc::Trackpoints::iterator tpit = igcfile_.Trackpoints.begin();
+        std::advance(tpit, *it);
+
+        // find the waypoint
+        vector<shared_ptr<Location> > tmploc;
+        remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
+            !ret<bool>(bind(&Location::usage, *bll::_1) & Location::UA_WAYPNT) ||
+            bind(&Location::getDistance, *bll::_1, tpit->pos_) > distThreshold);
+        if(tmploc.size())
+        {
+            sort(tmploc.begin(), tmploc.end(), bind(&Location::getDistance, *bll::_1, tpit->pos_)
+                                             < bind(&Location::getDistance, *bll::_2, tpit->pos_));
+            LocationField *lfWpt = new LocationField(flightDb_, flb::Location::UA_LANDING);
+            lfWpt->setLocation(**tmploc.begin());
+
+            cell->addWidget(lfWpt);
+        }
+        else
+        {
+            NewLocationField *nlfWpt = new NewLocationField(flightDb_);
+            nlfWpt->fillAreas();
+
+            cell->addWidget(nlfWpt);
+        }
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

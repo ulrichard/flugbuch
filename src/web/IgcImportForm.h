@@ -7,12 +7,17 @@
 // witty
 #include <Wt/WCompositeWidget>
 #include <Wt/Ext/Dialog>
+//standard library
+#include <string>
+#include <vector>
+#include <map>
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // forward declarations
 namespace Wt
 {
     class WFileUpload;
+    class WButtonGroup;
 
     namespace Ext
     {
@@ -61,15 +66,19 @@ private:
     void uploadTooBig(int size);
     void fileReceived();
     void addFlight();
+    void changeWptStrategy();
 
 
     boost::shared_ptr<flb::FlightDatabase> flightDb_;
     flb::inout_igc  igcfile_;
+    std::map<std::string, std::vector<size_t> > wptOpt_;
+    Wt::WTable      *table_;
     Wt::WFileUpload *fileuploader_;
     LocationField   *lfTakeoff_, *lfLanding_;
     std::vector<LocationField*> vlfWaypoints_;
     NewLocationField *nlfTakeoff_, *nlfLanding_;
-    Wt::Ext::Button *btnAddFlight_;
+    Wt::Ext::Button  *btnAddFlight_;
+    Wt::WButtonGroup *btnGrpOptStrategy_;
 
 
 };

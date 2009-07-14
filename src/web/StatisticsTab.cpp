@@ -141,17 +141,24 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
 void StatisticsPanel::load()
 {
     Wt::WBorderLayout *blayout = dynamic_cast<Wt::WBorderLayout*>(impl_->layout());
-    if(Wt::WWidget *wid = blayout->widgetAt(Wt::WBorderLayout::Center))
-        blayout->removeWidget(wid);
-    Wt::WContainerWidget *cont = new Wt::WContainerWidget();
-    blayout->addWidget(cont, Wt::WBorderLayout::Center);
+    assert(blayout);
+    const string statname = cbStatSel_->text().narrow();
+    static string laststatname = "";
+    Wt::WContainerWidget *cont = dynamic_cast<Wt::WContainerWidget*>(blayout->widgetAt(Wt::WBorderLayout::Center));
+    if(statname != laststatname && cont)
+        blayout->removeWidget(cont);
+    laststatname = statname;
+    if(!cont)
+    {
+        cont = new Wt::WContainerWidget();
+        blayout->addWidget(cont, Wt::WBorderLayout::Center);
+    }
 
     initFilter();
     set<shared_ptr<flb::Flight> > flights;
     remove_copy_if(flightDb_->flights().begin(), flightDb_->flights().end(), inserter(flights, flights.end()),
         !bll::bind(&StatisticsPanel::filter, this, *bll::_1));
 
-    const string statname = cbStatSel_->text().narrow();
     boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
     if(fit != stats_.end())
         fit->second->draw(cont, flights);

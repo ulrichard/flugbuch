@@ -14,10 +14,14 @@ using std::vector;
 using std::map;
 using std::make_pair;
 
-// static members
-boost::ptr_vector<WaypointOptimizerStrategyBase> WaypointOptimizer::strategies_;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+WaypointOptimizer::WaypointOptimizer()
+{
+    addOptStrategy(new WaypointOptimizerOpenDistance());
+    addOptStrategy(new WaypointOptimizerRichi());
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 map<string, WaypointOptimizerStrategyBase::OptRes> WaypointOptimizer::optimize() const
 {
