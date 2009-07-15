@@ -56,7 +56,7 @@ public:
         size_t i = 0, j = 0;
         for(InputIteratorT it1 = begin; it1 != end; ++it1, ++i, j=0)
         {
-            std::cout << "calc distance " << i << " of " << wpt_count << std::endl;
+ //           std::cout << "calc distance " << i << " of " << wpt_count << std::endl;
             for(InputIteratorT it2 = begin; it2 != it1; ++it2, ++j)
                 (*dist_mx_)(i, j) = geometry::distance(*it1, *it2, geometry::strategy::distance::haversine<typename InputIteratorT::value_type>());
         }

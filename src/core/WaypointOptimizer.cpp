@@ -58,9 +58,9 @@ WaypointOptimizerOpenDistance::OptRes WaypointOptimizerOpenDistance::optimize(co
     size_t i0 = 0;
     size_t i4 = mx.size1() - 1;
 
-    for(size_t i1=i0+1; i1<mx.size1(); ++i1)
-        for(size_t i2=i1+1; i2<mx.size1(); ++i2)
-            for(size_t i3=i2+1; i3<mx.size1(); ++i3)
+    for(size_t i1=i0+1; i1<mx.size1(); i1 += 5)
+        for(size_t i2=i1+1; i2<mx.size1(); i2 += 5)
+            for(size_t i3=i2+1; i3<mx.size1(); i3 += 5)
             {
                 unsigned int newdist = mx(i0, i1) + mx(i1, i2) + mx(i2, i3) + mx(i3, i4);
                 if(newdist > currdist)
@@ -70,7 +70,7 @@ WaypointOptimizerOpenDistance::OptRes WaypointOptimizerOpenDistance::optimize(co
                     currdist = newdist;
                 }
             }
-    for(i0=0; i0<idx_wpt[1]; ++i0)
+    for(i0=0; i0<idx_wpt[1]; i0 += 5)
     {
         unsigned int newdist = mx(i0, idx_wpt[1]) + mx(idx_wpt[1], idx_wpt[2]) + mx(idx_wpt[2], idx_wpt[3]) + mx(idx_wpt[3], idx_wpt[4]);
         if(newdist > currdist)
@@ -79,7 +79,7 @@ WaypointOptimizerOpenDistance::OptRes WaypointOptimizerOpenDistance::optimize(co
             currdist = newdist;
         }
     }
-    for(i4=idx_wpt[3]+1; i4<mx.size1(); ++i4)
+    for(i4=idx_wpt[3]+1; i4<mx.size1(); i4 += 5)
     {
         unsigned int newdist = mx(idx_wpt[0], idx_wpt[1]) + mx(idx_wpt[1], idx_wpt[2]) + mx(idx_wpt[2], idx_wpt[3]) + mx(idx_wpt[3], i4);
         if(newdist > currdist)
@@ -105,11 +105,11 @@ WaypointOptimizerRichi::OptRes WaypointOptimizerRichi::optimize(const WaypointOp
     // maybe we can use the travveling salesman approache from the boost::graph later on
     size_t i0 = 0;
     size_t i4 = mx.size1()-1;
-    for(size_t i1=i0+1; i1<mx.size1(); ++i1)
+    for(size_t i1=i0+1; i1<mx.size1(); i1 += 5)
     {
 //        std::cout << "WaypointOptimizerRichi::optimize " << i1 << " of " << mx.size1() << std::endl;
-        for(size_t i2=i1+1; i2<mx.size1(); ++i2)
-            for(size_t i3=i2+1; i3<mx.size1(); ++i3)
+        for(size_t i2=i1+1; i2<mx.size1(); i2 += 5)
+            for(size_t i3=i2+1; i3<mx.size1(); i3 += 5)
                 {
                     unsigned int newdist = mx(i0, i1) + mx(i1, i2) + mx(i2, i3) + mx(i3, i4);
                     if(newdist > currdist)
