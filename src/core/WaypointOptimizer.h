@@ -70,6 +70,17 @@ private:
     WaypointOptimizerStrategyBase::DistMatrixT *dist_mx_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+class WaypointOptimizerNoWpt : public WaypointOptimizerStrategyBase
+{
+public:
+    WaypointOptimizerNoWpt() : WaypointOptimizerStrategyBase("NoWaypoints", 1.0) {}
+    virtual ~WaypointOptimizerNoWpt() {}
+
+    virtual OptRes optimize(const DistMatrixT &mx) const;
+
+private:
+};
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class WaypointOptimizerOpenDistance : public WaypointOptimizerStrategyBase
 {
 public:

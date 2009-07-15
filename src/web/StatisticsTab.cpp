@@ -146,7 +146,10 @@ void StatisticsPanel::load()
     static string laststatname = "";
     Wt::WContainerWidget *cont = dynamic_cast<Wt::WContainerWidget*>(blayout->widgetAt(Wt::WBorderLayout::Center));
     if(statname != laststatname && cont)
+    {
         blayout->removeWidget(cont);
+        cont = NULL;
+    }
     laststatname = statname;
     if(!cont)
     {
@@ -159,9 +162,14 @@ void StatisticsPanel::load()
     remove_copy_if(flightDb_->flights().begin(), flightDb_->flights().end(), inserter(flights, flights.end()),
         !bll::bind(&StatisticsPanel::filter, this, *bll::_1));
 
-    boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
-    if(fit != stats_.end())
-        fit->second->draw(cont, flights);
+    if(statname.length())
+    {
+        boost::ptr_map<std::string, StatBase>::const_iterator fit = stats_.find(statname);
+        if(fit != stats_.end())
+            fit->second->draw(cont, flights);
+        else
+            throw std::runtime_error("StatisticsPanel::load()  statistic not found : " + statname);
+    }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void StatisticsPanel::initFilter()

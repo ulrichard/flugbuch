@@ -267,7 +267,7 @@ void FlightTableRow::edit()
 	lfLanding_->selectLocation(flight_->landing()->name());
 	table_->elementAt(rowNr_, colLanding)->addWidget(lfLanding_);
 	// story
-	Wt::WTextArea *taStory_ = new Wt::WTextArea("");
+	taStory_ = new Wt::WTextArea("");
 	taStory_->setText(flight_->story());
 	taStory_->setColumns(50);
 	taStory_->setRows(5);
@@ -328,6 +328,7 @@ void FlightTableRow::save()
         assert(lfLanding_);
         flight_->setLanding(lfLanding_->getLocation());
         // story
+        assert(taStory_);
         flight_->setStory(taStory_->text().narrow());
         // duration
         assert(ndDuration_);

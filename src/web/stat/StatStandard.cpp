@@ -110,6 +110,9 @@ void FlightlessTime::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
     Wt::WStandardItemModel *modelrel = model(flights).release();
 
     WCartesianChart *cartchart = new WCartesianChart(parent);
+    cartchart->resize(800, 500);
+    cartchart->setTitle("Fluglose Zeit");
+    cartchart->setPlotAreaPadding(200, Wt::Right);
     cartchart->setModel(modelrel);
     cartchart->setXSeriesColumn(0);
     Wt::Chart::WDataSeries data1(Wt::Chart::WDataSeries(1, Wt::Chart::LineSeries, Wt::Chart::Y1Axis));
@@ -160,7 +163,7 @@ auto_ptr<WStandardItemModel> FlightsPerGlider::model(const flb::FlightDatabase::
 
         model->setData(i, 0, any(nam));
         model->setData(i, 1, any(cnt));
-        model->setData(i, 2, any(dur));
+        model->setData(i, 2, any(dur.total_seconds() / 3600.0));
     }
 
     return model;
@@ -180,7 +183,7 @@ void FlightsPerGlider::draw(Wt::WContainerWidget *parent, const flb::FlightDatab
     pie1->setPerspectiveEnabled(true, 0.3);
 
     WPieChart *pie2 = new WPieChart(parent);
-    pie1->setTitle("Flugzeit");
+    pie2->setTitle("Flugzeit");
     pie2->setModel(modelrel);
     pie2->setLabelsColumn(0);
     pie2->setDataColumn(2);
@@ -258,7 +261,7 @@ auto_ptr<WStandardItemModel> FlightsPerPeriod::model(const flb::FlightDatabase::
     {
         model->setData(i, 0, boost::any(it->first));
         model->setData(i, 1, boost::any(it->second.first));
-        model->setData(i, 2, boost::any(it->second.second));
+        model->setData(i, 2, boost::any(it->second.second.total_seconds() / 3600.0));
     }
 
     return model;
@@ -339,7 +342,7 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
     {
         model->setData(i, 0, any(it->first->name()));
         model->setData(i, 1, any(it->second.first));
-        model->setData(i, 2, any(it->second.second));
+        model->setData(i, 2, any(it->second.second.total_seconds() / 3600.0));
     }
 
     return model;
@@ -359,7 +362,7 @@ void FlightsPerArea::draw(Wt::WContainerWidget *parent, const flb::FlightDatabas
     pie1->setPerspectiveEnabled(true, 0.3);
 
     WPieChart *pie2 = new WPieChart(parent);
-    pie1->setTitle("Flugzeit");
+    pie2->setTitle("Flugzeit");
     pie2->setModel(modelrel);
     pie2->setLabelsColumn(0);
     pie2->setDataColumn(2);

@@ -95,7 +95,7 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     if(!gmap)
     {
         gmap = new Wt::WGoogleMap(parent);
-        gmap->resize(700, 500);
+        gmap->resize(800, 500);
         gmap->enableScrollWheelZoom();
         gmap->addHierarchicalMapTypeControl();
     }
