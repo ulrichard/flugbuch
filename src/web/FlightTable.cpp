@@ -485,7 +485,7 @@ void FlightTable::addNewFlight()
                                                 *itTo,                          // takeoff
                                                 *itLa));                        // landing
         flightDb_->addFlight(newFlight);
-        FlightTableRow *newRow = addFlight(newFlight, insertRowNr_++, true);
+        FlightTableRow *newRow = addFlight(newFlight, --insertRowNr_, true);
         newRow->edit();
     }
     createFooterRow();
