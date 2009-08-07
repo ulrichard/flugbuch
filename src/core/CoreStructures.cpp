@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 // flugbuch
 #include "CoreStructures.h"
+#include "igc_storage.h"
 // ggl (boost sandbox)
 #include <geometry/algorithms/distance.hpp>
 #include <geometry/strategies/geographic/geo_distance.hpp>
@@ -16,6 +17,8 @@
 
 using namespace flb;
 using namespace boost::lambda;
+namespace bfs = boost::filesystem;
+using std::string;
 using std::vector;
 using boost::shared_ptr;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -74,6 +77,9 @@ bool Flight::samePlaces(const Flight &other) const
     return true;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void Flight::setTrack(const std::string &track)
+{
+    igcfile_ = track;
+}
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 

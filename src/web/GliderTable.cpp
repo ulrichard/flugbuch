@@ -84,18 +84,17 @@ void GliderTableRow::edit()
 {
 	clearRow();
 
-    table_->elementAt(rowNr_, colOp)->setLayout(new Wt::WHBoxLayout());
 	// the save image
 	WImage *wiSave = new WImage("img/save.png");
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
+	table_->elementAt(rowNr_, colOp)->addWidget(wiSave);
 	wiSave->clicked().connect(SLOT(this, GliderTableRow::save));
     // the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
+	table_->elementAt(rowNr_, colOp)->addWidget(wiCancel);
 	if(isNewEntry_)
         wiCancel->clicked().connect(SLOT(this, GliderTableRow::remove));
     else

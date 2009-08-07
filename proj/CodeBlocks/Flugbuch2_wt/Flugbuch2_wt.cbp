@@ -221,6 +221,8 @@
 		<Unit filename="../../../src/core/MainExternalIncludes.h" />
 		<Unit filename="../../../src/core/WaypointOptimizer.cpp" />
 		<Unit filename="../../../src/core/WaypointOptimizer.h" />
+		<Unit filename="../../../src/inout/igc_storage.cpp" />
+		<Unit filename="../../../src/inout/igc_storage.h" />
 		<Unit filename="../../../src/inout/inout.h" />
 		<Unit filename="../../../src/inout/inout_flyhigh.cpp">
 			<Option target="Debug" />

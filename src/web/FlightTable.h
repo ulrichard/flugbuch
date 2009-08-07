@@ -22,6 +22,7 @@ namespace Wt
         class ComboBox;
         class NumberField;
         class DateField;
+        class Dialog;
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -65,6 +66,8 @@ public:
 
 private:
 	virtual void clearRow();
+	void map();
+	void closeDlg();
 
 	shared_ptr<flb::Flight> flight_;
 	// gui elements
@@ -76,6 +79,7 @@ private:
 	Wt::Ext::NumberField *ndDuration_;
 	std::vector<LocationField*> vlfWaypoints_;
 	Wt::WTextArea        *taStory_;
+	Wt::Ext::Dialog      *mapDlg_;
 
 
 	enum ColPositons

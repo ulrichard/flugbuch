@@ -1,17 +1,22 @@
 // flugbuch
 #include "FlightTable.h"
 #include "FormatStr.h"
+#include "SystemInformation.h"
+#include "inout_igc.h"
+#include "igc_storage.h"
 // witty
 #include <Wt/Ext/ComboBox>
 #include <Wt/Ext/DateField>
 #include <Wt/Ext/NumberField>
 #include <Wt/Ext/MessageBox>
+#include <Wt/Ext/Button>
 #include <Wt/WDate>
 #include <Wt/WImage>
 #include <Wt/WText>
 #include <Wt/WHBoxLayout>
 #include <Wt/WBorderLayout>
 #include <Wt/WApplication>
+#include <Wt/WGoogleMap>
 // boost
 #include <boost/lexical_cast.hpp>
 #include <boost/checked_delete.hpp>
@@ -31,9 +36,11 @@ using Wt::WText;
 using Wt::WImage;
 using std::string;
 using std::vector;
+using std::pair;
 //using boost::bind;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
+namespace bfs = boost::filesystem;
 using boost::shared_ptr;
 
 
@@ -144,24 +151,24 @@ void FlightTableRow::show()
 {
 	clearRow();
 
+    // the edit image
 	WImage *wiEdit = new WImage("img/edit.png");
 	wiEdit->setToolTip("Flug bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked().connect(SLOT(this, FlightTableRow::edit));
-
+    // the delete image
 	WImage *wiDelete = new WImage("img/delete.png");
 	wiDelete->setToolTip("Flug löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
 	wiDelete->clicked().connect(SLOT(this, FlightTableRow::remove));
-
-	if(flight_->hasTrack())
-	{
-		WImage *wiTrack = new WImage("img/track.gif");
-		wiTrack->setToolTip("Track anschauen");
-		table_->elementAt(rowNr_, colOp)->addWidget(wiTrack);
-	}
+	// the map image
+	WImage *wiMap = new WImage("img/map.png");
+	wiMap->setToolTip("track");
+	wiMap->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
+    wiMap->clicked().connect(SLOT(this, FlightTableRow::map));
 	// prepare the text
 	vector<string> vsText;
 	vsText.push_back(boost::lexical_cast<string>(flight_->number()));
@@ -195,22 +202,27 @@ void FlightTableRow::edit()
 	size_t idx = 0;
 	clearRow();
 
-    table_->elementAt(rowNr_, colOp)->setLayout(new Wt::WHBoxLayout());
-	// the save image
+ 	// the save image
 	WImage *wiSave = new WImage("img/save.png");
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiSave);
+	table_->elementAt(rowNr_, colOp)->addWidget(wiSave);
 	wiSave->clicked().connect(SLOT(this, FlightTableRow::save));
 	// the cancel image
 	WImage *wiCancel = new WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
-	table_->elementAt(rowNr_, colOp)->layout()->addWidget(wiCancel);
+	table_->elementAt(rowNr_, colOp)->addWidget(wiCancel);
 	if(isNewEntry_)
         wiCancel->clicked().connect(SLOT(this, FlightTableRow::remove));
     else
         wiCancel->clicked().connect(SLOT(this, FlightTableRow::show));
+    // the map image
+	WImage *wiMap = new WImage("img/map.png");
+	wiMap->setToolTip("track");
+	wiMap->setStyleClass("operationImg");
+	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
+    wiMap->clicked().connect(SLOT(this, FlightTableRow::map));
 	// flight number
 	nbrEdit_ = new Wt::Ext::NumberField();
 	nbrEdit_->setValue(flight_->number());
@@ -362,6 +374,82 @@ void FlightTableRow::remove()
     {
         Wt::Ext::MessageBox::show("Error", ex.what(), Wt::Ok, true);
     }
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightTableRow::map()
+{
+    mapDlg_ = new Wt::Ext::Dialog("View the flight");
+    mapDlg_->resize(500, 400);
+    mapDlg_->setSizeGripEnabled(false);
+    Wt::WGoogleMap *gmap = new Wt::WGoogleMap();
+    mapDlg_->contents()->addWidget(gmap);
+	gmap->resize(500, 400);
+	gmap->enableScrollWheelZoom();
+	gmap->disableDoubleClickZoom();
+	gmap->enableDragging();
+	gmap->addHierarchicalMapTypeControl();
+
+	// get the igc file if we have one
+	string igcBaseDir;
+	if(!Wt::WApplication::readConfigurationProperty("igcBaseDir", igcBaseDir))
+        igcBaseDir = (flb::SystemInformation::homeDir() / "gipsy").string();
+    igc_storage igcstore(bfs::path(igcBaseDir) / flightDb_->pilotName(), true);
+    bfs::path igcfile = igcstore.make_igc_filename(flight_->track(), flight_->date().year());
+
+	gmap->clearOverlays();
+    // draw the flight
+    vector<Wt::WGoogleMap::Coordinate> points;
+    pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = std::make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
+
+    if(bfs::exists(igcfile))
+    {
+        flb::inout_igc ioigc(flightDb_);
+        ioigc.read(igcfile);
+        for(flb::inout_igc::Trackpoints::const_iterator itp = ioigc.Trackpoints.begin(); itp != ioigc.Trackpoints.end(); ++itp)
+            points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.lat(), itp->pos_.lon()));
+        gmap->addPolyline(points, Wt::WColor("#EE4444"), 3, 0.4);
+
+        for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+        {
+            bbox.first.setLatitude(  std::min(bbox.first.latitude(),   itb->latitude()));
+            bbox.first.setLongitude( std::min(bbox.first.longitude(),  itb->longitude()));
+            bbox.second.setLatitude( std::max(bbox.second.latitude(),  itb->latitude()));
+            bbox.second.setLongitude(std::max(bbox.second.longitude(), itb->longitude()));
+        }
+    }
+    // draw the legs
+    points.clear();
+    points.push_back(Wt::WGoogleMap::Coordinate(flight_->takeoff()->pos().lat(), flight_->takeoff()->pos().lon()));
+
+    for(Flight::Waypoints::const_iterator it = flight_->Waypoints.begin(); it != flight_->Waypoints.end(); ++it)
+    {
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->pos().lat(), (*it)->pos().lon()));
+    }
+    points.push_back(Wt::WGoogleMap::Coordinate(flight_->landing()->pos().lat(), flight_->landing()->pos().lon()));
+
+    gmap->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.9);
+    // bounding box
+    for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+    {
+        bbox.first.setLatitude(  std::min(bbox.first.latitude(),   itb->latitude()));
+        bbox.first.setLongitude( std::min(bbox.first.longitude(),  itb->longitude()));
+        bbox.second.setLatitude( std::max(bbox.second.latitude(),  itb->latitude()));
+        bbox.second.setLongitude(std::max(bbox.second.longitude(), itb->longitude()));
+    }
+    gmap->zoomWindow(bbox);
+
+
+    Wt::Ext::Button *btnCancel = new Wt::Ext::Button("Cancel");
+    mapDlg_->addButton(btnCancel);
+    btnCancel->clicked().connect(SLOT(this, FlightTableRow::closeDlg));
+
+    mapDlg_->show();
+}
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+void FlightTableRow::closeDlg()
+{
+    mapDlg_->accept();
+    delete mapDlg_;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

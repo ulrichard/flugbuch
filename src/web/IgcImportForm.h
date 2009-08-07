@@ -77,6 +77,7 @@ private:
 
     boost::shared_ptr<flb::FlightDatabase> flightDb_;
     flb::inout_igc  igcfile_;
+    std::string     igcname_;
     std::map<std::string, std::vector<size_t> > wptOpt_;
     Wt::WTable      *table_;
     Wt::WFileUpload *fileuploader_;

@@ -219,7 +219,8 @@ public:
 	const boost::posix_time::time_duration & duration() const { return airtime_; }
 	double							         distance() const { return distance_; }
 	const std::string &                      story()    const { return story_; }
-	bool							         hasTrack() const { return false; }
+	bool							         hasTrack() const { return igcfile_.length(); }
+	const std::string &                      track()    const { return igcfile_; }
 	// setters
 	void setNumber(unsigned int nbr)                       { number_  = nbr; }
 	void setDate(const boost::gregorian::date &ndate)      { date_    = ndate; }
@@ -229,6 +230,7 @@ public:
     void setDuration(boost::posix_time::time_duration dur) { airtime_ = dur; }
     void setDistance(double dist)                          { distance_ = dist; }
     void setStory(const std::string &story)                { story_   = story; }
+    void setTrack(const std::string &track);
     // waypoints
     void clearWaypoints()                             { waypoints_.clear(); }
     void addWaypoint(boost::shared_ptr<Location> wpt) { waypoints_.push_back(wpt); }

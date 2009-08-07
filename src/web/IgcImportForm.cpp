@@ -1,9 +1,11 @@
 // flugbuch
 #include "IgcImportForm.h"
-#include "FormatStr.h"
 #include "FlightTable.h"
 #include "TabControl.h"
 #include "WaypointOptimizer.h"
+#include "igc_storage.h"
+#include "FormatStr.h"
+#include "SystemInformation.h"
 // ggl (boost sandbox)
 #include <geometry/algorithms/distance.hpp>
 #include <geometry/strategies/geographic/geo_distance.hpp>
@@ -41,6 +43,7 @@ using namespace flbwt;
 using namespace flb;
 using namespace boost::lambda;
 namespace bll = boost::lambda;
+namespace bfs = boost::filesystem;
 using boost::lexical_cast;
 using boost::shared_ptr;
 using std::string;
@@ -149,6 +152,8 @@ void IgcImportForm::fileReceived()
     try
     {
 //        fileuploader_->stealSpooledFile();
+
+        // read the file
         igcfile_.read(fileuploader_->spoolFileName());
 
         if(!igcfile_.Trackpoints.size())
@@ -158,6 +163,21 @@ void IgcImportForm::fileReceived()
         }
         else
         {
+            // copy the igc file
+            igcname_ = fileuploader_->clientFileName().narrow();
+            string igcBaseDir;
+            if(!Wt::WApplication::readConfigurationProperty("igcBaseDir", igcBaseDir))
+                igcBaseDir = (flb::SystemInformation::homeDir() / "gipsy").string();
+            flb::igc_storage igcstore(bfs::path(igcBaseDir) / flightDb_->pilotName(), true);
+            bfs::path igcfile = igcstore.make_igc_filename(igcname_, igcfile_.Trackpoints.begin()->timestamp_.date().year());
+            bfs::create_directories(igcfile.parent_path());
+            bfs::copy_file(bfs::path(fileuploader_->spoolFileName()), igcfile);
+            if(!bfs::exists(igcfile))
+            {
+                Wt::Ext::MessageBox::show("Error", "Failed to copy the igc file to the igc files directory!", Wt::Ok, true);
+                accept();
+            }
+
             contents()->clear();
             Wt::WTable *tblbrd = new Wt::WTable(contents());
             table_ = new Wt::WTable(tblbrd->elementAt(0, 0));
@@ -208,7 +228,6 @@ void IgcImportForm::fileReceived()
             gmap_->enableScrollWheelZoom();
 
             changeWptStrategy();
-
 
             btnAddFlight_->setEnabled(true);
         }
@@ -380,6 +399,8 @@ void IgcImportForm::addFlight()
             else
                 throw std::runtime_error("Wether existing nor new location for landing");
         }
+
+        newFlight->setTrack(igcname_);
 
         // close the dialog
         accept();
