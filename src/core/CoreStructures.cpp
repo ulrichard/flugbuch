@@ -14,13 +14,15 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <limits>
 
 using namespace flb;
 using namespace boost::lambda;
 namespace bfs = boost::filesystem;
+using boost::shared_ptr;
 using std::string;
 using std::vector;
-using boost::shared_ptr;
+using std::numeric_limits;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void Location::setHeight(unsigned short height)
 {
@@ -31,7 +33,10 @@ void Location::setHeight(unsigned short height)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 double Location::getDistance(const geometry::point_ll_deg &otherpos) const
 {
-    return geometry::distance(pos_, otherpos, geometry::strategy::distance::vincenty<geometry::point_ll_deg>()) / 1000.0;
+    const double dist = geometry::distance(pos_, otherpos, geometry::strategy::distance::vincenty<geometry::point_ll_deg>()) / 1000.0;
+    if(numeric_limits<double>::has_quiet_NaN && dist == numeric_limits<double>::quiet_NaN())
+        return 0;
+    return dist;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool Location::isEquivalent(const Location &rhs) const
