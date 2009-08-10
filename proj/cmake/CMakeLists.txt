@@ -68,6 +68,7 @@ set(FLUGBUCH2_SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/../../src/core/WaypointOptimizer.cpp
 #	${PROJECT_SOURCE_DIR}/../../src/inout/inout_flyhigh.cpp
 	${PROJECT_SOURCE_DIR}/../../src/inout/inout_igc.cpp
+	${PROJECT_SOURCE_DIR}/../../src/inout/igc_storage.cpp
 	${PROJECT_SOURCE_DIR}/../../src/inout/inout_xml.cpp
 	${PROJECT_SOURCE_DIR}/../../src/util/SystemInformation.cpp
 	${PROJECT_SOURCE_DIR}/../../src/web/AreaTable.cpp
