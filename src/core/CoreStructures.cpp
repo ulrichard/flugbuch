@@ -33,9 +33,11 @@ void Location::setHeight(unsigned short height)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 double Location::getDistance(const geometry::point_ll_deg &otherpos) const
 {
+    if(pos_ == otherpos)
+        return 0.0;
     const double dist = geometry::distance(pos_, otherpos, geometry::strategy::distance::vincenty<geometry::point_ll_deg>()) / 1000.0;
     if(numeric_limits<double>::has_quiet_NaN && dist == numeric_limits<double>::quiet_NaN())
-        return 0;
+        return 0.0;
     return dist;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -66,7 +68,10 @@ double Flight::calcDistance() const
     for( ; it2 != locations.end(); ++it1, ++it2)
         legLengths.push_back((*it1)->getDistance((*it2)->pos()));
     // summm the legs
-    return std::accumulate(legLengths.begin(), legLengths.end(), 0.0);
+    const double dist = std::accumulate(legLengths.begin(), legLengths.end(), 0.0);
+    if(numeric_limits<double>::has_quiet_NaN && dist == numeric_limits<double>::quiet_NaN())
+        return 0.0;
+    return dist;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool Flight::samePlaces(const Flight &other) const
