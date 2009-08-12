@@ -56,6 +56,7 @@ private:
     Wt::WFileUpload         *im_uploader_;
     Wt::WLineEdit           *im_username_;
     Wt::WLineEdit           *im_password_;
+    Wt::WCheckBox           *im_matchIgc_;
     Wt::Ext::ProgressDialog *im_progress_;
 
 };

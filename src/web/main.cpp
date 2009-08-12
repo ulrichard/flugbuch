@@ -12,6 +12,8 @@
 #else
   #include "inout_mdb.h"
 #endif
+#include "inout_igc.h"
+#include "igc_storage.h"
 // witty
 #include <Wt/WBorderLayout>
 #include <Wt/Ext/Dialog>
@@ -30,12 +32,14 @@
 #include <string>
 
 
-using std::string;
-using std::vector;
-using std::pair;
-using std::make_pair;
 using namespace flbwt;
 namespace bfs = boost::filesystem;
+namespace bgreg = boost::gregorian;
+using std::string;
+using std::vector;
+using std::map;
+using std::pair;
+using std::make_pair;
 
 // callback function is called everytime when a user enters the page. Can be used to authenticate.
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
@@ -140,7 +144,7 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
     string footerText;
     if(!readConfigurationProperty("footerText", footerText))
         footerText = "flugbuch2 ist opensource software im alpha stadium. http://www.sourceforge.net/projects/flugbuch2";
-	Wt::WText *txtFooter = new Wt::WText(footerText);
+	Wt::WText *txtFooter = new Wt::WText(footerText, Wt::XHTMLUnsafeText);
 	borderLayout->addWidget(txtFooter, Wt::WBorderLayout::South);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -156,13 +160,43 @@ void FlightLogApp::loadTestDb()
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string &usr, const string &pwd)
+void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string &usr, const string &pwd, bool assignIgc)
 {
     try
     {
         flb::inout_mdb iomdb;
         shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(file)));
         fldb->setPilotNameAndPwd(usr, pwd);
+
+        if(assignIgc)
+        {
+            // try to match igc files
+            string igcBaseDir;
+            if(!Wt::WApplication::readConfigurationProperty("igcBaseDir", igcBaseDir))
+                igcBaseDir = (flb::SystemInformation::homeDir() / "gipsy").string();
+            flb::igc_storage igcstore(bfs::path(igcBaseDir) / usr, true);
+            vector<bfs::path> igcnames = igcstore.find_all_igc_files();
+            map<bgreg::date, vector<pair<bfs::path, shared_ptr<flb::inout_igc> > > > igcdata;
+
+            for(vector<bfs::path>::const_iterator it = igcnames.begin(); it != igcnames.end(); ++it)
+            {
+                shared_ptr<flb::inout_igc> igcf(new flb::inout_igc(flightDb_));
+                igcf->read(*it);
+                igcdata[igcf->Trackpoints.begin()->timestamp_.date()].push_back(make_pair(*it, igcf));
+            }
+
+            // todo: handle multible flights per day
+            if(igcdata.size())
+                for(flb::FlightDatabase::SeqFlights::iterator it = fldb->flights().begin(); it != fldb->flights().end(); ++it)
+                {
+                    if(igcdata[(*it)->date()].size() == 1)
+                    {
+                        (*it)->setTrack(igcdata[(*it)->date()][0].first.filename());
+                        igcdata[(*it)->date()].clear();
+                        std::cout << "assigned ifg file : " << igcdata[(*it)->date()][0].first.filename() << " to fight " << (*it)->number() << std::endl;
+                    }
+                }
+        } // if(assignIgc)
 
         loadFlights(fldb);
 

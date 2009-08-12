@@ -172,6 +172,8 @@ Wt::WWidget * WelcomeScreen::makeImportTab()
     im_password_->enterPressed().connect(SLOT(this, WelcomeScreen::startUpload));
     passwordLabel->setBuddy(im_password_);
 
+    im_matchIgc_ = new Wt::WCheckBox("Igc Dateien zuordnen", cont);
+
     cont->addWidget(new Wt::WBreak());
 
     Wt::WPushButton *LoginButton = new Wt::WPushButton("Importieren", cont);
@@ -208,6 +210,7 @@ void WelcomeScreen::doImport()
     assert(im_progress_);
     assert(im_username_);
     assert(im_password_);
+    assert(im_matchIgc_);
 
     im_progress_->cancel();
     delete im_progress_;
@@ -215,7 +218,7 @@ void WelcomeScreen::doImport()
 
     im_uploader_->stealSpooledFile();
     FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
-    app->importFlightDb(im_uploader_->spoolFileName(), true, im_username_->text().narrow(), im_password_->text().narrow());
+    app->importFlightDb(im_uploader_->spoolFileName(), true, im_username_->text().narrow(), im_password_->text().narrow(), im_matchIgc_->isChecked());
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
