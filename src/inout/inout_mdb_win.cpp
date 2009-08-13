@@ -21,13 +21,20 @@
 #include <numeric>
 #include <iostream>
 
+// flugbuch
 using namespace flb;
+// ggl
+using geometry::point_ll_deg;
+using geometry::latitude;
+using geometry::longitude;
+//boost
 using namespace boost::lambda;
 namespace bll = boost::lambda;
 using boost::lexical_cast;
 using boost::bind;
 using boost::ref;
 namespace bfs = boost::filesystem;
+// standard library
 using std::string;
 using std::vector;
 using std::map;
@@ -203,9 +210,9 @@ pair<unsigned int, boost::shared_ptr<Location> > inout_mdb::GetLocation(const dt
 {
     shared_ptr<Location> loc(new Location(areas_[row["FluggebietId"]], // area
                                           row["Name"],                 // name
-                                          row["Hoehe"],               // height
-                                          row["Breite"],              // latitude
-                                          row["Laenge"],              // longitude
+                                          row["Hoehe"],                // height
+										  point_ll_deg(latitude<>(static_cast<double>(row["Breite"])),
+													   longitude<>(static_cast<double>(row["Laenge"]))), // pos
                                           0));                         // usage will be assigned later
     return make_pair(static_cast<int>(row[idname]), loc);
 }
@@ -230,7 +237,7 @@ pair<unsigned int, boost::shared_ptr<Flight> > inout_mdb::GetFlight(const dtl::v
 
     shared_ptr<Flight> flt(new Flight(row["FlugNr"],                  // flight number
                                       bgdate,						  // date
-                                      row["Flugminuten"],             // airtime
+                                      boost::posix_time::minutes(row["Flugminuten"]), // airtime
                                       gliders_[row["GleitschirmId"]], // glider
                                       takeoffs_[row["StartplatzId"]], // takeoff
                                       landings_[row["LandeplatzId"]], // landing

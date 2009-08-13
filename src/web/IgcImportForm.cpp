@@ -298,6 +298,7 @@ Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, con
 {
     static const double distThreshold = 0.3; // km
     // find the waypoint
+#ifndef WIN32
     vector<shared_ptr<Location> > tmploc;
     remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
         !ret<bool>(bind(&Location::usage, *bll::_1) & usage) ||
@@ -315,6 +316,7 @@ Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, con
         return lfWpt;
     }
     else
+#endif
     {
         NewLocationField *nlfWpt = new NewLocationField(flightDb_);
         nlfWpt->fillAreas();

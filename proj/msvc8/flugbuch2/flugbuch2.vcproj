@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm250 "
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat"
+				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat;..\..\..\lib\ggl\boost\ggl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -131,7 +131,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat"
+				AdditionalIncludeDirectories="..\..\..\src\core;..\..\..\src\inout;..\..\..\src\util;..\..\..\src\web;..\..\..\src\web\stat;..\..\..\lib\ggl\boost\ggl"
 				PreprocessorDefinitions="WIN32;_CONSOLE;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -220,6 +220,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\inout\igc_storage.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\web\IgcImportForm.cpp"
 				>
 			</File>
@@ -273,6 +277,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\web\TabControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\WaypointOptimizer.cpp"
 				>
 			</File>
 			<File

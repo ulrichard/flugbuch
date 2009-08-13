@@ -314,9 +314,9 @@ auto_ptr<WStandardItemModel> FlightsPerArea::model(const flb::FlightDatabase::Se
         areas.push_back(flarInfo);
     }
 
-    // select the aread with the most flights
-    sort(areas.begin(), areas.end(), bind<int>(&PairIntT::first, bind<PairIntT>(&AreaVectorT::value_type::second, bll::_1)) >
-                                     bind<int>(&PairIntT::first, bind<PairIntT>(&AreaVectorT::value_type::second, bll::_2)));
+    // select the area with the most flights
+    sort(areas.begin(), areas.end(), bll::bind<int>(&PairIntT::first, bll::bind<PairIntT>(&AreaVectorT::value_type::second, bll::_1)) >
+                                     bll::bind<int>(&PairIntT::first, bll::bind<PairIntT>(&AreaVectorT::value_type::second, bll::_2)));
     AreaVectorT::iterator endit = areas.begin();
     std::advance(endit, std::min(areas.size(), numArea_));
 

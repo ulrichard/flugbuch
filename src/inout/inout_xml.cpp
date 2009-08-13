@@ -16,16 +16,16 @@ namespace bfs = boost::filesystem;
 
 FlightDatabase inout_xml::read(const bfs::path &source)
 {
-	FlightDatabase fldb("");
+	FlightDatabase fdb("");
 	// create and open an archive for input
     bfs::ifstream ifs(source, std::ios_base::in | std::ios_base::binary);
 	if(!ifs.good())
         throw std::runtime_error("file not found");
 	boost::archive::xml_iarchive ia(ifs);
     // read class state from archive
-	ia >> BOOST_SERIALIZATION_NVP(fldb);
+	ia >> BOOST_SERIALIZATION_NVP(fdb);
     // archive and stream closed when destructors are called
-	return fldb;
+	return fdb;
 }
 
 void inout_xml::write(const FlightDatabase &fdb, const bfs::path &destination)

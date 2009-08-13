@@ -146,9 +146,9 @@
 				</Compiler>
 				<Linker>
 					<Add option="/DEBUG" />
-					<Add library="libboost_date_time-vc80-mt-gd-1_38" />
-					<Add library="libboost_serialization-vc80-mt-gd-1_38" />
-					<Add library="libboost_signals-vc80-mt-gd-1_38" />
+					<Add library="libboost_date_time-vc80-mt-gd-1_39" />
+					<Add library="libboost_serialization-vc80-mt-gd-1_39" />
+					<Add library="libboost_signals-vc80-mt-gd-1_39" />
 					<Add library="wtd" />
 					<Add library="wtextd" />
 					<Add library="wthttpd" />
@@ -162,8 +162,8 @@
 			</Target>
 			<Target title="Release_MSVC">
 				<Option platforms="Windows;" />
-				<Option output="bin/Release_MSVC/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release_MSVC/" />
+				<Option output="bin\Release_MSVC\Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release_MSVC\" />
 				<Option type="1" />
 				<Option compiler="msvc8" />
 				<Option use_console_runner="0" />
@@ -178,16 +178,17 @@
 					<Add option="/DWIN32" />
 					<Add option="/DNDEBUG" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="../../../src/core" />
-					<Add directory="../../../src/inout" />
-					<Add directory="../../../src/web" />
-					<Add directory="../../../src/util" />
-					<Add directory="../../../src/web/stat" />
+					<Add directory="..\..\..\src\core" />
+					<Add directory="..\..\..\src\inout" />
+					<Add directory="..\..\..\src\web" />
+					<Add directory="..\..\..\src\util" />
+					<Add directory="..\..\..\src\web\stat" />
+					<Add directory="..\..\..\lib\ggl\boost\ggl" />
 				</Compiler>
 				<Linker>
-					<Add library="libboost_date_time-vc80-mt-1_38" />
-					<Add library="libboost_serialization-vc80-mt-1_38" />
-					<Add library="libboost_signals-vc80-mt-1_38" />
+					<Add library="libboost_date_time-vc80-mt-1_39" />
+					<Add library="libboost_serialization-vc80-mt-1_39" />
+					<Add library="libboost_signals-vc80-mt-1_39" />
 					<Add library="wt" />
 					<Add library="wtext" />
 					<Add library="wthttp" />
@@ -197,6 +198,7 @@
 					<Add library="DTL.lib" />
 					<Add library="odbc32.lib" />
 					<Add library="odbccp32.lib" />
+					<Add library="libboost_filesystem-vc80-mt-1_39" />
 				</Linker>
 			</Target>
 		</Build>

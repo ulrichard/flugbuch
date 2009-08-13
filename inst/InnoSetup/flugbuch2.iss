@@ -10,7 +10,7 @@ Name: {group}\Web Client; Filename: http://localhost:8080
 [Setup]
 AppCopyright=Richard Ulrich
 AppName=Flugbuch2
-AppVerName=2.0.0.5
+AppVerName=2.0.0.7
 ShowLanguageDialog=no
 DefaultDirName={pf}\flugbuch2
 OutputBaseFilename=flugbuch2_inst
