@@ -171,7 +171,9 @@ void IgcImportForm::fileReceived()
             flb::igc_storage igcstore(bfs::path(igcBaseDir) / flightDb_->pilotName(), true);
             bfs::path igcfile = igcstore.make_igc_filename(igcname_, igcfile_.Trackpoints.begin()->timestamp_.date().year());
             bfs::create_directories(igcfile.parent_path());
-            bfs::copy_file(bfs::path(fileuploader_->spoolFileName()), igcfile);
+            if(!bfs::exists(igcfile))
+                bfs::copy_file(bfs::path(fileuploader_->spoolFileName()), igcfile);
+            // todo : ask the user if he wants to overwrite an existing file with the same name
             if(!bfs::exists(igcfile))
             {
                 Wt::Ext::MessageBox::show("Error", "Failed to copy the igc file to the igc files directory!", Wt::Ok, true);
