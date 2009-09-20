@@ -196,6 +196,8 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addFlightArea(arEngelstock);
 	shared_ptr<flb::FlightArea> arFamatina(new flb::FlightArea("Famatina", "Argentinien", "vor-Anden"));
 	fldb->addFlightArea(arFamatina);
+	shared_ptr<flb::FlightArea> arMunGyeong(new flb::FlightArea("MunGyeong", "Sued Korea", "Asien"));
+	fldb->addFlightArea(arFamatina);
 	// locations
 	shared_ptr<flb::Location> locWeststart(new flb::Location(arRothenflue, "Westwindstartplatz", 1540, point_ll_deg(latitude<>(47.018337296086003), longitude<>(8.7019931164065607)), flb::Location::UA_TAKEOFF));
 	fldb->addLocation(locWeststart);
@@ -229,9 +231,19 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addLocation(locFamatina);
 	shared_ptr<flb::Location> locFamaLande(new flb::Location(arFamatina, "CHA154", 1100, point_ll_deg(latitude<>(-28.5819), longitude<>(-67.5928)), flb::Location::UA_LANDING));
 	fldb->addLocation(locFamaLande);
-	shared_ptr<flb::Location> locFamaWp1(new flb::Location(arFamatina, "Pituil", 0, point_ll_deg(latitude<>(dms<south>(28, 34, 49.2)), longitude<>(dms<west>(68, 30, 44.2))), flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locFamaWp1(new flb::Location(arFamatina, "Pituil", 0, point_ll_deg(latitude<>(dms<south>(28, 34, 49.2)), longitude<>(dms<west>(67, 29, 15.8))), flb::Location::UA_WAYPNT));
 	fldb->addLocation(locFamaWp1);
-	shared_ptr<flb::Location> locFamaWp2(new flb::Location(arFamatina, "Campanas", 0, point_ll_deg(latitude<>(dms<south>(28, 32, 38)), longitude<>(dms<west>(68, 22, 36.1))), flb::Location::UA_WAYPNT));
+	shared_ptr<flb::Location> locFamaWp2(new flb::Location(arFamatina, "Campanas", 0, point_ll_deg(latitude<>(dms<south>(28, 32, 38)), longitude<>(dms<west>(67, 37, 23.9))), flb::Location::UA_WAYPNT));
+	fldb->addLocation(locFamaWp2);
+	shared_ptr<flb::Location> locMunGyTo(new flb::Location(arMunGyeong, "Mun Gyeong", 985, point_ll_deg(latitude<>(dms<north>(36, 43, 47.7)), longitude<>(dms<east>(128, 10, 27.3))), flb::Location::UA_TAKEOFF));
+	fldb->addLocation(locFamaWp2);
+	shared_ptr<flb::Location> locMunGyARA(new flb::Location(arMunGyeong, "ARA", 90, point_ll_deg(latitude<>(dms<north>(36, 34, 12.8)), longitude<>(dms<east>(128, 17, 28.1))), flb::Location::UA_LANDING));
+	fldb->addLocation(locFamaWp2);
+	shared_ptr<flb::Location> locMunGyWP1(new flb::Location(arMunGyeong, "Mun Gyeong", 0, point_ll_deg(latitude<>(dms<north>(36, 47, 6.2)), longitude<>(dms<east>(128, 12, 36))), flb::Location::UA_WAYPNT));
+	fldb->addLocation(locFamaWp2);
+	shared_ptr<flb::Location> locMunGyWP2(new flb::Location(arMunGyeong, "Mun Gyeong", 0, point_ll_deg(latitude<>(dms<north>(36, 40, 1.2)), longitude<>(dms<east>(128, 7, 60))), flb::Location::UA_WAYPNT));
+	fldb->addLocation(locFamaWp2);
+	shared_ptr<flb::Location> locMunGyWP3(new flb::Location(arMunGyeong, "Mun Gyeong", 0, point_ll_deg(latitude<>(dms<north>(36, 33, 40.4)), longitude<>(dms<east>(128, 13, 55.2))), flb::Location::UA_WAYPNT));
 	fldb->addLocation(locFamaWp2);
 	// gliders
 	shared_ptr<flb::Glider> glMagus4(new flb::Glider("MacPara", "Magus 4", "25", "yellow", 2006, "comp") );
@@ -262,6 +274,11 @@ shared_ptr<FlightDatabase> FlightDatabase::makeTestDb(void)
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(10, date(2009,  1, 10), minutes( 15), glBiGolden,  locBrunni, locOchsenmatte)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(11, date(2009,  1, 11), minutes(  5), glAspen, locFronalpstock, locStoosSki)));
 	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(12, date(2009,  1, 15), minutes( 10), glMagus5, locEngelstock, locBormPoint)));
+	vector<shared_ptr<flb::Location> > wptsMunGyeong;
+	wptsMunGyeong.push_back(locMunGyWP1);
+	wptsMunGyeong.push_back(locMunGyWP2);
+	wptsMunGyeong.push_back(locMunGyWP3);
+	fldb->addFlight(shared_ptr<flb::Flight>(new flb::Flight(13, date(2009,  5,  1), minutes(160), glMagus5, locMunGyTo, locMunGyARA, "PWC", wptsMunGyeong)));
 
     for(FlightDatabase::SeqFlights::iterator it = fldb->flights().begin(); it != fldb->flights().end(); ++it)
         (*it)->setDistance((*it)->calcDistance());
