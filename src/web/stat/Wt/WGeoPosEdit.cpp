@@ -302,7 +302,7 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
             sstr << floor(tmpval) << "' ";
             sstr << ((tmpval - floor(tmpval)) * 60.0) << "\"   ";
             sstr << (pos.second >= 0.0 ? "O " : "W ");
-            tmpval = pos.second;
+            tmpval = fabs(pos.second);
             sstr << floor(tmpval) << "° ";
             tmpval = (tmpval - floor(tmpval)) * 60.0;
             sstr << floor(tmpval) << "' ";
@@ -314,15 +314,15 @@ string WGeoPosEdit::format(pair<double, double> pos, Wt::WGeoPosEdit::PositionFo
             sstr << floor(tmpval) << "° ";
             sstr << ((tmpval - floor(tmpval)) * 60.0) << "'   ";
             sstr << (pos.second >= 0.0 ? "O " : "W ");
-            tmpval = pos.second;
+            tmpval = fabs(pos.second);
             sstr << floor(tmpval) << "° ";
             sstr << ((tmpval - floor(tmpval)) * 60.0) << "' ";
             break;
         case WGS84_DEC:
             sstr << (pos.first >= 0.0 ? "N " : "S ");
-            sstr << pos.first << "° ";
+            sstr << fabs(pos.first) << "° ";
             sstr << (pos.second >= 0.0 ? "O " : "W ");
-            sstr << pos.second << "° ";
+            sstr << fabs(pos.second) << "° ";
             break;
         case WGS84_UTM:
         {
