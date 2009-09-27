@@ -96,10 +96,18 @@ void LocationField::fillLocations(int idx)
 size_t LocationField::selectLocation(const string &loc)
 {
     for(int i=0; i<cbLocation_->count(); ++i)
-        if(loc == cbLocation_->itemText(i).narrow())
+        try
         {
-            cbLocation_->setCurrentIndex(i);
-            return i;
+            if(loc == cbLocation_->itemText(i).narrow())
+            {
+                cbLocation_->setCurrentIndex(i);
+                return i;
+            }
+        }
+        catch(std::exception &ex)
+        {
+            std::cout << "Exception in LocationField::selectLocation() : " << ex.what();
+//                      << " with " << cbLocation_->itemText(i) << std::endl;
         }
     return 0;
 }
