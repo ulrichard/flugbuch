@@ -395,7 +395,7 @@ void FlightTableRow::map()
 	gmap->enableScrollWheelZoom();
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
-	gmap->addHierarchicalMapTypeControl();
+	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
 
 	// get the igc file if we have one
 	string igcBaseDir;

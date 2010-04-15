@@ -296,20 +296,35 @@ void IgcImportForm::changeWptStrategy()
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+struct locfiltusg
+{
+    locfiltusg(const geometry::point_ll_deg &pos, const Location::UseAs usage) : pos_(pos), usage_(usage) { }
+
+    bool operator()(boost::shared_ptr<Location> loc)
+    {
+        return (!(loc->usage() & usage_) || loc->getDistance(pos_) > distThreshold_);
+    }
+
+    const geometry::point_ll_deg &pos_;
+    const Location::UseAs usage_;
+    static const double distThreshold_ = 0.3; // km
+};
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, const geometry::point_ll_deg &pos, const Location::UseAs usage, const size_t trpid)
 {
     static const double distThreshold = 0.3; // km
     // find the waypoint
 #ifndef WIN32
     vector<shared_ptr<Location> > tmploc;
-    remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
-        !ret<bool>(bind(&Location::usage, *bll::_1) & usage) ||
-        bind(&Location::getDistance, *bll::_1, pos) > distThreshold);
+//    remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc),
+//        !ret<bool>(bind(&Location::usage, *bll::_1) & usage) ||
+//        bind(&Location::getDistance, *bll::_1, pos) > distThreshold);
+    remove_copy_if(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(tmploc), locfiltusg(pos, usage));
 
     if(tmploc.size())
     {
-        sort(tmploc.begin(), tmploc.end(), bind(&Location::getDistance, *bll::_1, pos)
-                                         < bind(&Location::getDistance, *bll::_2, pos));
+        sort(tmploc.begin(), tmploc.end(), bll::bind(&Location::getDistance, *bll::_1, pos)
+                                         < bll::bind(&Location::getDistance, *bll::_2, pos));
         LocationField *lfWpt = new LocationField(flightDb_, usage);
         lfWpt->setLocation(**tmploc.begin());
 

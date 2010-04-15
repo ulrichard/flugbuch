@@ -20,6 +20,7 @@
 					<Add directory="../../../src/web" />
 					<Add directory="../../../src/util" />
 					<Add directory="../../../src/web/stat" />
+					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
 					<Add library="boost_date_time-mt-d" />
@@ -46,6 +47,7 @@
 					<Add directory="../../../src/web" />
 					<Add directory="../../../src/util" />
 					<Add directory="../../../src/web/stat" />
+					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -80,6 +82,7 @@
 					<Add directory="../../../src/web" />
 					<Add directory="../../../src/util" />
 					<Add directory="../../../src/web/stat" />
+					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -105,6 +108,7 @@
 					<Add directory="../../../src/web" />
 					<Add directory="../../../src/util" />
 					<Add directory="../../../src/web/stat" />
+					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -162,8 +166,8 @@
 			</Target>
 			<Target title="Release_MSVC">
 				<Option platforms="Windows;" />
-				<Option output="bin\Release_MSVC\Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release_MSVC\" />
+				<Option output="bin/Release_MSVC/Flugbuch2_wt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release_MSVC/" />
 				<Option type="1" />
 				<Option compiler="msvc8" />
 				<Option use_console_runner="0" />
@@ -178,12 +182,12 @@
 					<Add option="/DWIN32" />
 					<Add option="/DNDEBUG" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="..\..\..\src\core" />
-					<Add directory="..\..\..\src\inout" />
-					<Add directory="..\..\..\src\web" />
-					<Add directory="..\..\..\src\util" />
-					<Add directory="..\..\..\src\web\stat" />
-					<Add directory="..\..\..\lib\ggl\boost\ggl" />
+					<Add directory="../../../src/core" />
+					<Add directory="../../../src/inout" />
+					<Add directory="../../../src/web" />
+					<Add directory="../../../src/util" />
+					<Add directory="../../../src/web/stat" />
+					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
 					<Add library="libboost_date_time-vc80-mt-1_39" />
@@ -227,8 +231,6 @@
 		<Unit filename="../../../src/inout/igc_storage.h" />
 		<Unit filename="../../../src/inout/inout.h" />
 		<Unit filename="../../../src/inout/inout_flyhigh.cpp">
-			<Option target="Debug" />
-			<Option target="Release_http" />
 			<Option target="Debug_MSVC" />
 			<Option target="Release_MSVC" />
 		</Unit>
