@@ -160,7 +160,7 @@ public:
                 gmap_->addMapTypeControl();
                 break;
             case 1:
-                gmap_->addHierarchicalMapTypeControl();
+                gmap_->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
                 break;
             case 2:
                 gmap_->addMenuMapTypeControl();

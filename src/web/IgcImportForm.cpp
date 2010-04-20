@@ -309,6 +309,17 @@ struct locfiltusg
     const Location::UseAs usage_;
     static const double distThreshold_ = 0.3; // km
 };
+struct distsorter
+{
+    distsorter(const geometry::point_ll_deg &pos) : pos_(pos) { }
+
+    bool operator()(const boost::shared_ptr<Location> lhs, const boost::shared_ptr<Location> rhs)
+    {
+        return (lhs->getDistance(pos_) < rhs->getDistance(pos_));
+    }
+
+    const geometry::point_ll_deg &pos_;
+};
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, const geometry::point_ll_deg &pos, const Location::UseAs usage, const size_t trpid)
 {
@@ -323,8 +334,9 @@ Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, con
 
     if(tmploc.size())
     {
-        sort(tmploc.begin(), tmploc.end(), bll::bind(&Location::getDistance, *bll::_1, pos)
-                                         < bll::bind(&Location::getDistance, *bll::_2, pos));
+//        sort(tmploc.begin(), tmploc.end(), bll::bind(&Location::getDistance, *bll::_1, pos)
+//                                         < bll::bind(&Location::getDistance, *bll::_2, pos));
+        sort(tmploc.begin(), tmploc.end(), distsorter(pos));
         LocationField *lfWpt = new LocationField(flightDb_, usage);
         lfWpt->setLocation(**tmploc.begin());
 

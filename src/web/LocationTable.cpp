@@ -229,7 +229,7 @@ void LocationTableRow::map()
 	gmap->enableScrollWheelZoom();
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
-	gmap->addHierarchicalMapTypeControl();
+	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
     const geometry::point_ll_deg pdpos = location_->pos();
     if(pdpos.lat() != 0.0 && pdpos.lon() != 0.0)
     {

@@ -176,8 +176,10 @@ void StatisticsPanel::initFilter()
 {
     filtCountries_.clear();
     const set<int> &countrysel = sbCountry_->selectedIndexes();
-    transform(countrysel.begin(), countrysel.end(), inserter(filtCountries_, filtCountries_.end()),
-        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbCountry_, ::_1)));
+//    transform(countrysel.begin(), countrysel.end(), inserter(filtCountries_, filtCountries_.end()),
+//        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbCountry_, ::_1)));
+    BOOST_FOREACH(int cn, countrysel)
+        filtCountries_.insert(sbCountry_->itemText(cn).narrow());
 
     filtYears_.clear();
     BOOST_FOREACH(int idx, sbYear_->selectedIndexes())
@@ -185,8 +187,10 @@ void StatisticsPanel::initFilter()
 
     filtClassi_.clear();
     const set<int> &classisel = sbClassi_->selectedIndexes();
-    transform(classisel.begin(), classisel.end(), inserter(filtClassi_, filtClassi_.end()),
-        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbClassi_, ::_1)));
+//    transform(classisel.begin(), classisel.end(), inserter(filtClassi_, filtClassi_.end()),
+//        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbClassi_, ::_1)));
+    BOOST_FOREACH(int csn, classisel)
+        filtClassi_.insert(sbClassi_->itemText(csn).narrow());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 bool StatisticsPanel::filter(const flb::Flight &fl) const

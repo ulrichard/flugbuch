@@ -381,7 +381,7 @@ void WGeoPosEdit::showMap()
 	gmap->enableScrollWheelZoom();
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
-	gmap->addHierarchicalMapTypeControl();
+	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
     gmap->enableGoogleBar();
     gmap->doubleClicked().connect(SLOT(this, WGeoPosEdit::setPosFromDlg));
     const pair<double, double> pdpos = pos();

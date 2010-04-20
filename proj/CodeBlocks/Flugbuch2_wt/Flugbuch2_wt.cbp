@@ -23,15 +23,13 @@
 					<Add directory="../../../lib/ggl/boost/ggl" />
 				</Compiler>
 				<Linker>
-					<Add library="boost_date_time-mt-d" />
-					<Add library="boost_serialization-mt-d" />
-					<Add library="boost_signals-mt-d" />
-					<Add library="boost_filesystem-mt-d" />
-					<Add library="wtd" />
-					<Add library="wtextd" />
-					<Add library="wthttpd" />
-					<Add library="DTL" />
-					<Add library="odbc" />
+					<Add library="boost_date_time-mt" />
+					<Add library="boost_serialization-mt" />
+					<Add library="boost_signals-mt" />
+					<Add library="boost_filesystem-mt" />
+					<Add library="wt" />
+					<Add library="wtext" />
+					<Add library="wthttp" />
 					<Add directory="/usr/local/lib" />
 				</Linker>
 			</Target>

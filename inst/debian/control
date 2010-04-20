@@ -2,7 +2,7 @@ Source: flugbuch2
 Section: web
 Priority: optional
 Maintainer: Richard Ulrich <richi@paraeasy.ch>
-Build-Depends: debhelper (>= 7), libfcgi0ldbl, libboost-regex1.35-dev, libboost-program-options1.35-dev, libboost-date-time1.35-dev, libboost-signals1.35-dev, libboost-thread1.35-dev, libboost-system1.35-dev, libboost-filesystem1.35-dev, libboost-serialization1.35-dev, witty-dev (>= 2.99.2)
+Build-Depends: debhelper (>= 7), libfcgi0ldbl, libboost-regex-dev, libboost-program-options-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-system-dev, libboost-filesystem-dev, libboost-serialization-dev, libwt-dev, libwtext-dev, libwtfcgi-dev, libwthttp-dev
 standards-Version: 3.8.1.0
 Homepage: http://sourceforge.net/projects/flugbuch2
 
