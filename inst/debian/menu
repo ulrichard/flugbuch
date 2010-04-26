@@ -1,2 +1,0 @@
-?package(flugbuch2):needs="X11" section="Applications/Other"\
-  title="flugbuch2" command="/usr/bin/testapp"

@@ -6,13 +6,29 @@
 set -e
 
 case "$1" in
-	configure)
-		mkdir -p /var/run/flugbuch2
-    		chown -R www-data:www-data /var/run/flugbuch2
+	configure)	
+		# set up the environment for the webapp
+		mkdir -p /usr/run/flugbuch2
+    	chown -R www-data:www-data /usr/run/flugbuch2
+
+		mkdir -p /usr/share/flugbuch2/data
+		chown -R www-data:www-data /usr/share/flugbuch2/data
+
+		mkdir -p /usr/share/flugbuch2/igc
+		chown -R www-data:www-data /usr/share/flugbuch2/igc
+
+		if ! grep -q "^flugbuch2:" /etc/wt/wt_config.xml ; then
+			chmod +x /usr/share/flugbuch2/append_wt_config.pl
+			/usr/share/flugbuch2/append_wt_config.pl > /etc/wt/wt_config.xml.new
+			mv /etc/wt/wt_config.xml /etc/wt/wt_config.xml.old
+			mv /etc/wt/wt_config.xml.new /etc/wt/wt_config.xml
+		fi
+
 		# register with apache
-		a2enmod fcgid
+		a2enmod fastcgi
 		echo "register flugbuch2 with apache"
-		a2ensite /etc/apache2/sites-available/flugbuch2 
+		a2ensite flugbuch2.local
+		/etc/init.d/apache2 restart
 		;;
 	*)
 		#

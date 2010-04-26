@@ -39,13 +39,12 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 MARK_AS_ADVANCED( CONFIGDIR )
 SET(CONFIGURATION "${CONFIGDIR}/wt_config.xml" CACHE PATH "Path to the wt configuration file")
 
-SET(WEBUSER apache CACHE STRING "Webserver username (e.g. apache or www)")
-SET(WEBGROUP apache CACHE STRING "Webserver groupname (e.g. apache or www or users)")
+SET(WEBUSER www-data CACHE STRING "Webserver username (e.g. apache or www)")
+SET(WEBGROUP www-data CACHE STRING "Webserver groupname (e.g. apache or www or users)")
 
 FIND_PACKAGE(Boost REQUIRED)
 FIND_PACKAGE(Wt REQUIRED)
 #FIND_PACKAGE(Fcgi REQUIRED)
-#FIND_PACKAGE(Dtl REQUIRED)
 
 ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
 
@@ -146,8 +145,8 @@ INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css    DESTINATION $
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
-INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml   DESTINATION ${CONFIGDIR} )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local DESTINATION ${CONFIGDIRAPACHE}/sites-available )
-
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/append_wt_config.pl DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
+INSTALL(FILES ${PROJECT_SOURCE_DIR}/../../inst/wt_config_merge.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
 
 

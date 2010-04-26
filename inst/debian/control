@@ -7,8 +7,8 @@ standards-Version: 3.8.1.0
 Homepage: http://sourceforge.net/projects/flugbuch2
 
 Package: flugbuch2
-Architecture: i386
+Architecture: i386 amd64
 Essential: no
-Depends: apache2, libapache2-mod-fastcgi, libfcgi0ldbl, libboost-regex1.35.0, libboost-program-options1.35.0, libboost-date-time1.35.0, libboost-signals1.35.0, libboost-thread1.35.0, libboost-system1.35.0, libboost-filesystem1.35.0, libboost-serialization1.35.0, witty (>= 2.99.2)
+Depends: ${shlibs:Depends}, ${misc:Depends}, apache2, libapache2-mod-fastcgi, xml-twig-tools
 Description: Flight log book for paraglider pilots
  Manage your flights and create statistics.
