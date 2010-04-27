@@ -38,7 +38,9 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	# $(MAKE) clean
-	rm -rf build-release
+	rm -rf $(CURDIR)/../proj/cmake/build-release
+	rm -rf $(CURDIR)/debian/tmp
+	rm -rf $(CURDIR)/debian/flugbuch2
 
 	dh_clean 
 
@@ -50,9 +52,9 @@ install: build
 
 	# Add here commands to install the package into debian/flugbuch2.
 	# $(MAKE) DESTDIR=$(CURDIR)/debian/flugbuch2 install
-	(cd $(CURDIR)/../proj/cmake/build-release; $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/ )
+	(cd $(CURDIR)/../proj/cmake/build-release; $(MAKE) install DESTDIR=$(CURDIR)/debian/flugbuch2/ )
 
-#	cp -R $(CURDIR)/../res $(CURDIR)/debian/tmp/usr/share/flugbuch2/
+
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -82,7 +84,7 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 #	dh_perl
-	dh_makeshlibs -pflugbuch2 -V'flugbuch2 (>= 2.0.5)'
+	dh_makeshlibs -pflugbuch2 -V'flugbuch2 (>= 2.0.8)'
 	dh_shlibdeps -a
 	dh_fixperms
 	dh_installdeb
