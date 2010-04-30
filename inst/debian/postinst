@@ -17,7 +17,7 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-. /usr/share/debconf/confmodule
+#. /usr/share/debconf/confmodule
 #. /usr/share/dbconfig-common/dpkg/postinst.pgsql
 #dbc_go flightpred $@
 
