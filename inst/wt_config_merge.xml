@@ -1,4 +1,4 @@
-<application-settings location="/usr/share/flugbuch2/www_docroot/flightpred_web.fcgi">
+<application-settings location="/usr/share/flugbuch2/www_docroot/flugbuch2_wt.fcgi">
 	<session-management>
 		<timeout>3600</timeout>
 	</session-management>

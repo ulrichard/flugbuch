@@ -138,12 +138,12 @@ PROPERTIES
   DEBUG_POSTFIX "d"
 )
 
-INSTALL(TARGETS   flugbuch2_wt.fcgi  RUNTIME                           DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2 )
-INSTALL(TARGETS   flugbuch2_wt_http  RUNTIME                           DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2 )
-INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2 )
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/ )
+INSTALL(TARGETS   flugbuch2_wt.fcgi  RUNTIME                           DESTINATION share/flugbuch2/www_docroot )
+INSTALL(TARGETS   flugbuch2_wt_http  RUNTIME                           DESTINATION share/flugbuch2/www_docroot )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
+INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local     DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/append_wt_config.pl DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config_merge.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)

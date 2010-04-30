@@ -5,6 +5,23 @@
 
 set -e
 
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+. /usr/share/debconf/confmodule
+#. /usr/share/dbconfig-common/dpkg/postinst.pgsql
+#dbc_go flightpred $@
+
+
 case "$1" in
 	configure)	
 		# set up the environment for the webapp
@@ -16,6 +33,8 @@ case "$1" in
 
 		mkdir -p /usr/share/flugbuch2/igc
 		chown -R www-data:www-data /usr/share/flugbuch2/igc
+
+		chown -R www-data:www-data /usr/share/flugbuch2/www_docroot
 
 		if ! grep -q "^flugbuch2:" /etc/wt/wt_config.xml ; then
 			chmod +x /usr/share/flugbuch2/append_wt_config.pl
@@ -29,6 +48,7 @@ case "$1" in
 		echo "register flugbuch2 with apache"
 		a2ensite flugbuch2.local
 		/etc/init.d/apache2 restart
+		echo "apache restarted"
 		;;
 	*)
 		#
