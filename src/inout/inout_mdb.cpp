@@ -49,24 +49,24 @@ FlightDatabase inout_mdb::read(const bfs::path &source)
 {
 	FlightDatabase fldb("");
     // the areas can be used as is
-	parse_csv(export_csv(source, "Laender"),       ::bind(&inout_mdb::readCountry,    this, ::_1));
-	parse_csv(export_csv(source, "Fluggebiete"),   ::bind(&inout_mdb::readFlightArea, this, ::_1));
+	parse_csv(export_csv(source, "Laender"),       ::bind(&inout_mdb::readCountry,    this, boost::arg<1>()));
+	parse_csv(export_csv(source, "Fluggebiete"),   ::bind(&inout_mdb::readFlightArea, this, boost::arg<1>()));
     for(map<unsigned int, shared_ptr<FlightArea> >::iterator it = areas_.begin(); it != areas_.end(); ++it)
         fldb.addFlightArea(it->second);
     // the gliders can be used as is
-	parse_csv(export_csv(source, "Gleitschirme"),  ::bind(&inout_mdb::readGlider,     this, ::_1));
+	parse_csv(export_csv(source, "Gleitschirme"),  ::bind(&inout_mdb::readGlider,     this, boost::arg<1>()));
     for(map<unsigned int, shared_ptr<Glider> >::iterator it = gliders_.begin(); it != gliders_.end(); ++it)
         fldb.addGlider(it->second);
     // we have to consolidate the locations
-	parse_csv(export_csv(source, "Startplaetze"),  ::bind(&inout_mdb::readLocation,   this, ::_1, ref(takeoffs_)));
-	parse_csv(export_csv(source, "Landeplaetze"),  ::bind(&inout_mdb::readLocation,   this, ::_1, ref(landings_)));
-	parse_csv(export_csv(source, "Wegpunkte"),     ::bind(&inout_mdb::readLocation,   this, ::_1, ref(waypoints_)));
-	parse_csv(export_csv(source, "lnkWegpFluege"), ::bind(&inout_mdb::readWptLink,    this, ::_1));
-    for_each(takeoffs_.begin(),  takeoffs_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_TAKEOFF, ref(fldb)));
-    for_each(landings_.begin(),  landings_.end(),  ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_LANDING, ref(fldb)));
-    for_each(waypoints_.begin(), waypoints_.end(), ::bind(&inout_mdb::consolidateLocation, this, ::_1, Location::UA_WAYPNT,  ref(fldb)));
+	parse_csv(export_csv(source, "Startplaetze"),  ::bind(&inout_mdb::readLocation,   this, boost::arg<1>(), ref(takeoffs_)));
+	parse_csv(export_csv(source, "Landeplaetze"),  ::bind(&inout_mdb::readLocation,   this, boost::arg<1>(), ref(landings_)));
+	parse_csv(export_csv(source, "Wegpunkte"),     ::bind(&inout_mdb::readLocation,   this, boost::arg<1>(), ref(waypoints_)));
+	parse_csv(export_csv(source, "lnkWegpFluege"), ::bind(&inout_mdb::readWptLink,    this, boost::arg<1>()));
+    for_each(takeoffs_.begin(),  takeoffs_.end(),  ::bind(&inout_mdb::consolidateLocation, this, boost::arg<1>(), Location::UA_TAKEOFF, ref(fldb)));
+    for_each(landings_.begin(),  landings_.end(),  ::bind(&inout_mdb::consolidateLocation, this, boost::arg<1>(), Location::UA_LANDING, ref(fldb)));
+    for_each(waypoints_.begin(), waypoints_.end(), ::bind(&inout_mdb::consolidateLocation, this, boost::arg<1>(), Location::UA_WAYPNT,  ref(fldb)));
     // flights
-	parse_csv(export_csv(source, "Fluege"),        ::bind(&inout_mdb::readFlight,     this, ::_1));
+	parse_csv(export_csv(source, "Fluege"),        ::bind(&inout_mdb::readFlight,     this, boost::arg<1>()));
     for(map<unsigned int, shared_ptr<Flight> >::iterator it = flights_.begin(); it != flights_.end(); ++it)
         fldb.addFlight(it->second);
     // find gaps in the flight number sequence, and calculate the flown distance

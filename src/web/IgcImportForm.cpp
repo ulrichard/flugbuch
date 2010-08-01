@@ -33,6 +33,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 // standard library
 #include <algorithm>
 #include <numeric>
@@ -190,8 +191,8 @@ void IgcImportForm::fileReceived()
             // optimize the waypoints
             typedef inout_igc::Trackpoints::iterator::value_type track_point_t;
             WaypointOptimizer wptopt;
-            wptopt.initialize(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, ::_1)),
-                              boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, ::_1)));
+            wptopt.initialize(boost::make_transform_iterator(igcfile_.Trackpoints.begin(), boost::bind(&track_point_t::pos_, boost::arg<1>())),
+                              boost::make_transform_iterator(igcfile_.Trackpoints.end(),   boost::bind(&track_point_t::pos_, boost::arg<1>())));
             wptOpt_ = wptopt.optimize();
 
             // use a button group to logically group the options

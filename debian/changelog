@@ -1,3 +1,9 @@
+flugbuch2 (2.0.12) lucid; urgency=low
+
+  * resolved compiler error with ambiguity between the _1 placeholder of boost::bind and boost::lambda::bind with 64 bit compilation. For some reason, the old trick to explicitly specify either bll::_1 or ::_1  didn't work on amd64.
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  01 Aug 2010 21:54:10 +0200
+
 flugbuch2 (2.0.11) lucid; urgency=low
 
   * Moved the debian directory from inst/ to the project root. The source tarball resulting from "dpkg-buildpackage -rfakeroot -S" contained only the inst subdir.
