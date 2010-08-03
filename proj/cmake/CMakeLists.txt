@@ -5,7 +5,7 @@ SET(CMAKE_MODULE_PATH ${flugbuch2_SOURCE_DIR})
 
 SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 0)
-SET(VERSION_MINOR 9)
+SET(VERSION_MINOR 13)
 
 IF(WIN32)
   SET(USERLIB_ROOT "c:/libraries" CACHE PATH "directory containing the dependency libraries")

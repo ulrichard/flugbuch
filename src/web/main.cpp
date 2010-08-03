@@ -143,7 +143,7 @@ void FlightLogApp::loadFlights(shared_ptr<flb::FlightDatabase> fldb)
 
     string footerText;
     if(!readConfigurationProperty("footerText", footerText))
-        footerText = "flugbuch2 ist opensource software im alpha stadium. http://www.sourceforge.net/projects/flugbuch2";
+        footerText = "flugbuch2 ist opensource software im beta stadium. http://www.sourceforge.net/projects/flugbuch2";
 	Wt::WText *txtFooter = new Wt::WText(footerText, Wt::XHTMLUnsafeText);
 	borderLayout->addWidget(txtFooter, Wt::WBorderLayout::South);
 }
