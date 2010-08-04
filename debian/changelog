@@ -2,7 +2,7 @@ flugbuch2 (2.0.14) lucid; urgency=low
 
   * fixed the hanging debian/postinst that troubled a while. I found the solution in the postinst script of the gallery package of which I found a mailing list that indicated that they used to have the same problem.
 
- -- Richard Ulrich <richi@paraeasy.ch>  Wed,  05 Aug 2010 01:15:10 +0200
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  05 Aug 2010 01:15:10 +0200
 
 flugbuch2 (2.0.13) lucid; urgency=low
 
