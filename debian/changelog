@@ -1,3 +1,9 @@
+flugbuch2 (2.0.14~maverick) maverick; urgency=low
+
+  * build for maverick
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  17 Okt 2010 11:40:10 +0200
+
 flugbuch2 (2.0.14) lucid; urgency=low
 
   * fixed the hanging debian/postinst that troubled a while. I found the solution in the postinst script of the gallery package of which I found a mailing list that indicated that they used to have the same problem.
