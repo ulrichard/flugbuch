@@ -1,5 +1,9 @@
 Alias /flugbuch2 /usr/share/flugbuch2/www_docroot
 
+<IfModule mod_fastcgi.c>
+	FastCgiServer /usr/share/flugbuch2/www_docroot/flugbuch2_wt.fcgi -initial-env WT_APP_ROOT=/etc/flugbuch2
+</IfModule>
+
 <Directory /usr/share/flugbuch2/www_docroot>
         Allow from all
         Options ExecCGI FollowSymLinks MultiViews Indexes

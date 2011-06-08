@@ -38,12 +38,6 @@ case "$1" in
 
 		chown -R www-data:www-data /usr/share/flugbuch2/www_docroot
 
-		if ! grep -q "^flugbuch2:" /etc/wt/wt_config.xml ; then
-			chmod +x /usr/share/flugbuch2/append_wt_config.pl
-			/usr/share/flugbuch2/append_wt_config.pl > /etc/wt/wt_config.xml.new
-			mv /etc/wt/wt_config.xml /etc/wt/wt_config.xml.old
-			mv /etc/wt/wt_config.xml.new /etc/wt/wt_config.xml
-		fi
 
 		# register with apache
 		a2enmod fastcgi

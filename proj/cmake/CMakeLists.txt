@@ -5,7 +5,7 @@ SET(CMAKE_MODULE_PATH ${flugbuch2_SOURCE_DIR})
 
 SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 0)
-SET(VERSION_MINOR 14)
+SET(VERSION_MINOR 15)
 
 IF(WIN32)
   SET(USERLIB_ROOT "c:/libraries" CACHE PATH "directory containing the dependency libraries")
@@ -145,7 +145,6 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATI
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local     DESTINATION ${CONFIGDIRAPACHE}/sites-available )
-INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/append_wt_config.pl DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
-INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config_merge.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml       DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
 
 

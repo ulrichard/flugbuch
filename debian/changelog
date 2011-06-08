@@ -1,3 +1,10 @@
+flugbuch2 (2.0.15~natty) natty; urgency=low
+
+  * build for natty
+  * using app-root wt fcgi configuration
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  8 Jun 2011 18:40:10 +0200
+
 flugbuch2 (2.0.14~maverick) maverick; urgency=low
 
   * build for maverick
