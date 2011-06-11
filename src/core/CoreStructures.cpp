@@ -3,8 +3,8 @@
 #include "CoreStructures.h"
 #include "igc_storage.h"
 // ggl (boost sandbox)
-#include <geometry/algorithms/distance.hpp>
-#include <geometry/strategies/geographic/geo_distance.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/extensions/gis/geographic/strategies/vincenty.hpp>
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
@@ -31,11 +31,11 @@ void Location::setHeight(unsigned short height)
     height_   = height;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-double Location::getDistance(const geometry::point_ll_deg &otherpos) const
+double Location::getDistance(const Location::point_ll_deg &otherpos) const
 {
-    if(pos_ == otherpos)
-        return 0.0;
-    const double dist = geometry::distance(pos_, otherpos, geometry::strategy::distance::vincenty<geometry::point_ll_deg>()) / 1000.0;
+//    if(pos_ == otherpos)
+//        return 0.0;
+    const double dist = boost::geometry::distance(pos_, otherpos, boost::geometry::strategy::distance::vincenty<point_ll_deg>()) / 1000.0;
     if(numeric_limits<double>::has_quiet_NaN && dist == numeric_limits<double>::quiet_NaN())
         return 0.0;
     return dist;

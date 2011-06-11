@@ -2,7 +2,7 @@
 #define GENGEOMLIBSERIALIZE_H_INCLUDED
 
 // ggl (boost sandbox)
-#include <geometry/geometries/latlong.hpp>
+#include <boost/geometry/extensions/gis/latlong/latlong.hpp>
 // boost
 #include <boost/serialization/split_free.hpp>
 
@@ -13,7 +13,7 @@ namespace serialization
 {
 
     template <class Archive>
-    void save(Archive &ar, const geometry::point_ll_deg &pos, const unsigned int version)
+    void save(Archive &ar, const boost::geometry::model::ll::point<> &pos, const unsigned int version)
     {
 		double lat(pos.lat()), lon(pos.lon());
 		ar & BOOST_SERIALIZATION_NVP(lat);
@@ -21,17 +21,17 @@ namespace serialization
     }
 
     template <class Archive>
-    void load(Archive &ar, geometry::point_ll_deg &pos, const unsigned int version)
+    void load(Archive &ar, boost::geometry::model::ll::point<> &pos, const unsigned int version)
     {
 		double lat, lon;
 		ar & BOOST_SERIALIZATION_NVP(lat);
 		ar & BOOST_SERIALIZATION_NVP(lon);
-		pos = geometry::point_ll_deg(geometry::latitude<>(lat), geometry::longitude<>(lon));
+		pos = boost::geometry::model::ll::point<>(geometry::latitude<>(lat), geometry::longitude<>(lon));
     }
 
 } // namespace serialization
 } // namespace boost
-BOOST_SERIALIZATION_SPLIT_FREE(geometry::point_ll_deg)
+BOOST_SERIALIZATION_SPLIT_FREE(boost::geometry::model::ll::point<>)
 
 
 #endif // GENGEOMLIBSERIALIZE_H_INCLUDED

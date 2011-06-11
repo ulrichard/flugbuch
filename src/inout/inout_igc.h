@@ -5,7 +5,7 @@
 #include "FlightDatabase.h"
 #include "inout.h"
 // ggl (boost sandbox)
-#include <geometry/geometries/latlong.hpp>
+#include <boost/geometry/extensions/gis/latlong/latlong.hpp>
 // boost
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -19,16 +19,17 @@ namespace flb
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 class inout_igc : public inout_flight
 {
+    typedef boost::geometry::model::ll::point<> point_ll_deg;
 private:
     struct track_point
     {
-        track_point(const boost::posix_time::ptime &timestamp, const geometry::point_ll_deg pos, unsigned short alt)
+        track_point(const boost::posix_time::ptime &timestamp, const point_ll_deg pos, unsigned short alt)
             : timestamp_(timestamp), pos_(pos), alt_(alt) { }
         track_point(const track_point &tpnt)
             : timestamp_(tpnt.timestamp_), pos_(tpnt.pos_), alt_(tpnt.alt_) {}
 
         boost::posix_time::ptime timestamp_;
-        geometry::point_ll_deg pos_;
+        point_ll_deg pos_;
         unsigned short  alt_;
     };
 public:

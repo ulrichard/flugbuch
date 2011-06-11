@@ -23,9 +23,8 @@
 // flugbuch
 using namespace flb;
 // ggl
-using geometry::point_ll_deg;
-using geometry::latitude;
-using geometry::longitude;
+using boost::geometry::latitude;
+using boost::geometry::longitude;
 // boost
 using boost::lexical_cast;
 using boost::bind;
@@ -44,6 +43,8 @@ using std::pair;
 using std::make_pair;
 using std::count;
 
+
+typedef boost::geometry::model::ll::point<> point_ll_deg;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_mdb::read(const bfs::path &source)
 {

@@ -2,9 +2,10 @@
 #define WAYPOINTOPTIMIZER_H_INCLUDED
 
 // ggl (boost sandbox)
-#include <geometry/geometries/latlong.hpp>
-#include <geometry/algorithms/distance.hpp>
-#include <geometry/strategies/spherical/sph_distance.hpp>
+#include <boost/geometry/extensions/gis/latlong/latlong.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
+//#include <boost/geometry/extensions/gis/geographic/strategies/vincenty.hpp>
+#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
 // boost
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -58,7 +59,7 @@ public:
         {
  //           std::cout << "calc distance " << i << " of " << wpt_count << std::endl;
             for(InputIteratorT it2 = begin; it2 != it1; ++it2, ++j)
-                (*dist_mx_)(i, j) = geometry::distance(*it1, *it2, geometry::strategy::distance::haversine<typename InputIteratorT::value_type>());
+                (*dist_mx_)(i, j) = boost::geometry::distance(*it1, *it2, boost::geometry::strategy::distance::haversine<typename InputIteratorT::value_type>());
         }
     }
 

@@ -7,8 +7,8 @@
 #include "FormatStr.h"
 #include "SystemInformation.h"
 // ggl (boost sandbox)
-#include <geometry/algorithms/distance.hpp>
-#include <geometry/strategies/geographic/geo_distance.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
+#include <boost/geometry/extensions/gis/geographic/strategies/vincenty.hpp>
 // witty
 #include <Wt/WFileUpload>
 #include <Wt/WContainerWidget>
@@ -52,6 +52,8 @@ using std::vector;
 using std::map;
 using std::pair;
 using std::remove_copy_if;
+
+typedef boost::geometry::model::ll::point<> point_ll_deg;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 NewLocationField::NewLocationField(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -210,8 +212,8 @@ void IgcImportForm::fileReceived()
                     inout_igc::Trackpoints::iterator pit1 = igcfile_.Trackpoints.begin();
                     std::advance(pit0, *it0);
                     std::advance(pit1, *it1);
-                    leglengths.push_back(geometry::distance(pit0->pos_, pit1->pos_,
-                                                            geometry::strategy::distance::vincenty<geometry::point_ll_deg>()));
+                    leglengths.push_back(boost::geometry::distance(pit0->pos_, pit1->pos_,
+                                                            boost::geometry::strategy::distance::vincenty<point_ll_deg>()));
                 }
                 const double dist = std::accumulate(leglengths.begin(), leglengths.end(), 0.0) / 1000.0;
 
@@ -299,30 +301,30 @@ void IgcImportForm::changeWptStrategy()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 struct locfiltusg
 {
-    locfiltusg(const geometry::point_ll_deg &pos, const Location::UseAs usage) : pos_(pos), usage_(usage) { }
+    locfiltusg(const point_ll_deg &pos, const Location::UseAs usage) : pos_(pos), usage_(usage) { }
 
     bool operator()(boost::shared_ptr<Location> loc)
     {
         return (!(loc->usage() & usage_) || loc->getDistance(pos_) > distThreshold_);
     }
 
-    const geometry::point_ll_deg &pos_;
+    const point_ll_deg &pos_;
     const Location::UseAs usage_;
     static const double distThreshold_ = 0.3; // km
 };
 struct distsorter
 {
-    distsorter(const geometry::point_ll_deg &pos) : pos_(pos) { }
+    distsorter(const point_ll_deg &pos) : pos_(pos) { }
 
     bool operator()(const boost::shared_ptr<Location> lhs, const boost::shared_ptr<Location> rhs)
     {
         return (lhs->getDistance(pos_) < rhs->getDistance(pos_));
     }
 
-    const geometry::point_ll_deg &pos_;
+    const point_ll_deg &pos_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, const geometry::point_ll_deg &pos, const Location::UseAs usage, const size_t trpid)
+Wt::WWidget * IgcImportForm::setTurnpointField(Wt::WContainerWidget *parent, const point_ll_deg &pos, const Location::UseAs usage, const size_t trpid)
 {
     static const double distThreshold = 0.3; // km
     // find the waypoint

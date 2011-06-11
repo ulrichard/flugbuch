@@ -1,5 +1,6 @@
 flugbuch2 (2.0.15~natty) natty; urgency=low
 
+  * adapted to more recent version of boost::geometry
   * build for natty
   * using app-root wt fcgi configuration
 

@@ -49,7 +49,7 @@ using namespace boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
 
-
+typedef boost::geometry::model::ll::point<> point_ll_deg;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -182,7 +182,7 @@ void LocationTableRow::save()
         location_->setHeight(nfHeight_->value());
         // position
         assert(pfPosition_);
-        location_->setPosition(geometry::point_ll_deg(geometry::latitude<>(pfPosition_->pos().first), geometry::longitude<>(pfPosition_->pos().second)));
+        location_->setPosition(point_ll_deg(boost::geometry::latitude<>(pfPosition_->pos().first), boost::geometry::longitude<>(pfPosition_->pos().second)));
         // usage
         assert(cbTakeoff_ && cbLanding_ && cbWayPnt_);
         int usage = 0;
@@ -230,7 +230,7 @@ void LocationTableRow::map()
 	gmap->disableDoubleClickZoom();
 	gmap->enableDragging();
 	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
-    const geometry::point_ll_deg pdpos = location_->pos();
+    const point_ll_deg pdpos = location_->pos();
     if(pdpos.lat() != 0.0 && pdpos.lon() != 0.0)
     {
         Wt::WGoogleMap::Coordinate lalo(pdpos.lat(), pdpos.lon());
@@ -296,8 +296,8 @@ void LocationTable::addNewLocation()
     }
     shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
 
-    shared_ptr<Location> newLocation(new Location(area, "", 0, geometry::point_ll_deg(geometry::latitude<>(0.0),
-                                                               geometry::longitude<>(0.0)), Location::UA_TAKEOFF));
+    shared_ptr<Location> newLocation(new Location(area, "", 0, point_ll_deg(boost::geometry::latitude<>(0.0),
+                                                               boost::geometry::longitude<>(0.0)), Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
     LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++, true);
     newRow->edit();

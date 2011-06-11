@@ -17,14 +17,15 @@
 // flugbuch
 using namespace flb;
 // ggl
-using geometry::point_ll_deg;
-using geometry::latitude;
-using geometry::longitude;
-using geometry::dms;
-using geometry::north;
-using geometry::south;
-using geometry::east;
-using geometry::west;
+//using geometry::point_ll_deg;
+using boost::geometry::latitude;
+using boost::geometry::longitude;
+using boost::geometry::dms;
+using boost::geometry::north;
+using boost::geometry::south;
+using boost::geometry::east;
+using boost::geometry::west;
+
 // boost
 using namespace boost::lambda;
 using boost::shared_ptr;
@@ -40,7 +41,10 @@ using std::remove_copy_if;
 using std::remove_if;
 using std::copy;
 using std::endl;
- /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
+
+typedef boost::geometry::model::ll::point<> point_ll_deg;
+
+/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightDatabase::addFlightArea(shared_ptr<FlightArea> flar)
 {
 	if(find(FlightAreas_.begin(), FlightAreas_.end(), flar) != FlightAreas_.end())

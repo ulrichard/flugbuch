@@ -47,19 +47,19 @@ FIND_PACKAGE(Wt REQUIRED)
 ADD_DEFINITIONS(-DWT_THREADED -D_REENTRANT -DBOOST_SPIRIT_THREADSAFE)
 
 # Make sure the compiler can find include files.
-include_directories (${PROJECT_SOURCE_DIR}/../../src) 
+include_directories (${PROJECT_SOURCE_DIR}/../../src)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/core)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/inout)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/web)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/util)
 include_directories (${PROJECT_SOURCE_DIR}/../../src/web/stat)
-include_directories (${PROJECT_SOURCE_DIR}/../../lib/ggl/boost/ggl)
+include_directories (${PROJECT_SOURCE_DIR}/../../lib/ggl)
 include_directories (${BOOST_INCLUDE_DIRS})
 include_directories (${Wt_INCLUDE_DIR})
 #include_directories (${DTL_INCLUDE_DIRS})
 
 
-set(FLUGBUCH2_SOURCE_FILES 
+set(FLUGBUCH2_SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/../../src/core/CoreStructures.cpp
 	${PROJECT_SOURCE_DIR}/../../src/core/FlightDatabase.cpp
 	${PROJECT_SOURCE_DIR}/../../src/core/WaypointOptimizer.cpp
@@ -86,45 +86,45 @@ set(FLUGBUCH2_SOURCE_FILES
 )
 
 IF(WIN32)
-  set(FLUGBUCH2_SOURCE_FILES 
+  set(FLUGBUCH2_SOURCE_FILES
     ${FLUGBUCH2_SOURCE_FILES}
     ${PROJECT_SOURCE_DIR}/../../src/inout/inout_mdb_win.cpp
   )
 ELSE(WIN32)
-  set(FLUGBUCH2_SOURCE_FILES 
+  set(FLUGBUCH2_SOURCE_FILES
     ${FLUGBUCH2_SOURCE_FILES}
     ${PROJECT_SOURCE_DIR}/../../src/inout/inout_mdb.cpp
   )
 ENDIF(WIN32)
 
-add_executable(flugbuch2_wt.fcgi 
+add_executable(flugbuch2_wt.fcgi
 	${FLUGBUCH2_SOURCE_FILES}
 )
 
-add_executable(flugbuch2_wt_http 
+add_executable(flugbuch2_wt_http
 	${FLUGBUCH2_SOURCE_FILES}
 )
 
 # Link the executable library.
-target_link_libraries(flugbuch2_wt.fcgi 
+target_link_libraries(flugbuch2_wt.fcgi
 	${BOOST_FLB_LIBRARIES}
 	${Wt_LIBRARY}
-	${Wt_EXT_LIBRARY}	
+	${Wt_EXT_LIBRARY}
 	${Wt_FCGI_LIBRARY}
 #	${FCGI_LIBRARIES}
 #	${DTL_LIBRARIES}
 #	odbc
 
-) 
+)
 
 target_link_libraries(flugbuch2_wt_http
 	${BOOST_FLB_LIBRARIES}
 	${Wt_LIBRARY}
 	${Wt_HTTP_LIBRARY}
-	${Wt_EXT_LIBRARY}	
+	${Wt_EXT_LIBRARY}
 #	${DTL_LIBRARIES}
 #	odbc
-) 
+)
 
 IF(WIN32)
   TARGET_LINK_LIBRARIES(flugbuch2_wt.fcgi winmm wsock32)
@@ -143,7 +143,7 @@ INSTALL(TARGETS   flugbuch2_wt_http  RUNTIME                           DESTINATI
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
-INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/resources            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
+INSTALL(DIRECTORY /usr/share/Wt/resources                              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local     DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml       DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2)
 

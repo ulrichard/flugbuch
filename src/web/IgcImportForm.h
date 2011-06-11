@@ -63,6 +63,7 @@ private:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 class IgcImportForm : public Wt::Ext::Dialog
 {
+    typedef boost::geometry::model::ll::point<> point_ll_deg;
 public:
     IgcImportForm(boost::shared_ptr<flb::FlightDatabase> flightDb);
     virtual ~IgcImportForm();
@@ -72,7 +73,7 @@ private:
     void fileReceived();
     void addFlight();
     void changeWptStrategy();
-    Wt::WWidget * setTurnpointField(Wt::WContainerWidget *parent, const geometry::point_ll_deg &pos, const flb::Location::UseAs usage, const size_t trpid);
+    Wt::WWidget * setTurnpointField(Wt::WContainerWidget *parent, const point_ll_deg &pos, const flb::Location::UseAs usage, const size_t trpid);
 
 
     boost::shared_ptr<flb::FlightDatabase> flightDb_;
