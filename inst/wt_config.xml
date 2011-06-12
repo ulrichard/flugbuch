@@ -146,14 +146,76 @@
 
                The default value is 1.
 	      -->
-	    <num-threads>1</num-threads>
+	    <num-threads>4</num-threads>
 
 	</connector-fcgi>
 
-        <!-- Enable debug
+	<!-- Settings that apply only to the MS IIS ISAPI connector.
 
-	     When enabled,
-	     - JavaScript errors are not caught to display an error message.
+	   To configure the wthttpd connector, use command line options, or
+	   configure default options in /etc/wt/wthttpd
+	  -->
+	<connector-isapi>
+	    <!-- Number of threads per process
+
+               This configures the number of threads that will be used
+               to handle Wt requests. The IIS internal threads are never
+               used to do any processing; all requests are forwarded to
+               be handled in this threadpool. Rather than to configure a
+               so-called 'web-garden' in IIS, increase this number. The
+               ISAPI connector will not work correctly when a web-garden
+               is configured.
+
+               You may want to change this value if you would like to
+               support more reentrant event loops, where you block one
+               event loop using WDialog::exec() or related static
+               methods. Everytime you enter such an event loop, one
+               thread is blocked, and therefore the total number of
+               sessions that reliably can do this is limited to the
+               number of thread you have (minus one to unblock).
+
+               You may also want to increase this number if your Wt
+               application is regularly waiting for IO (databases, network,
+               files, ...). If this number is too low, all threads could
+               be waiting for IO operations to complete while your CPU
+               is idle. Increasing the number of threads may help.
+
+               Computing intensive applications may also increase this number,
+               even though it is better to offload computations to a helper
+               thread and user server push or a WTimer to check for
+               completion of the task in order to keep your GUI responsive
+               during the computations.
+
+               The default value is 10.
+	      -->
+	    <num-threads>10</num-threads>
+
+	    <!-- Maximum Request Size spooled in memory (Kb)
+        
+               Normally, Wt keeps incoming requests (POST data) in memory.
+               However, malicious users could send a big POST and as such
+               use up all memory of your HTTP server. With this parameter,
+               you tune how big a request can be before Wt spools it in a
+               file before processing it. Legitimate big POST messages may
+               occur when users are expected to upload files.
+
+               See also max-request-size.
+
+               The default value is 128K, which is more than enough for
+               any interactive Wt event.
+	      -->
+	    <max-memory-request-size>128</max-memory-request-size>
+	</connector-isapi>
+
+        <!-- Javascript debug options
+
+	     Values:
+	     - true: JavaScript errors are not caught but the browser
+	             built-in debug options are used
+	     - stack: JavaScript errors are caught but also a stack trace
+                      is printed, useful for diagnosing a problem in production
+	     - false: JavaScript errors are caught and a simple error message
+	              is printed to indicate that something is terribly wrong
 	  -->
 	<debug>false</debug>
 
@@ -166,7 +228,11 @@
          -->
 	<log-file></log-file>
 
-	<!-- Maximum HTTP request size (Kb) -->
+	<!-- Maximum HTTP request size (Kb)
+
+           Maximum size of an incoming POST request. This value must be
+           increased when the user is allowed to upload files.
+         -->
 	<max-request-size>5120</max-request-size>
 
 	<!-- Session id length (number of characters) -->
@@ -175,17 +241,16 @@
 	<!-- Send the XHTML mime type when appropriate
 
 	   Wt renders XHTML1 (XML variant of HTML) that is backward-compatible
-	   with HTML. In this way, Wt is capable of supporting XHTML-only
+	   with HTML. Using XHTML, Wt is capable of supporting XHTML-only
 	   features such as embedded SVG or MathML.
 
-	   The browser renders the document as XHTML or HTML depending on the
-	   mime-type that is set. By default Wt sets an XHTML mime-type
-	   (application/xhtml+xml) when the browser reports support for it. Most
-	   notably, Internet Explorer does not support it.  Because XHTML and
-	   HTML are slightly different with respect to default CSS rules, you
-	   may want to disable sending the XHTML mime-type alltogether, at least
-	   if you are not using SVG (used by the WPaintedWidget).
-	  -->
+	   When enabled, JWt sets an XHTML mime-type
+	   (application/xhtml+xml) when the browser reports support
+	   for it. Most notably, Internet Explorer does not support
+	   it.  Because XHTML and HTML are slightly different with
+	   respect to default CSS rules, you may want to disable
+	   sending the XHTML mime-type alltogether, at least if you
+	   are not using SVG (used by the WPaintedWidget).  -->
 	<send-xhtml-mime-type>false</send-xhtml-mime-type>
 
 	<!-- Do strict serialization of events.
@@ -210,6 +275,28 @@
 	   true.
 	  -->
 	<strict-event-serialization>false</strict-event-serialization>
+
+	<!-- Enables web socket.
+
+	   By default AJAX and long polling are used to communicate
+	   between server and browser.
+
+           By enabling web socket support, if the browser supports
+           WebSockets, then WebSocket is the protocol used for
+           communication between client and server. WebSockets are
+           currently only supported by the built-in httpd Connector,
+	   which acts as both an HTTP and WebSocket server. The WebSocket
+	   protocol is intentionally not compatible with HTTP, through 
+	   a special hand-shake mechanism, and requires
+           that all (reverse) proxy servers also have explicit support
+           for this protocol.
+
+           This feature is still experimental: the Web Sockets RFC is
+           still a draft with ongoing changes to the framing protocol,
+	   and the current implementation is based on
+	   http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-00
+	  -->
+	<web-sockets>false</web-sockets>
 
 	<!-- Redirect message shown for browsers without JavaScript support
 
@@ -239,35 +326,41 @@
            stylesheet when first used. This can be disabled using this
 	   configuration option.
 
-           Note: some widgets, such as WTreeView, dynamically
-           manipulate rules in this stylesheet, and will no longer
-           work properly when inline-css is disabled.
+           Note: some widgets, such as WTreeView and WTableView,
+           dynamically manipulate rules in this stylesheet, and will
+           no longer work properly when inline-css is disabled.
 	  -->
 	<inline-css>true</inline-css>
 
+	<!-- The timeout before showing the loading indicator.
+
+	   The value is specified in ms.
+          -->
+	<indicator-timeout>500</indicator-timeout>
+
 	<!-- Ajax user agent list
 
-            Wt considers three types of sessions:
-	    - AJAX sessions: use AJAX and JavaScript
-	    - plain HTML sessions: use plain old server POSTs
-	    - bots: have clean internal paths and no persistent sessions
+           Wt considers three types of sessions:
+	   - AJAX sessions: use AJAX and JavaScript
+	   - plain HTML sessions: use plain old server GETs and POSTs
+	   - bots: have clean internal paths and no persistent sessions
 
-            By default, Wt does a browser detection to distinguish between
-	    the first two: if a browser supports JavaScript (and has it
-	    enabled), and has an AJAX DOM API, then AJAX sessions are chosen,
-	    otherwise plain HTML sessions.
+           By default, Wt does a browser detection to distinguish between
+	   the first two: if a browser supports JavaScript (and has it
+	   enabled), and has an AJAX DOM API, then AJAX sessions are chosen,
+	   otherwise plain HTML sessions.
 
-            Here, you may indicate which user agents should or should
-            not receive an AJAX session regardless of what they report as
-	    capabilities.
+           Here, you may indicate which user agents should or should
+           not receive an AJAX session regardless of what they report as
+	   capabilities.
 
-            Possible values for 'mode' or "white-list" or "black-list". A
-	    white-list will only treat the listed agents as supporting AJAX,
-	    all other agents will be served plain HTML sessions. A black-list
-	    will always server plain HTML sessions to listed agents and
-	    otherwise rely on browser capability detection.
+           Possible values for 'mode' or "white-list" or "black-list". A
+	   white-list will only treat the listed agents as supporting AJAX,
+	   all other agents will be served plain HTML sessions. A black-list
+	   will always server plain HTML sessions to listed agents and
+	   otherwise rely on browser capability detection.
 
-            Each <user-agent> is a regular expression.
+           Each <user-agent> is a regular expression.
 	  -->
 	<user-agents type="ajax" mode="black-list">
 	  <!-- <user-agent>.*Crappy browser.*</user-agent> -->
@@ -275,10 +368,10 @@
 
 	<!-- Bot user agent list
 
-            Here, you can specify user agents that should be should be
-            treated as bots.
+           Here, you can specify user agents that should be should be
+           treated as bots.
 
-            Each <user-agent> is a regular expression.
+           Each <user-agent> is a regular expression.
 	  -->
 	<user-agents type="bot">
 	  <user-agent>.*Googlebot.*</user-agent>
@@ -290,6 +383,16 @@
 	  <user-agent>.*Twiceler.*</user-agent>
 	</user-agents>
 
+	<!-- Whether the progressive bootstrap is used.
+
+	   The default bootstrap method first senses whether there is AJAX
+	   support, and only then creates the application.
+
+	   The progressive bootstrap method first renders a plain HTML
+	   version and later upgrades to an AJAX version.
+	  -->
+	<progressive-bootstrap>false</progressive-bootstrap>
+
 	<!-- Runtime Properties
      
            These properties may be used to adapt applications to their
@@ -297,19 +400,38 @@
 	   that may or may not be shared between several applications.
 	  -->
 	<properties>
-            <!-- resources property
+	    <!-- baseURL property
 
-	       The location of the resources/ folder that is part of the Wt
-	       distribution.
+	       The absolute URL at which the application is deployed
+	       (known to the user). This may be a reverse-proxified URL
+	       when the app is deployed behind a reverse proxy. This is
+               set as base URL in the HTML so that relative URLs (to e.g.
+	       css, images, etc...) work correctly regardless of the
+               internal path.
+
+	       Eg. "http://www.webtoolkit.eu/"
+
+	       The default value is empty, in which case the base URL is
+               explicitly set. Note that for most applications (which do
+	       not use internal paths and rely on relative URls) this is
+	       fine.
+	      -->
+	    <property name="baseURL"></property>
+
+            <!-- resourcesURL property
+
+	       The URL at which the resources/ folder is deploeyd that
+	       comes distributed with Wt and contains auxiliary files
+	       used to primarily for styles and themes.
 
 	       The default value is 'resources/'
               -->
-	    <property name="resources">resources/</property>
+	    <property name="resourcesURL">resources/</property>
 
 	    <!-- extBaseURL property
 
                Used in conjunction with Ext:: widgets, and points to the
-	       location of Ext JavaScript and resource files (css, images).
+	       URL of Ext JavaScript and resource files (css, images).
 	       See the documentation for the Ext namespace for details.
 
 	       The default value is 'ext/'
@@ -326,6 +448,14 @@
 	      -->
 	    <!-- <property name="favicon">images/favicon.ico</property> -->
 
+	    <!-- oldInternalPathAPI property
+
+	       Since wt 2.99.3, the internal path API has been simplified.
+	       The API functions are still the same, but the semantics have
+	       changed. To keep using the old semantics (which are deprecated
+	       but still implemented) you can set this property.
+	      -->
+	    <!-- <property name="oldInternalPathAPI">true</property> -->
 	</properties>
 
     </application-settings>
@@ -343,27 +473,22 @@
        location="/var/www/localhost/wt-examples/hello.wt">
     </application-settings>
     -->
-    <application-settings location="/home/paraeasy/flugbuch2/flugbuch2_wt.fcgi">
-	<session-management>
-	    <timeout>3600</timeout>
-	</session-management>
-	<max-request-size>5120</max-request-size>
-	<session-id-length>16</session-id-length>
-	<properties>
-	    <property name="persistenceDir">/home/paraeasy/flugbuch2/data</property>
-	    <property name="google_api_key">ABQIAAAAWqrN5o4-ISwj0Up_depYvhS5xVgjcBp1Rg20t8xmBonmOp0fbBQ9c6aO458KNtGzpz2uUSlAczglvQ</property>
-	</properties>
-    </application-settings>
-    <application-settings location="/home/paraeasy/flugbuch2/flugbuch2.fcgi">
-	<session-management>
-	    <timeout>3600</timeout>
-	</session-management>
-	<max-request-size>5120</max-request-size>
-	<session-id-length>16</session-id-length>
-	<properties>
-	    <property name="persistenceDir">/home/paraeasy/flugbuch2/data</property>
-	    <property name="google_api_key">ABQIAAAAWqrN5o4-ISwj0Up_depYvhS5xVgjcBp1Rg20t8xmBonmOp0fbBQ9c6aO458KNtGzpz2uUSlAczglvQ</property>
-            <property name="footerText">flgbuch2 ist opensource software von &lt;a href="http://www.sourceforge.net"&gt;. Die Anwendung ins noch im alpha stadium und l&auml;uft auf einem ALIX board von &lt;a href="http://www.pcengines.ch"&gt;pcengines.ch&lt;/a&gt;</property>
-	</properties>
-    </application-settings>
+       
+	<application-settings location="/usr/share/flugbuch2/www_docroot/flugbuch2_wt.fcgi">
+		<session-management>
+			<timeout>3600</timeout>
+		</session-management>
+		<connector-fcgi>
+			<run-directory>/usr/run/flugbuch2</run-directory>
+		</connector-fcgi>
+		<max-request-size>5120</max-request-size>
+		<session-id-length>16</session-id-length>
+		<progressive-bootstrap>true</progressive-bootstrap>
+		<properties>
+			<property name="persistenceDir">/usr/share/flugbuch2/data</property>
+			<property name="google_api_key">ABQIAAAAWqrN5o4-ISwj0Up_depYvhS5xVgjcBp1Rg20t8xmBonmOp0fbBQ9c6aO458KNtGzpz2uUSlAczglvQ</property>
+			<property name="footerText">flugbuch2 is opensource software from www.sourceforge.net/projects/flugbuch2/  The application is still in beta.</property>
+			<property name="igcBaseDir">/usr/share/flugbuch2/igc</property>
+		</properties>
+	</application-settings>
 </server>

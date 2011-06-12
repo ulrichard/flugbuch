@@ -1,4 +1,4 @@
-flugbuch2 (2.0.15~natty) natty; urgency=low
+flugbuch2 (2.0.16~natty) natty; urgency=low
 
   * adapted to more recent version of boost::geometry
   * build for natty
