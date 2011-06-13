@@ -1,6 +1,6 @@
 #!/bin/sh
 # build a debian sourcepackage and upload it to the launchpad ppa
-FLUGBUCHVERSIONSTR=2.0.16~natty
+FLUGBUCHVERSIONSTR=2.0.17~natty
 export GPGKEY=DA94BB53
 export DEBEMAIL="richi@paraeasy.ch"
 export DEBFULLNAME="Richard Ulrich"
