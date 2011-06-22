@@ -144,7 +144,9 @@ INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css        DESTINATI
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY /usr/share/Wt/resources                              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
-INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local     DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.local         DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.homelinux.org DESTINATION ${CONFIGDIRAPACHE}/sites-available )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/flugbuch2.ulrichard.ch  DESTINATION ${CONFIGDIRAPACHE}/sites-available )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../inst/wt_config.xml       DESTINATION /etc/flugbuch2)
 
 

@@ -43,6 +43,8 @@ case "$1" in
 		a2enmod fastcgi
 		echo "register flugbuch2 with apache"
 		a2ensite flugbuch2.local
+		a2ensite flugbuch2.homelinux.org
+		a2ensite flugbuch2.ulrichard.ch
 	
 		db_stop
 

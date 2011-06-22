@@ -1,5 +1,5 @@
 <VirtualHost *:80>	
-	ServerName flugbuch2.homelinux.org
+	ServerName flugbuch2.ulrichard.ch
 	DocumentRoot /usr/share/flugbuch2/www_docroot
 	ServerAdmin richi@paraeasy.ch
 	
