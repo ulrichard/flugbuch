@@ -3,10 +3,6 @@
 	DocumentRoot /usr/share/flugbuch2/www_docroot
 	ServerAdmin richi@paraeasy.ch
 	
-	<IfModule mod_fastcgi.c>
-		FastCgiServer /usr/share/flugbuch2/www_docroot/flugbuch2_wt.fcgi -initial-env WT_APP_ROOT=/etc/flugbuch2
-	</IfModule>
-
 	<Directory /usr/share/flugbuch2/www_docroot>
 		Options FollowSymLinks MultiViews ExecCGI
 		DirectoryIndex flugbuch2_wt.fcgi
