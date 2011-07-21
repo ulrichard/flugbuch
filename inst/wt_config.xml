@@ -486,7 +486,7 @@
 		<progressive-bootstrap>true</progressive-bootstrap>
 		<properties>
 			<property name="persistenceDir">/usr/share/flugbuch2/data</property>
-			<property name="google_api_key">ABQIAAAAWqrN5o4-ISwj0Up_depYvhS5xVgjcBp1Rg20t8xmBonmOp0fbBQ9c6aO458KNtGzpz2uUSlAczglvQ</property>
+			<property name="google_api_key">ABQIAAAAWqrN5o4-ISwj0Up_depYvhTeoJQCileQXTuFET8v0EV9uh_j3RSNterv7TicuE8-GNbI4Mr89fqyOQ</property>
 			<property name="footerText">flugbuch2 is opensource software from www.sourceforge.net/projects/flugbuch2/  The application is still in beta.</property>
 			<property name="igcBaseDir">/usr/share/flugbuch2/igc</property>
 		</properties>

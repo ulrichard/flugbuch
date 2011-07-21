@@ -1,3 +1,9 @@
+flugbuch2 (2.0.18~natty) natty; urgency=low
+
+  * updating to libwt 3.1.10
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  21 Jul 2011 18:40:10 +0200
+
 flugbuch2 (2.0.17~natty) natty; urgency=low
 
   * adapted to more recent version of boost::geometry
