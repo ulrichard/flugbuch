@@ -62,7 +62,7 @@ private:
     DetailTableBase        *table_;
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-class DetailTableBase : public Wt::WTable, boost::noncopyable
+class DetailTableBase : public Wt::WTable
 {
 public:
 	DetailTableBase(boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent = 0);
@@ -82,7 +82,9 @@ protected:
 	unsigned short                          entriesPerPage_;
 	unsigned short                          pageNr_;
 	unsigned short                          insertRowNr_;
-
+private:
+    DetailTableBase(const DetailTableBase&);
+    DetailTableBase& operator=(const DetailTableBase&);
 };
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 }

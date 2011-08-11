@@ -74,7 +74,6 @@ void inout_igc::read(const boost::filesystem::path &source)
         }
        else if(line[0] == 'B')
         {
-            double lat, lon;
             int hh, mm, ss;
             int latdeg, latminute, latmindec;
             int londeg, lonminute, lonmindec;
@@ -88,12 +87,12 @@ void inout_igc::read(const boost::filesystem::path &source)
                     &hh, &mm, &ss, &latdeg, &latminute, &latmindec, &northsouth, &londeg,
                     &lonminute, &lonmindec, &eastwest, &valid, &altPress, &altGPS) == 14)
             {
-                lat = ((double) latdeg + ((double) latminute / 60.0) + ((double) latmindec / 60000.0));
-                lon = ((double) londeg + ((double) lonminute / 60.0) + ((double) lonmindec / 60000.0));
+                const double lat = ((double) latdeg + ((double) latminute / 60.0) + ((double) latmindec / 60000.0));
+                const double lon = ((double) londeg + ((double) lonminute / 60.0) + ((double) lonmindec / 60000.0));
 
                 track_point tpt(bpt::ptime(date_, bpt::time_duration(hh, mm, ss)),
                                 point_ll_deg(boost::geometry::latitude<>(northsouth == 'N' ? lat : -lat),
-                                             boost::geometry::longitude<>(eastwest   == 'E' ? lon : -lon)),
+                                             boost::geometry::longitude<>(eastwest  == 'E' ? lon : -lon)),
                                 altGPS ? altGPS : altPress);
                 track_points_.push_back(tpt);
             }

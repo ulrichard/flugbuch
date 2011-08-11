@@ -1,6 +1,6 @@
 // flugbuch
 #include "inout_mdb.h"
-#include "SystemInformation.h"
+#include "../util/SystemInformation.h"
 // boost
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -90,7 +90,8 @@ bfs::path inout_mdb::export_csv(const bfs::path &source, const string &tablename
     const bfs::path outfile = flb::SystemInformation::tempDir() / ("flb_imp_" + tablename + ".csv");
     bfs::remove(outfile);
     const string cmd = "mdb-export " + source.external_file_string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.external_file_string();
-    system(cmd.c_str());
+    if(system(cmd.c_str()))
+        throw std::runtime_error("failed to run mdb-export");
     // check if the file was written
     if(!bfs::exists(outfile))
         throw std::runtime_error("failed to write file " + outfile.string());

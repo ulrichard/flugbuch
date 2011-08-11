@@ -30,12 +30,12 @@ class FlightArea
 {
 	friend class boost::serialization::access;
 public:
-    FlightArea(const std::string &name, const std::string &country, const std::string desc) : name_(name), country_(country), descript_(desc) {}
-    FlightArea(const FlightArea &cpy) : name_(cpy.name_), country_(cpy.country_), descript_(cpy.descript_) {}
+    FlightArea(const std::string& name, const std::string& country, const std::string& desc) : name_(name), country_(country), descript_(desc) {}
+    FlightArea(const FlightArea& cpy) : name_(cpy.name_), country_(cpy.country_), descript_(cpy.descript_) {}
     ~FlightArea() {};
 	const FlightArea & operator=(const FlightArea &flar) {FlightArea cpy(flar); std::swap(*this, cpy); return *this; };
-	bool operator==(const FlightArea &flar) { return (flar.name_ == name_ && flar.country_ == country_); }
-	bool operator<(const FlightArea &rhs)   { return (name_ < rhs.name_ || country_ < rhs.country_); }
+	bool operator==(const FlightArea &flar) const { return (flar.name_ == name_ && flar.country_ == country_); }
+	bool operator<(const FlightArea &rhs)   const { return (name_ < rhs.name_ || country_ < rhs.country_); }
     template<class Archive> void serialize(Archive & ar, const unsigned int version)
 	{
 		ar & BOOST_SERIALIZATION_NVP(name_);
@@ -66,10 +66,10 @@ class Location
 public:
 	Location(boost::shared_ptr<FlightArea> area, const std::string &name, unsigned short height, const point_ll_deg &pos, int usage)
 	 : area_(area), name_(name), height_(height), pos_(pos), usageas_(usage) {}
-	Location(const Location &cpy) :  name_(cpy.name_), height_(cpy.height_), pos_(cpy.pos_), usageas_(cpy.usageas_) {}
+	Location(const Location &cpy) : area_(cpy.area_), name_(cpy.name_), height_(cpy.height_), pos_(cpy.pos_), usageas_(cpy.usageas_) {}
     ~Location() {};
 	const Location & operator=(const Location &loc) { Location cpy(loc); std::swap(*this, cpy); return *this; };
-	bool operator==(const Location &loc) { return (loc.name() == name_ && loc.area() == area_); }
+	bool operator==(const Location &loc) const { return (loc.name() == name_ && loc.area() == area_); }
 	// getters
 	const boost::shared_ptr<FlightArea> area() const { return area_; }
 	const std::string            & name()      const { return name_; }
@@ -131,7 +131,7 @@ public:
             color_(cpy.color_), year_(cpy.year_), classi_(cpy.classi_), desc_(cpy.desc_), img_(cpy.img_) {}
     ~Glider() {}
    const Glider & operator=(const Glider& gld) { Glider cpy(gld); std::swap(*this, cpy); return *this; }
-   bool operator==(const Glider &gld) { return (gld.brand_ == brand_ && gld.model_ == model_); }
+   bool operator==(const Glider &gld) const { return (gld.brand_ == brand_ && gld.model_ == model_); }
     template<class Archive> void serialize(Archive & ar, const unsigned int version)
 	{
 		ar & BOOST_SERIALIZATION_NVP(brand_);
@@ -191,12 +191,12 @@ public:
 			landing_(landing), waypoints_(waypoints), distance_(0), story_(story), Waypoints(*this)    { }
 	Flight(const Flight &cpy) : number_(cpy.number_), date_(cpy.date_), airtime_(cpy.airtime_),
 			glider_(cpy.glider_), takeoff_(cpy.takeoff_), landing_(cpy.landing_),
-			waypoints_(cpy.waypoints_), distance_(cpy.distance_), story_(cpy.story_), Waypoints(*this) { }
+			waypoints_(cpy.waypoints_), distance_(cpy.distance_), story_(cpy.story_), igcfile_(cpy.igcfile_), Waypoints(*this) { }
 	~Flight() {}
 	// operators
 	const Flight & operator=(const Flight &flt) { Flight cpy(flt); std::swap(*this, cpy); return *this; }
-	bool operator==(const Flight &flt) { return (flt.number_ == number_); }
-	bool operator <(const Flight &rhs) { return number_ < rhs.number(); }
+	bool operator==(const Flight &flt) const { return (flt.number_ == number_); }
+	bool operator <(const Flight &rhs) const { return number_ < rhs.number(); }
 	// serialization
     template<class Archive> void serialize(Archive & ar, const unsigned int version)
 	{

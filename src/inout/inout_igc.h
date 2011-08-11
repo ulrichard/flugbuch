@@ -2,8 +2,8 @@
 #define INOUT_IGC_H_INCLUDED
 
 // flugbuch
-#include "FlightDatabase.h"
 #include "inout.h"
+#include "../core/FlightDatabase.h"
 // ggl (boost sandbox)
 #include <boost/geometry/extensions/gis/latlong/latlong.hpp>
 // boost

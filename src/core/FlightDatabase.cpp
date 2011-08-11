@@ -1,6 +1,6 @@
 // flugbuch
 #include "FlightDatabase.h"
-#include "FormatStr.h"
+#include "../util/FormatStr.h"
 // boost
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>

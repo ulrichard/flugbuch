@@ -2,8 +2,8 @@
 #define INOUT_H
 
 // flugbuch
-#include "MainExternalIncludes.h"
-#include "FlightDatabase.h"
+#include "../core/MainExternalIncludes.h"
+#include "../core/FlightDatabase.h"
 // boost
 #include <boost/filesystem.hpp>
 #include <boost/utility.hpp>

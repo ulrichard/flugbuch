@@ -2,7 +2,7 @@
 #define IGC_STORAGE_H_INCLUDED
 
 // flugbuch
-#include "FlightDatabase.h"
+#include "../core/FlightDatabase.h"
 // boost
 #include <boost/filesystem.hpp>
 #include <boost/utility.hpp>

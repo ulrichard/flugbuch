@@ -1,7 +1,7 @@
 // flugbuch
 #include "inout_flyhigh.h"
-#include "SystemInformation.h"
-#include "FormatStr.h"
+#include "../util/SystemInformation.h"
+#include "../util/FormatStr.h"
 // mdb odbc
 #define DTL_NO_UNICODE
 #include <dtl/DTL.h>

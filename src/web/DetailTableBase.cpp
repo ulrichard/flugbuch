@@ -1,6 +1,6 @@
 // flugbuch
 #include "DetailTableBase.h"
-#include "FormatStr.h"
+#include "../util/FormatStr.h"
 // witty
 #include <Wt/WText>
 // boost

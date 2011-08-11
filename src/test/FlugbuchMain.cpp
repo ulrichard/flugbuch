@@ -1,9 +1,9 @@
 // flugbuch
-#include "FlightDatabase.h"
-#include "inout_xml.h"
-#include "inout_mdb.h"
-#include "inout_igc.h"
-#include "SystemInformation.h"
+#include "../core/FlightDatabase.h"
+#include "../inout/inout_xml.h"
+#include "../inout/inout_mdb.h"
+#include "../inout/inout_igc.h"
+#include "../util/SystemInformation.h"
 // boost
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_DYN_LINK

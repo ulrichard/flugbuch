@@ -1,6 +1,6 @@
 // flugbuch
 #include "AreaTable.h"
-#include "FormatStr.h"
+#include "../util/FormatStr.h"
 // witty
 #include <Wt/Ext/LineEdit>
 #include <Wt/Ext/ComboBox>

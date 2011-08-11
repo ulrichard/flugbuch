@@ -2,8 +2,8 @@
 #define FLIGHTLIST_WT
 
 // flugbuch
-#include "CoreStructures.h"
-#include "FlightDatabase.h"
+#include "../core/CoreStructures.h"
+#include "../core/FlightDatabase.h"
 #include "DetailTableBase.h"
 // witty
 #include <Wt/WContainerWidget>
