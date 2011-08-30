@@ -9,7 +9,7 @@ Homepage: http://sourceforge.net/projects/flugbuch2
 Package: flugbuch2
 Architecture: i386 amd64
 Essential: no
-Depends: ${shlibs:Depends}, ${misc:Depends}, apache2, libapache2-mod-fastcgi, xml-twig-tools
+Depends: ${shlibs:Depends}, ${misc:Depends}, apache2, libapache2-mod-fastcgi, mdbtools, xml-twig-tools
 Description: Flight log book for paraglider pilots
  Manage your flights and create statistics.
  This package contains the web application.
