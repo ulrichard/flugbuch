@@ -1,3 +1,9 @@
+flugbuch2 (2.0.19~natty) natty; urgency=low
+
+  * mdb import: accepting records with 8 elements
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Thu,  20 Sep 2011 23:25:10 +0200
+
 flugbuch2 (2.0.18~natty) natty; urgency=low
 
   * updating to libwt 3.1.10

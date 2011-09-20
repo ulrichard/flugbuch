@@ -143,7 +143,7 @@ void inout_mdb::readFlightArea(const vector<string> &tokens)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void inout_mdb::readGlider(const vector<string> &tokens)
 {
-    if(tokens.size() == 9)
+    if(tokens.size() == 8 || tokens.size() == 9)
     {
         unsigned short year = atoi(tokens[6].c_str());
         if(year == 0)

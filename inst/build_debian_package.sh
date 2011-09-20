@@ -10,11 +10,10 @@ mkdir builddeb
 cd builddeb
 for DISTRIBUTION in maverick natty oneiric
 do
-	FLUGBUCHVERSIONSTR=2.0.18~${DISTRIBUTION}
+	FLUGBUCHVERSIONSTR=2.0.19~${DISTRIBUTION}
 	svn export https://flugbuch2.svn.sourceforge.net/svnroot/flugbuch2/trunk flugbuch2-$FLUGBUCHVERSIONSTR
 	cd flugbuch2-$FLUGBUCHVERSIONSTR
-		sed -i  -e "s/jaunty/${DISTRIBUTION}/" -e "s/karmic/${DISTRIBUTION}/" -e "s/maverick/${DISTRIBUTION}/" -e "s/natty/${DISTRIBUTION}/" -e "s/oneiric/${DISTRIBUTION}/" debian/changelog
-	sed -i  -e "s/jaunty/${DISTRIBUTION}/" -e "s/karmic/${DISTRIBUTION}/" -e "s/maverick/${DISTRIBUTION}/" -e "s/natty/${DISTRIBUTION}/" -e "s/oneiric/${DISTRIBUTION}/" debian/changelog
+		sed -i  -e "s/jaunty/${DISTRIBUTION}/g" -e "s/karmic/${DISTRIBUTION}/g" -e "s/maverick/${DISTRIBUTION}/g" -e "s/natty/${DISTRIBUTION}/g" -e "s/oneiric/${DISTRIBUTION}/g" debian/changelog
 
 	dpkg-buildpackage -rfakeroot -S
 	cd ..
