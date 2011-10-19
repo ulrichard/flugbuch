@@ -39,7 +39,11 @@ vector<bfs::path> igc_storage::find_all_igc_files() const
         {
             const bfs::directory_iterator end_itr; // default construction yields past-the-end
             for(bfs::directory_iterator itr(storage_dir_); itr != end_itr; ++itr)
+#if BOOST_FILESYSTEM_VERSION >= 3
+				if(is_directory(itr->status()) && itr->path().filename().string().length() == 4)
+#else
                 if(is_directory(itr->status()) && itr->path().filename().length() == 4)
+#endif
                     search_dir(itr->path(), files);
         }
     }

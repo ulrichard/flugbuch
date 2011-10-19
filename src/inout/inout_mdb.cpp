@@ -89,7 +89,11 @@ bfs::path inout_mdb::export_csv(const bfs::path &source, const string &tablename
 {
     const bfs::path outfile = flb::SystemInformation::tempDir() / ("flb_imp_" + tablename + ".csv");
     bfs::remove(outfile);
+#if BOOST_FILESYSTEM_VERSION >= 3
+    const string cmd = "mdb-export " + source.string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.string();
+#else
     const string cmd = "mdb-export " + source.external_file_string() + " " + tablename + " -H -D %Y/%m/%d > " + outfile.external_file_string();
+#endif
     if(system(cmd.c_str()))
         throw std::runtime_error("failed to run mdb-export");
     // check if the file was written

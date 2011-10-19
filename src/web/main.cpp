@@ -191,7 +191,11 @@ void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string 
                 {
                     if(igcdata[(*it)->date()].size() == 1)
                     {
+#if BOOST_FILESYSTEM_VERSION >= 3
+                        (*it)->setTrack(igcdata[(*it)->date()][0].first.filename().string());
+#else
                         (*it)->setTrack(igcdata[(*it)->date()][0].first.filename());
+#endif
                         igcdata[(*it)->date()].clear();
                         std::cout << "assigned ifg file : " << igcdata[(*it)->date()][0].first.filename() << " to fight " << (*it)->number() << std::endl;
                     }
