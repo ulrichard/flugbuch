@@ -141,6 +141,8 @@ PROPERTIES
 INSTALL(TARGETS   flugbuch2_wt.fcgi  RUNTIME                           DESTINATION share/flugbuch2/www_docroot )
 INSTALL(TARGETS   flugbuch2_wt_http  RUNTIME                           DESTINATION share/flugbuch2/www_docroot )
 INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/flugbuch2.css        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/robots.txt           DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot )
+INSTALL(FILES     ${PROJECT_SOURCE_DIR}/../../res/favicon.ico          DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/ext                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/../../res/img                  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
 INSTALL(DIRECTORY /usr/share/Wt/resources                              DESTINATION ${CMAKE_INSTALL_PREFIX}/share/flugbuch2/www_docroot/ )
