@@ -37,7 +37,7 @@ private:
     void doTest();
     void startUpload();
     void doImport();
-    void uploadTooBig(int size);
+    void uploadTooBig(::int64_t size);
 
     // normal login
     Wt::WText               *nl_txt_;

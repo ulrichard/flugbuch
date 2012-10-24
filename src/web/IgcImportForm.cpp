@@ -139,7 +139,7 @@ IgcImportForm::~IgcImportForm()
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void IgcImportForm::uploadTooBig(int size)
+void IgcImportForm::uploadTooBig(::int64_t size)
 {
     int maxreqsize = Wt::WApplication::instance()->maximumRequestSize();
     std::string msg(FormatStr() << "Die Datei ist zu gross fuer den upload :\n"

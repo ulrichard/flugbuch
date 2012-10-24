@@ -69,7 +69,7 @@ public:
     virtual ~IgcImportForm();
 
 private:
-    void uploadTooBig(int size);
+    void uploadTooBig(::int64_t size);
     void fileReceived();
     void addFlight();
     void changeWptStrategy();

@@ -1,6 +1,12 @@
-flugbuch2 (2.0.20~oneiric) oneiric; urgency=low
+flugbuch2 (2.0.21~quantal) quantal; urgency=low
 
-  * adapted to oneiric
+  * compiling with quantal
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Wed, 24 Oct 2012 21:37:56 +0200
+
+flugbuch2 (2.0.20~quantal) quantal; urgency=low
+
+  * adapted to quantal
 
  -- Richard Ulrich <richi@paraeasy.ch>  Thu,  20 Oct 2011 00:55:10 +0200
 

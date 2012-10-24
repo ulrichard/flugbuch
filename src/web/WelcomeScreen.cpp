@@ -190,7 +190,7 @@ void WelcomeScreen::startUpload()
     im_uploader_->upload();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void WelcomeScreen::uploadTooBig(int size)
+void WelcomeScreen::uploadTooBig(::int64_t size)
 {
     im_progress_->cancel();
     delete im_progress_;
