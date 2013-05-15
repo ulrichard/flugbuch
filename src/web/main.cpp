@@ -54,6 +54,14 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 // main entry point of the application
 int main(int argc, char *argv[])
 {
+    // provide default arguments if we got nothing
+    if(argc == 1 && strstr(argv[0], "flugbuch2_wt_http"))
+    {
+        const char* argmod[] = {argv[0], "--docroot", "/usr/share/Wt", "--http-address", "0.0.0.0", "--http-port", "8081"};
+
+        return Wt::WRun(7, const_cast<char**>(argmod), &createApplication);
+    }
+
 	return Wt::WRun(argc, argv, &createApplication);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -99,8 +107,8 @@ void FlightLogApp::loadFlightDb(const string &usr, const string &pwd)
 
         flb::inout_xml ioxml;
         shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(ioxml.read(filename)));
-        if(!fldb->checkPassword(pwd))
-            throw std::invalid_argument("incorrect password");
+//        if(!fldb->checkPassword(pwd))
+//            throw std::invalid_argument("incorrect password");
 
         loadFlights(fldb);
     }
