@@ -1,5 +1,5 @@
 
-FIND_PACKAGE(Boost 1.42 COMPONENTS system filesystem iostreams unit_test_framework date_time thread regex serialization program_options signals REQUIRED)
+FIND_PACKAGE(Boost 1.55 COMPONENTS system filesystem iostreams unit_test_framework date_time thread regex serialization program_options signals REQUIRED)
 FIND_PACKAGE(Wt REQUIRED)
 #FIND_PACKAGE(Fcgi REQUIRED)
 
@@ -12,7 +12,6 @@ include_directories (${PROJECT_SOURCE_DIR}/src/inout)
 include_directories (${PROJECT_SOURCE_DIR}/src/web)
 include_directories (${PROJECT_SOURCE_DIR}/src/util)
 include_directories (${PROJECT_SOURCE_DIR}/src/web/stat)
-include_directories (${PROJECT_SOURCE_DIR}/lib/ggl)
 include_directories (${BOOST_INCLUDE_DIRS})
 include_directories (${Wt_INCLUDE_DIR})
 #include_directories (${DTL_INCLUDE_DIRS})
