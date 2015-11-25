@@ -23,8 +23,8 @@
 // flugbuch
 using namespace flb;
 // ggl
-using boost::geometry::latitude;
-using boost::geometry::longitude;
+//using boost::geometry::latitude;
+//using boost::geometry::longitude;
 // boost
 using boost::lexical_cast;
 using boost::bind;
@@ -44,7 +44,7 @@ using std::make_pair;
 using std::count;
 
 
-typedef boost::geometry::model::ll::point<> point_ll_deg;
+typedef std::pair<double, double> point_ll_deg;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 FlightDatabase inout_mdb::read(const bfs::path &source)
 {
@@ -178,8 +178,8 @@ void inout_mdb::readLocation(const vector<string> &tokens, std::map<unsigned int
         shared_ptr<Location> loc(new Location(areas_[lexical_cast<unsigned int>(tokens[1])], // area
                                               tokens[2],                                     // name
                                               atoi(tokens[4].c_str()),                       // height
-                                              point_ll_deg(latitude<>(atof(tokens[6].c_str())),
-                                                           longitude<>(atof(tokens[5].c_str()))), // pos
+                                              point_ll_deg(atof(tokens[6].c_str()),
+                                                           atof(tokens[5].c_str())), // pos
                                               0));                                           // usage will be assigned later
         locations[lexical_cast<int>(tokens[0])] = loc;
     }

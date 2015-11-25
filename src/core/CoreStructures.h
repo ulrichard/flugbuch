@@ -3,8 +3,6 @@
 
 // flugbuch
 #include "GenGeomLibSerialize.h"
-// ggl (boost sandbox)
-#include <boost/geometry/extensions/gis/latlong/latlong.hpp>
 // boost
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -62,7 +60,7 @@ BOOST_SERIALIZATION_SHARED_PTR(FlightArea);
 class Location
 {
 	friend class boost::serialization::access;
-	typedef boost::geometry::model::ll::point<> point_ll_deg;
+	typedef std::pair<double, double> point_ll_deg;
 public:
 	Location(boost::shared_ptr<FlightArea> area, const std::string &name, unsigned short height, const point_ll_deg &pos, int usage)
 	 : area_(area), name_(name), height_(height), pos_(pos), usageas_(usage) {}

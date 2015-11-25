@@ -91,8 +91,8 @@ void inout_igc::read(const boost::filesystem::path &source)
                 const double lon = ((double) londeg + ((double) lonminute / 60.0) + ((double) lonmindec / 60000.0));
 
                 track_point tpt(bpt::ptime(date_, bpt::time_duration(hh, mm, ss)),
-                                point_ll_deg(boost::geometry::latitude<>(northsouth == 'N' ? lat : -lat),
-                                             boost::geometry::longitude<>(eastwest  == 'E' ? lon : -lon)),
+                                point_ll_deg(northsouth == 'N' ? lat : -lat,
+                                             eastwest  == 'E' ? lon : -lon),
                                 altGPS ? altGPS : altPress);
                 track_points_.push_back(tpt);
             }

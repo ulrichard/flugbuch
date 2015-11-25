@@ -63,7 +63,7 @@ private:
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 class IgcImportForm : public Wt::Ext::Dialog
 {
-    typedef boost::geometry::model::ll::point<> point_ll_deg;
+    typedef std::pair<double, double> point_ll_deg;
 public:
     IgcImportForm(boost::shared_ptr<flb::FlightDatabase> flightDb);
     virtual ~IgcImportForm();
