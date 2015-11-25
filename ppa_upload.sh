@@ -15,7 +15,7 @@ rm debian/substvars
 
 :${VERSIONNBR:=$(parsechangelog | grep Version | sed -e "s/Version: //g" -e "s/\\~.*//g")}
 
-for DISTRIBUTION in raring # precise quantal 
+for DISTRIBUTION in wily # raring precise quantal 
 do
 	sed -i  -e "s/oneiric/${DISTRIBUTION}/g" -e "s/precise/${DISTRIBUTION}/g" -e "s/quantal/${DISTRIBUTION}/g"  debian/changelog
 	dpkg-buildpackage -rfakeroot -k${GPGKEY} -S

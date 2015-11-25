@@ -1,3 +1,9 @@
+flugbuch2 (2.0.22~wily) wily; urgency=medium
+
+  * removing old boost geometry sandbox
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Wed, 25 Nov 2015 23:56:11 +0100
+
 flugbuch2 (2.0.21~raring) raring; urgency=low
 
   * compiling with raring
