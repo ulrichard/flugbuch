@@ -414,7 +414,7 @@ void FlightTableRow::map()
         flb::inout_igc ioigc(flightDb_);
         ioigc.read(igcfile);
         for(flb::inout_igc::Trackpoints::const_iterator itp = ioigc.Trackpoints.begin(); itp != ioigc.Trackpoints.end(); ++itp)
-            points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.lat(), itp->pos_.lon()));
+            points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.first, itp->pos_.second));
         gmap->addPolyline(points, Wt::WColor("#EE4444"), 3, 0.4);
 
         for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
@@ -427,13 +427,13 @@ void FlightTableRow::map()
     }
     // draw the legs
     points.clear();
-    points.push_back(Wt::WGoogleMap::Coordinate(flight_->takeoff()->pos().lat(), flight_->takeoff()->pos().lon()));
+    points.push_back(Wt::WGoogleMap::Coordinate(flight_->takeoff()->pos().first, flight_->takeoff()->pos().second));
 
     for(Flight::Waypoints::const_iterator it = flight_->Waypoints.begin(); it != flight_->Waypoints.end(); ++it)
     {
-        points.push_back(Wt::WGoogleMap::Coordinate((*it)->pos().lat(), (*it)->pos().lon()));
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->pos().first, (*it)->pos().second));
     }
-    points.push_back(Wt::WGoogleMap::Coordinate(flight_->landing()->pos().lat(), flight_->landing()->pos().lon()));
+    points.push_back(Wt::WGoogleMap::Coordinate(flight_->landing()->pos().first, flight_->landing()->pos().second));
 
     gmap->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.9);
     // bounding box

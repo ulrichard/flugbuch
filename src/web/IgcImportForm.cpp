@@ -8,7 +8,7 @@
 #include "SystemInformation.h"
 // ggl (boost sandbox)
 #include <boost/geometry/algorithms/distance.hpp>
-#include <boost/geometry/extensions/gis/geographic/strategies/vincenty.hpp>
+//#include <boost/geometry/extensions/gis/geographic/strategies/vincenty.hpp>
 // witty
 #include <Wt/WFileUpload>
 #include <Wt/WContainerWidget>
@@ -53,7 +53,7 @@ using std::map;
 using std::pair;
 using std::remove_copy_if;
 
-typedef boost::geometry::model::ll::point<> point_ll_deg;
+typedef std::pair<double, double> point_ll_deg;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 NewLocationField::NewLocationField(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -212,8 +212,8 @@ void IgcImportForm::fileReceived()
                     inout_igc::Trackpoints::iterator pit1 = igcfile_.Trackpoints.begin();
                     std::advance(pit0, *it0);
                     std::advance(pit1, *it1);
-                    leglengths.push_back(boost::geometry::distance(pit0->pos_, pit1->pos_,
-                                                            boost::geometry::strategy::distance::vincenty<point_ll_deg>()));
+//                    leglengths.push_back(boost::geometry::distance(pit0->pos_, pit1->pos_,
+//                                                            boost::geometry::strategy::distance::vincenty<point_ll_deg>()));
                 }
                 const double dist = std::accumulate(leglengths.begin(), leglengths.end(), 0.0) / 1000.0;
 
@@ -274,7 +274,7 @@ void IgcImportForm::changeWptStrategy()
     // draw the flight
     vector<Wt::WGoogleMap::Coordinate> points;
     for(inout_igc::Trackpoints::const_iterator itp = igcfile_.Trackpoints.begin(); itp != igcfile_.Trackpoints.end(); ++itp)
-        points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.lat(), itp->pos_.lon()));
+        points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.first, itp->pos_.second));
     gmap_->addPolyline(points, Wt::WColor("#EE4444"), 3, 0.4);
     // bounding box
     pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = std::make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
@@ -293,7 +293,7 @@ void IgcImportForm::changeWptStrategy()
         assert(*it < igcfile_.Trackpoints.size());
         inout_igc::Trackpoints::iterator tpit = igcfile_.Trackpoints.begin();
         std::advance(tpit, *it);
-        points.push_back(Wt::WGoogleMap::Coordinate(tpit->pos_.lat(), tpit->pos_.lon()));
+        points.push_back(Wt::WGoogleMap::Coordinate(tpit->pos_.first, tpit->pos_.second));
     }
     gmap_->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.9);
 

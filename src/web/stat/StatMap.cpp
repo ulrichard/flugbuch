@@ -111,10 +111,10 @@ void StatMap::draw(Wt::WContainerWidget *parent, const flb::FlightDatabase::SeqF
     for(vector<shared_ptr<flb::Flight> >::const_iterator it = vFlights.begin(); it != vFlights.end(); ++it)
     {
         vector<Wt::WGoogleMap::Coordinate> points;
-        points.push_back(Wt::WGoogleMap::Coordinate((*it)->takeoff()->pos().lat(), (*it)->takeoff()->pos().lon()));
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->takeoff()->pos().first, (*it)->takeoff()->pos().second));
         for(Flight::Waypoints::iterator itw = (*it)->Waypoints.begin(); itw != (*it)->Waypoints.end(); ++itw)
-            points.push_back(Wt::WGoogleMap::Coordinate((*itw)->pos().lat(), (*itw)->pos().lon()));
-        points.push_back(Wt::WGoogleMap::Coordinate((*it)->landing()->pos().lat(), (*it)->landing()->pos().lon()));
+            points.push_back(Wt::WGoogleMap::Coordinate((*itw)->pos().first, (*itw)->pos().second));
+        points.push_back(Wt::WGoogleMap::Coordinate((*it)->landing()->pos().first, (*it)->landing()->pos().second));
 
         // bbox
         for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)

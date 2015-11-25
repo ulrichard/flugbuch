@@ -49,7 +49,7 @@ using namespace boost::lambda;
 using boost::shared_ptr;
 using boost::lexical_cast;
 
-typedef boost::geometry::model::ll::point<> point_ll_deg;
+typedef std::pair<double, double> point_ll_deg;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -98,7 +98,7 @@ void LocationTableRow::show()
 	vsText.push_back(location_->area()->name());
 	vsText.push_back(location_->name());
 	vsText.push_back(lexical_cast<string>(location_->height()));
-	vsText.push_back(Wt::WGeoPosEdit::format(make_pair(location_->pos().lat(), location_->pos().lon()), Wt::WGeoPosEdit::WGS84_SEC));
+	vsText.push_back(Wt::WGeoPosEdit::format(make_pair(location_->pos().first, location_->pos().second), Wt::WGeoPosEdit::WGS84_SEC));
 	vsText.push_back(location_->usage() & Location::UA_TAKEOFF ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_LANDING ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_WAYPNT  ? "x" : "_");
@@ -148,7 +148,7 @@ void LocationTableRow::edit()
 	table_->elementAt(rowNr_, colHeight)->addWidget(nfHeight_);
     // position
     pfPosition_ = new Wt::WGeoPosEdit(0, Wt::WGeoPosEdit::WGS84_SEC);
-    pfPosition_->setPos(make_pair(location_->pos().lat(), location_->pos().lon()));
+    pfPosition_->setPos(make_pair(location_->pos().first, location_->pos().second));
 	table_->elementAt(rowNr_, colPosition)->addWidget(pfPosition_);
 	// use as takeoff
 	cbTakeoff_ = new Wt::Ext::CheckBox();
@@ -182,7 +182,7 @@ void LocationTableRow::save()
         location_->setHeight(nfHeight_->value());
         // position
         assert(pfPosition_);
-        location_->setPosition(point_ll_deg(boost::geometry::latitude<>(pfPosition_->pos().first), boost::geometry::longitude<>(pfPosition_->pos().second)));
+        location_->setPosition(point_ll_deg(pfPosition_->pos().first, pfPosition_->pos().second));
         // usage
         assert(cbTakeoff_ && cbLanding_ && cbWayPnt_);
         int usage = 0;
@@ -231,9 +231,9 @@ void LocationTableRow::map()
 	gmap->enableDragging();
 	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
     const point_ll_deg pdpos = location_->pos();
-    if(pdpos.lat() != 0.0 && pdpos.lon() != 0.0)
+    if(pdpos.first != 0.0 && pdpos.second != 0.0)
     {
-        Wt::WGoogleMap::Coordinate lalo(pdpos.lat(), pdpos.lon());
+        Wt::WGoogleMap::Coordinate lalo(pdpos.first, pdpos.second);
         gmap->setCenter(lalo, 13);
         gmap->addMarker(lalo);
     }
@@ -296,8 +296,7 @@ void LocationTable::addNewLocation()
     }
     shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
 
-    shared_ptr<Location> newLocation(new Location(area, "", 0, point_ll_deg(boost::geometry::latitude<>(0.0),
-                                                               boost::geometry::longitude<>(0.0)), Location::UA_TAKEOFF));
+    shared_ptr<Location> newLocation(new Location(area, "", 0, point_ll_deg(0.0, 0.0), Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
     LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++, true);
     newRow->edit();
