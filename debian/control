@@ -2,12 +2,12 @@ Source: flugbuch2
 Section: web
 Priority: optional
 Maintainer: Richard Ulrich <richi@paraeasy.ch>
-Build-Depends: debhelper (>= 7), libfcgi0ldbl, libboost-regex-dev, libboost-program-options-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-system-dev, libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev, libboost-test-dev, libwt-dev, libwtext-dev, libwtfcgi-dev, libwthttp-dev, cmake (>= 2.6)
+Build-Depends: debhelper (>= 7), libfcgi0ldbl, libboost-regex-dev, libboost-program-options-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-system-dev, libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev, libboost-test-dev, libwt-dev, libwtext-dev, libwtfcgi-dev, libwthttp-dev, cmake
 standards-Version: 3.8.1.0
 Homepage: http://sourceforge.net/projects/flugbuch2
 
 Package: flugbuch2
-Architecture: i386 amd64
+Architecture: any
 Essential: no
 Depends: ${shlibs:Depends}, ${misc:Depends}, apache2, libapache2-mod-fastcgi, mdbtools, xml-twig-tools
 Description: Flight log book for paraglider pilots

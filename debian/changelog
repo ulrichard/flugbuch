@@ -1,4 +1,4 @@
-flugbuch2 (2.0.22~wily) wily; urgency=medium
+flugbuch2 (2.0.26~xenial) xenial; urgency=medium
 
   * removing old boost geometry sandbox
 
