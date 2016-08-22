@@ -42,9 +42,8 @@ case "$1" in
 		# register with apache
 		a2enmod fastcgi
 		echo "register flugbuch2 with apache"
-		a2ensite flugbuch2.local
-		a2ensite flugbuch2.homelinux.org
-		a2ensite flugbuch2.ulrichard.ch
+		a2ensite flugbuch2.local.conf
+		a2ensite flugbuch2.ulrichard.ch.conf
 	
 		db_stop
 
