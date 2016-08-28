@@ -12,11 +12,8 @@
 // boost
 #include <boost/lexical_cast.hpp>
 #include <boost/checked_delete.hpp>
-//#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/range/algorithm.hpp>
 // std lib
 #include <stdexcept>
 #include <set>
@@ -25,11 +22,7 @@ using namespace flbwt;
 using namespace flb;
 using Wt::WText;
 using Wt::WImage;
-using std::string;
-using std::vector;
-//using boost::bind;
-using namespace boost::lambda;
-using boost::shared_ptr;
+namespace brng = boost::range;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void AreaTableRow::clearRow()
@@ -62,7 +55,7 @@ void AreaTableRow::show()
 	wiDelete->clicked().connect(SLOT(this, AreaTableRow::remove));
 
 	// prepare the text
-	vector<string> vsText;
+	std::vector<std::string> vsText;
 	vsText.push_back(area_->name());
 	vsText.push_back(area_->country());
 	vsText.push_back(area_->description());
@@ -157,8 +150,8 @@ AreaTable::AreaTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainer
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void AreaTable::createHeaderRow()
 {
-    string captions[3] = {"Name", "Land", "Beschreibung"};
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    std::string captions[3] = {"Name", "Land", "Beschreibung"};
+    for(size_t i=0; i<sizeof(captions) / sizeof(std::string); ++i)
     {
         WText *labelText = new WText(captions[i]);
         labelText->setStyleClass("tableHeader");
@@ -176,7 +169,7 @@ void AreaTable::createFooterRow()
 	wiAdd->clicked().connect(SLOT(this, AreaTable::addNewArea));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-AreaTableRow* AreaTable::addArea(shared_ptr<FlightArea> flar, size_t row, bool newEntry)
+AreaTableRow* AreaTable::addArea(boost::shared_ptr<FlightArea> flar, size_t row, bool newEntry)
 {
 	AreaTableRow *flr = new AreaTableRow(flar, this, flightDb_, row, newEntry);
 	flr->show();
@@ -186,7 +179,7 @@ AreaTableRow* AreaTable::addArea(shared_ptr<FlightArea> flar, size_t row, bool n
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void AreaTable::addNewArea()
 {
-    shared_ptr<FlightArea> newArea(new FlightArea("", "", ""));
+    boost::shared_ptr<FlightArea> newArea(new FlightArea("", "", ""));
     flightDb_->addFlightArea(newArea);
     AreaTableRow *newRow = addArea(newArea, insertRowNr_++, true);
     newRow->edit();
@@ -198,15 +191,12 @@ void AreaTable::filter(const std::string &country)
     areas_.clear();
 
     if(country == "alle")
-        std::copy(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areas_));
+        brng::copy(flightDb_->FlightAreas, back_inserter(areas_));
     else
     {
-        std::remove_copy_if(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areas_),
-            country != bind(&FlightArea::country, *boost::lambda::_1));
-
-//        BOOST_FOREACH(shared_ptr<FlightArea> flar, flightDb_->flightAreas())
-//            if(flar->country() == country)
-//                areas_.push_back(loc);
+        for(const auto& loc : flightDb_->FlightAreas)
+            if(loc->country() == country)
+                areas_.push_back(loc);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -219,9 +209,9 @@ void AreaTable::loadPage(unsigned int page)
     const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < areas_.size())
     {
-        vector<shared_ptr<FlightArea> >::iterator ibeg = areas_.begin();
+        auto ibeg = areas_.begin();
         std::advance(ibeg, (pageNr_ - 1) * entriesPerPage_);
-        vector<shared_ptr<FlightArea> >::iterator iend = ibeg;
+        auto iend = ibeg;
         const int nLast = std::min<int>(areas_.size(), nFirst + entriesPerPage_);
         std::advance(iend, nLast - nFirst);
         for(size_t i=1; ibeg != iend; ++ibeg, ++i)
@@ -235,7 +225,7 @@ void AreaTable::loadPage(unsigned int page)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-AreaPanel::AreaPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
+AreaPanel::AreaPanel(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
@@ -272,18 +262,14 @@ void AreaPanel::load()
 {
     cbCountry_->clear();
     cbCountry_->addItem("alle");
-    std::set<string> countries;
-    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.end()),
-        bind(&FlightArea::country, *boost::lambda::_1));
-//    for_each(countries.begin(), countries.end(), bind(&Wt::Ext::ComboBox::addItem, cbCountry_, *boost::lambda::_1));
-    BOOST_FOREACH(string str, countries)
-        cbCountry_->addItem(str);
+    for(const auto& area : flightDb_->FlightAreas)
+        cbCountry_->addItem(area->country());
     cbCountry_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void AreaPanel::filter()
 {
-    const string country = cbCountry_->currentText().narrow();
+    const std::string country = cbCountry_->currentText().narrow();
 
     table_->filter(country);
     table_->loadPage(1);

@@ -31,12 +31,10 @@ private:
     Wt::WWidget * makeNormalLoginTab();
     Wt::WWidget * makeRegistrationTab();
     Wt::WWidget * makeTestDbTab();
-    Wt::WWidget * makeImportTab();
     void doLogin();
     void doRegister();
     void doTest();
     void startUpload();
-    void doImport();
     void uploadTooBig(::int64_t size);
 
     // normal login

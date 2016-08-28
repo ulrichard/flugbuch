@@ -21,12 +21,9 @@
 // boost
 #include <boost/lexical_cast.hpp>
 #include <boost/checked_delete.hpp>
-//#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/array.hpp>
+#include <boost/range/algorithm.hpp>
 // std lib
 #include <stdexcept>
 #include <sstream>
@@ -35,19 +32,7 @@
 
 using namespace flbwt;
 using namespace flb;
-using Wt::WText;
-using Wt::WImage;
-using std::string;
-using std::vector;
-using std::pair;
-using std::make_pair;
-using std::fabs;
-using std::sort;
-using std::transform;
-//using boost::bind;
-using namespace boost::lambda;
-using boost::shared_ptr;
-using boost::lexical_cast;
+namespace brng = boost::range;
 
 typedef std::pair<double, double> point_ll_deg;
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -75,13 +60,13 @@ void LocationTableRow::show()
 	clearRow();
 
     // the edit image
-	WImage *wiEdit = new WImage("img/edit.png");
+	Wt::WImage *wiEdit = new Wt::WImage("img/edit.png");
 	wiEdit->setToolTip("Ort bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked().connect(SLOT(this, LocationTableRow::edit));
     // the delete image
-	WImage *wiDelete = new WImage("img/delete.png");
+	Wt::WImage *wiDelete = new Wt::WImage("img/delete.png");
 	wiDelete->setToolTip("Ort löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
@@ -94,18 +79,18 @@ void LocationTableRow::show()
 //	wiMap->clicked.connect(SLOT(this, LocationTableRow::map));
 
 	// prepare the text
-	vector<string> vsText;
+	std::vector<std::string> vsText;
 	vsText.push_back(location_->area()->name());
 	vsText.push_back(location_->name());
-	vsText.push_back(lexical_cast<string>(location_->height()));
-	vsText.push_back(Wt::WGeoPosEdit::format(make_pair(location_->pos().first, location_->pos().second), Wt::WGeoPosEdit::WGS84_SEC));
+	vsText.push_back(boost::lexical_cast<std::string>(location_->height()));
+	vsText.push_back(Wt::WGeoPosEdit::format(std::make_pair(location_->pos().first, location_->pos().second), Wt::WGeoPosEdit::WGS84_SEC));
 	vsText.push_back(location_->usage() & Location::UA_TAKEOFF ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_LANDING ? "x" : "_");
 	vsText.push_back(location_->usage() & Location::UA_WAYPNT  ? "x" : "_");
 	// add the text widgets
 	for(size_t i=0; i<vsText.size(); ++i)
 	{
-		WText *wtxt = new WText(vsText[i]);
+		Wt::WText *wtxt = new Wt::WText(vsText[i]);
 		wtxt->setStyleClass("tableContent");
 		table_->elementAt(rowNr_, i + 1)->addWidget(wtxt);
 	}
@@ -116,13 +101,13 @@ void LocationTableRow::edit()
 	clearRow();
 
 	// the save image
-	WImage *wiSave = new WImage("img/save.png");
+	Wt::WImage *wiSave = new Wt::WImage("img/save.png");
 	wiSave->setToolTip("speichern");
     wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiSave);
 	wiSave->clicked().connect(SLOT(this, LocationTableRow::save));
 	// the cancel image
-	WImage *wiCancel = new WImage("img/undo.png");
+	Wt::WImage *wiCancel = new Wt::WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiCancel);
@@ -133,7 +118,8 @@ void LocationTableRow::edit()
 
     // area
     cbArea_ = new Wt::Ext::ComboBox();
-    for_each(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *boost::lambda::_1)));
+    for(const auto& area : flightDb_->FlightAreas)
+        cbArea_->addItem(area->name());
     for(int i=0; i<cbArea_->count(); ++i)
         if(location_->area()->name() == cbArea_->itemText(i).narrow())
             cbArea_->setCurrentIndex(i);
@@ -148,7 +134,7 @@ void LocationTableRow::edit()
 	table_->elementAt(rowNr_, colHeight)->addWidget(nfHeight_);
     // position
     pfPosition_ = new Wt::WGeoPosEdit(0, Wt::WGeoPosEdit::WGS84_SEC);
-    pfPosition_->setPos(make_pair(location_->pos().first, location_->pos().second));
+    pfPosition_->setPos(std::make_pair(location_->pos().first, location_->pos().second));
 	table_->elementAt(rowNr_, colPosition)->addWidget(pfPosition_);
 	// use as takeoff
 	cbTakeoff_ = new Wt::Ext::CheckBox();
@@ -172,7 +158,7 @@ void LocationTableRow::save()
     {
         // area
         assert(cbArea_);
-        shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
+        boost::shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
         location_->setArea(area);
         // name
         assert(edName_);
@@ -260,10 +246,10 @@ LocationTable::LocationTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WC
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationTable::createHeaderRow()
 {
-    string captions[7] = {"Gebiet", "Name", "Höhe", "Position", "SP", "LP", "WP"};
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    static const std::string captions[7] = {"Gebiet", "Name", "Höhe", "Position", "SP", "LP", "WP"};
+    for(size_t i=0; i<sizeof(captions) / sizeof(std::string); ++i)
     {
-        WText *labelText = new WText(captions[i]);
+        Wt::WText *labelText = new Wt::WText(captions[i]);
         labelText->setStyleClass("tableHeader");
         elementAt(0, i + 1)->addWidget(labelText);
     }
@@ -272,14 +258,14 @@ void LocationTable::createHeaderRow()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationTable::createFooterRow()
 {
-    WImage *wiAdd = new WImage("img/add.png");
+    Wt::WImage *wiAdd = new Wt::WImage("img/add.png");
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Orte hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
 	wiAdd->clicked().connect(SLOT(this, LocationTable::addNewLocation));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-LocationTableRow* LocationTable::addLocation(shared_ptr<Location> loc, size_t row, bool newEntry)
+LocationTableRow* LocationTable::addLocation(boost::shared_ptr<Location> loc, size_t row, bool newEntry)
 {
 	LocationTableRow *locr = new LocationTableRow(loc, this, flightDb_, row, newEntry);
 	locr->show();
@@ -294,9 +280,9 @@ void LocationTable::addNewLocation()
         Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst ein Fluggebiet.", Wt::Ok, true);
         return;
     }
-    shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
+    boost::shared_ptr<FlightArea> area = *flightDb_->FlightAreas.begin();
 
-    shared_ptr<Location> newLocation(new Location(area, "", 0, point_ll_deg(0.0, 0.0), Location::UA_TAKEOFF));
+    boost::shared_ptr<Location> newLocation(new Location(area, "", 0, point_ll_deg(0.0, 0.0), Location::UA_TAKEOFF));
     flightDb_->addLocation(newLocation);
     LocationTableRow *newRow = addLocation(newLocation, insertRowNr_++, true);
     newRow->edit();
@@ -311,24 +297,21 @@ void LocationTable::filter(const std::string &area, bool takeoff, bool landing, 
         std::copy(flightDb_->Locations.begin(), flightDb_->Locations.end(), back_inserter(locations_));
     else
     {
-//        std::remove_copy_if(flightDb_->locations().begin(), flightDb_->locations().end(), back_inserter(locations_),
-//            area != bind(&FlightArea::name, *(bind(&Location::area, *boost::lambda::_1))));
-
-        BOOST_FOREACH(shared_ptr<Location> loc, flightDb_->Locations)
+        for(auto& loc : flightDb_->Locations)
             if(loc->area()->name() == area)
                 locations_.push_back(loc);
     }
     if(!takeoff && !landing && !waypnt)
         return;
     if(takeoff)
-        locations_.erase(std::remove_if(locations_.begin(), locations_.end(),
-            !(bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_TAKEOFF))), locations_.end());
+        locations_.erase(brng::remove_if(locations_, [](boost::shared_ptr<Location>& loc)
+            { return loc->usage() & Location::UA_TAKEOFF; }), locations_.end());
     if(landing)
-        locations_.erase(std::remove_if(locations_.begin(), locations_.end(),
-            !(bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_LANDING))), locations_.end());
+        locations_.erase(brng::remove_if(locations_, [](boost::shared_ptr<Location>& loc)
+            { return loc->usage() & Location::UA_LANDING; }), locations_.end());
     if(waypnt)
-        locations_.erase(std::remove_if(locations_.begin(), locations_.end(),
-            !(bind(&Location::usage, *boost::lambda::_1) & static_cast<int>(Location::UA_WAYPNT))), locations_.end());
+        locations_.erase(brng::remove_if(locations_, [](boost::shared_ptr<Location>& loc)
+            { return loc->usage() & Location::UA_WAYPNT; }), locations_.end());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationTable::loadPage(unsigned int page)
@@ -340,9 +323,9 @@ void LocationTable::loadPage(unsigned int page)
     const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < locations_.size())
     {
-        vector<shared_ptr<Location> >::iterator ibeg = locations_.begin();
+        auto ibeg = locations_.begin();
         std::advance(ibeg, (pageNr_ - 1) * entriesPerPage_);
-        vector<shared_ptr<Location> >::iterator iend = ibeg;
+        auto iend = ibeg;
         const int nLast = std::min<int>(locations_.size(), nFirst + entriesPerPage_);
         std::advance(iend, nLast - nFirst);
         for(size_t i=1; ibeg != iend; ++ibeg, ++i)
@@ -356,7 +339,7 @@ void LocationTable::loadPage(unsigned int page)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
+LocationPanel::LocationPanel(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
@@ -381,9 +364,9 @@ LocationPanel::LocationPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContaine
     // header
     Wt::WTable *topBar = new Wt::WTable();
     topBar->setStyleClass("FilterBar");
-    WText *wtFilt = new WText("Filter : ");
+    Wt::WText *wtFilt = new Wt::WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
-    WText *wtArea = new WText("Fluggebiet");
+    Wt::WText *wtArea = new Wt::WText("Fluggebiet");
     wtArea->setStyleClass("FilterSubTitle");
     cbTakeoff_->setText("Startplaetze");
     cbLanding_->setText("Landeplaetze");
@@ -412,16 +395,18 @@ void LocationPanel::load()
 {
     cbArea_->clear();
     cbArea_->addItem("alle");
-    vector<string> areaNames;
-    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *boost::lambda::_1));
-    sort(areaNames.begin(), areaNames.end());
-    for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, boost::lambda::_1));
+    std::vector<std::string> areaNames;
+    brng::transform(flightDb_->FlightAreas, back_inserter(areaNames), [](const boost::shared_ptr<FlightArea>& area)
+        { return area->name(); });
+    brng::sort(areaNames);
+    for(const auto& name : areaNames)
+        cbArea_->addItem(name);
     cbArea_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void LocationPanel::filter()
 {
-    const string area = cbArea_->currentText().narrow();
+    const std::string area = cbArea_->currentText().narrow();
     const bool takeoff = cbTakeoff_->isChecked();
     const bool landing = cbLanding_->isChecked();
     const bool waypnt  = cbWayPnt_->isChecked();

@@ -43,18 +43,6 @@ set(FLUGBUCH2_SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/web/stat/Wt/WGeoPosEdit.cpp
 )
 
-IF(WIN32)
-  set(FLUGBUCH2_SOURCE_FILES
-    ${FLUGBUCH2_SOURCE_FILES}
-    ${PROJECT_SOURCE_DIR}/src/inout/inout_mdb_win.cpp
-  )
-ELSE(WIN32)
-  set(FLUGBUCH2_SOURCE_FILES
-    ${FLUGBUCH2_SOURCE_FILES}
-    ${PROJECT_SOURCE_DIR}/src/inout/inout_mdb.cpp
-  )
-ENDIF(WIN32)
-
 add_executable(flugbuch2_wt.fcgi
 	${FLUGBUCH2_SOURCE_FILES}
 )

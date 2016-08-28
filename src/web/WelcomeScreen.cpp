@@ -35,7 +35,6 @@ WelcomeScreen::WelcomeScreen(Wt::WContainerWidget *parent)
     addTab(makeNormalLoginTab(),  "Login");
     addTab(makeRegistrationTab(), "Registrieren");
     addTab(makeTestDbTab(), "Testen");
-    addTab(makeImportTab(), "Import");
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -147,41 +146,6 @@ void WelcomeScreen::doTest()
     app->loadTestDb();
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-Wt::WWidget * WelcomeScreen::makeImportTab()
-{
-    Wt::WContainerWidget *cont = new Wt::WContainerWidget();
-    im_txt_ = new Wt::WText("Hier koennen Sie ihre mdb Datenbank vom alten Flugbuchprogramm importieren.", cont);
-
-    cont->addWidget(new Wt::WBreak());
-
-
-    im_uploader_ = new Wt::WFileUpload(cont);
-    im_uploader_->uploaded().connect(SLOT(this, WelcomeScreen::doImport));
-    im_uploader_->fileTooLarge().connect(SLOT(this, WelcomeScreen::uploadTooBig));
-
-    Wt::WTable *layout = new Wt::WTable(cont);
-
-    Wt::WLabel *usernameLabel = new Wt::WLabel("Benutzername: ", layout->elementAt(0, 0));
-    layout->elementAt(0, 0)->resize(Wt::WLength(14, Wt::WLength::FontEx), Wt::WLength());
-    im_username_ = new Wt::WLineEdit(layout->elementAt(0, 1));
-    usernameLabel->setBuddy(im_username_);
-
-    Wt::WLabel *passwordLabel = new Wt::WLabel("Passwort: ", layout->elementAt(1, 0));
-    im_password_ = new Wt::WLineEdit(layout->elementAt(1, 1));
-    im_password_->setEchoMode(Wt::WLineEdit::Password);
-    im_password_->enterPressed().connect(SLOT(this, WelcomeScreen::startUpload));
-    passwordLabel->setBuddy(im_password_);
-
-    im_matchIgc_ = new Wt::WCheckBox("Igc Dateien zuordnen", cont);
-
-    cont->addWidget(new Wt::WBreak());
-
-    Wt::WPushButton *LoginButton = new Wt::WPushButton("Importieren", cont);
-    LoginButton->clicked().connect(SLOT(this, WelcomeScreen::startUpload));
-
-    return cont;
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void WelcomeScreen::startUpload()
 {
     im_progress_ = new Wt::Ext::ProgressDialog("Die Datei wird hochgeladen...", "Abbrechen", 0, 100);
@@ -202,24 +166,6 @@ void WelcomeScreen::uploadTooBig(::int64_t size)
                                 << "Maximum : " << maxreqsize / 1024 << " kB");
     im_txt_->setText(msg);
 //    Wt::Ext::MessageBox::show("Error", msg, Wt::Warning, true);
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void WelcomeScreen::doImport()
-{
-    assert(im_uploader_);
-    assert(im_progress_);
-    assert(im_username_);
-    assert(im_password_);
-    assert(im_matchIgc_);
-
-    im_progress_->cancel();
-    delete im_progress_;
-    im_progress_ = NULL;
-
-    im_uploader_->stealSpooledFile();
-    FlightLogApp *app = dynamic_cast<FlightLogApp*>(Wt::WApplication::instance());
-    app->importFlightDb(im_uploader_->spoolFileName(), true, im_username_->text().narrow(), im_password_->text().narrow(), im_matchIgc_->isChecked());
-
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

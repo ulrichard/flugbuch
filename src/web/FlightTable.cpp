@@ -20,28 +20,17 @@
 // boost
 #include <boost/lexical_cast.hpp>
 #include <boost/checked_delete.hpp>
-//#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/range/algorithm.hpp>
 // std lib
 #include <stdexcept>
 #include <iomanip>
 
 using namespace flbwt;
 using namespace flb;
-using Wt::WText;
-using Wt::WImage;
-using std::string;
-using std::vector;
-using std::pair;
-//using boost::bind;
-using namespace boost::lambda;
-namespace bll = boost::lambda;
+namespace brng = boost::range;
 namespace bfs = boost::filesystem;
-using boost::shared_ptr;
 
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -65,19 +54,22 @@ void LocationField::fillAreas()
     while(cbArea_->count())
         cbArea_->removeItem(0);
 
-    FlightDatabase::SeqFlightAreas areas = flightDb_->getFlightAreasEx(useAs_);
-    for_each(areas.begin(), areas.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bind(&FlightArea::name, *bll::_1)));
+    const auto areas = flightDb_->getFlightAreasEx(useAs_);
+    for(const auto& area : areas)
+        cbArea_->addItem(area->name());
     cbArea_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-size_t LocationField::selectArea(const string &area)
+size_t LocationField::selectArea(const std::string &area)
 {
     for(int i=0; i<cbArea_->count(); ++i)
+    {
         if(area == cbArea_->itemText(i).narrow())
         {
             cbArea_->setCurrentIndex(i);
             return i;
         }
+    }
     return 0;
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
@@ -86,14 +78,14 @@ void LocationField::fillLocations(int idx)
     while(cbLocation_->count())
         cbLocation_->removeItem(0);
 
-    const string area = cbArea_->text().narrow();
-    vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_);
-    for_each(locations.begin(), locations.end(), bind(&Wt::Ext::ComboBox::addItem, cbLocation_,
-        bind(&Location::name, *bll::_1)));
+    const std::string area = cbArea_->text().narrow();
+    for(const auto& location : flightDb_->getLocationsEx(flightDb_->getArea(area), useAs_))
+        cbLocation_->addItem(location->name());
+
     cbLocation_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-size_t LocationField::selectLocation(const string &loc)
+size_t LocationField::selectLocation(const std::string &loc)
 {
     for(int i=0; i<cbLocation_->count(); ++i)
         try
@@ -127,10 +119,10 @@ void LocationField::setLocation(const flb::Location &loc)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 const boost::shared_ptr<flb::Location> LocationField::getLocation() const
 {
-    shared_ptr<FlightArea> area = flightDb_->getArea(cbArea_->currentText().narrow());
-    vector<shared_ptr<Location> > locations = flightDb_->getLocationsEx(area, useAs_);
-    FlightDatabase::Locations::iterator fit = find_if(locations.begin(), locations.end(),
-                cbLocation_->currentText() == bind(&Location::name, *bll::_1));
+    auto area = flightDb_->getArea(cbArea_->currentText().narrow());
+    auto locations = flightDb_->getLocationsEx(area, useAs_);
+    auto fit = brng::find_if(locations, [this](const boost::shared_ptr<Location>& loc)
+        { return loc->name() == cbLocation_->currentText(); });
     if(fit == locations.end())
         throw std::invalid_argument("Unknown location");
     return *fit;
@@ -160,29 +152,29 @@ void FlightTableRow::show()
 	clearRow();
 
     // the edit image
-	WImage *wiEdit = new WImage("img/edit.png");
+	Wt::WImage *wiEdit = new Wt::WImage("img/edit.png");
 	wiEdit->setToolTip("Flug bearbeiten");
 	wiEdit->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked().connect(SLOT(this, FlightTableRow::edit));
     // the delete image
-	WImage *wiDelete = new WImage("img/delete.png");
+	Wt::WImage *wiDelete = new Wt::WImage("img/delete.png");
 	wiDelete->setToolTip("Flug löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
 	wiDelete->clicked().connect(SLOT(this, FlightTableRow::remove));
 	// the map image
-	WImage *wiMap = new WImage("img/map.png");
+	Wt::WImage *wiMap = new Wt::WImage("img/map.png");
 	wiMap->setToolTip("track");
 	wiMap->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
     wiMap->clicked().connect(SLOT(this, FlightTableRow::map));
 	// prepare the text
-	vector<string> vsText;
-	vsText.push_back(boost::lexical_cast<string>(flight_->number()));
+	std::vector<std::string> vsText;
+	vsText.push_back(boost::lexical_cast<std::string>(flight_->number()));
 	try
 	{
-        const string sloc = Wt::WApplication::instance()->locale();
+        const std::string sloc = Wt::WApplication::instance()->locale();
 	    std::locale loc(sloc.c_str());
 	    vsText.push_back(FormatStr(loc) << flight_->date());
 	}
@@ -199,7 +191,7 @@ void FlightTableRow::show()
 	// add the text widgets
 	for(size_t i=0; i<vsText.size(); ++i)
 	{
-		WText *wtxt = new WText(vsText[i]);
+		Wt::WText *wtxt = new Wt::WText(vsText[i]);
 		wtxt->setStyleClass("tableContent");
 		table_->elementAt(rowNr_, i + 1)->addWidget(wtxt);
 	}
@@ -211,13 +203,13 @@ void FlightTableRow::edit()
 	clearRow();
 
  	// the save image
-	WImage *wiSave = new WImage("img/save.png");
+	Wt::WImage *wiSave = new Wt::WImage("img/save.png");
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiSave);
 	wiSave->clicked().connect(SLOT(this, FlightTableRow::save));
 	// the cancel image
-	WImage *wiCancel = new WImage("img/undo.png");
+	Wt::WImage *wiCancel = new Wt::WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiCancel);
@@ -226,7 +218,7 @@ void FlightTableRow::edit()
     else
         wiCancel->clicked().connect(SLOT(this, FlightTableRow::show));
     // the map image
-	WImage *wiMap = new WImage("img/map.png");
+	Wt::WImage *wiMap = new Wt::WImage("img/map.png");
 	wiMap->setToolTip("track");
 	wiMap->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiMap);
@@ -249,7 +241,7 @@ void FlightTableRow::edit()
 	// glider
 	cbGlider_ = new Wt::Ext::ComboBox();
 	idx = 0;
-	BOOST_FOREACH(const boost::shared_ptr<Glider> gld, flightDb_->Gliders)
+	for(const auto& gld : flightDb_->Gliders)
 	{
         cbGlider_->insertItem(idx, gld->identity());
         if(gld == flight_->glider())
@@ -300,11 +292,11 @@ void FlightTableRow::edit()
 //	Wt::WText *txtMin = new Wt::WText("min");
 //	table_->elementAt(row, colDuration)->addWidget(txtMin);
 	// height difference
-	string sHeight(FormatStr() << (flight_->takeoff()->height() - flight_->landing()->height()) << "m");
+	std::string sHeight(FormatStr() << (flight_->takeoff()->height() - flight_->landing()->height()) << "m");
 	Wt::WText *txtHeight = new Wt::WText(sHeight);
 	table_->elementAt(rowNr_, colHeightDiff)->addWidget(txtHeight);
 	// distance
-	string sDist(FormatStr() << flight_->distance() << " km");
+	std::string sDist(FormatStr() << flight_->distance() << " km");
 	Wt::WText *txtDist = new Wt::WText(sDist);
 	table_->elementAt(rowNr_, colDistance)->addWidget(txtDist);
 }
@@ -333,7 +325,7 @@ void FlightTableRow::save()
 //            throw std::invalid_argument("Unknown glider");
 //        flight_->setGlider(*fitGld);
 
-        BOOST_FOREACH(boost::shared_ptr<Glider> gld, flightDb_->Gliders)
+        for(const auto& gld : flightDb_->Gliders)
             if(cbGlider_->text() == gld.get()->identity())
                 flight_->setGlider(gld);
         // takeoff
@@ -341,9 +333,9 @@ void FlightTableRow::save()
         flight_->setTakeoff(lfTakeoff_->getLocation());
         // waypoints
         flight_->clearWaypoints();
-        for(vector<LocationField*>::const_iterator it = vlfWaypoints_.begin(); it != vlfWaypoints_.end(); ++it)
-            if((*it)->hasLocation())
-                flight_->addWaypoint((*it)->getLocation());
+        for(const auto& locFld : vlfWaypoints_)
+            if(locFld->hasLocation())
+                flight_->addWaypoint(locFld->getLocation());
         // landing
         assert(lfLanding_);
         flight_->setLanding(lfLanding_->getLocation());
@@ -398,7 +390,7 @@ void FlightTableRow::map()
 	gmap->setMapTypeControl(Wt::WGoogleMap::HierarchicalControl);
 
 	// get the igc file if we have one
-	string igcBaseDir;
+	std::string igcBaseDir;
 	if(!Wt::WApplication::readConfigurationProperty("igcBaseDir", igcBaseDir))
         igcBaseDir = (flb::SystemInformation::homeDir() / "gipsy").string();
     igc_storage igcstore(bfs::path(igcBaseDir) / flightDb_->pilotName(), true);
@@ -406,8 +398,8 @@ void FlightTableRow::map()
 
 	gmap->clearOverlays();
     // draw the flight
-    vector<Wt::WGoogleMap::Coordinate> points;
-    pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = std::make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
+    std::vector<Wt::WGoogleMap::Coordinate> points;
+    std::pair<Wt::WGoogleMap::Coordinate, Wt::WGoogleMap::Coordinate> bbox = std::make_pair(Wt::WGoogleMap::Coordinate(90, 180), Wt::WGoogleMap::Coordinate(-90, -180));
 
     if(bfs::exists(igcfile))
     {
@@ -417,32 +409,30 @@ void FlightTableRow::map()
             points.push_back(Wt::WGoogleMap::Coordinate(itp->pos_.first, itp->pos_.second));
         gmap->addPolyline(points, Wt::WColor("#EE4444"), 3, 0.4);
 
-        for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+        for(const auto coord : points)
         {
-            bbox.first.setLatitude(  std::min(bbox.first.latitude(),   itb->latitude()));
-            bbox.first.setLongitude( std::min(bbox.first.longitude(),  itb->longitude()));
-            bbox.second.setLatitude( std::max(bbox.second.latitude(),  itb->latitude()));
-            bbox.second.setLongitude(std::max(bbox.second.longitude(), itb->longitude()));
+            bbox.first.setLatitude(  std::min(bbox.first.latitude(),   coord.latitude()));
+            bbox.first.setLongitude( std::min(bbox.first.longitude(),  coord.longitude()));
+            bbox.second.setLatitude( std::max(bbox.second.latitude(),  coord.latitude()));
+            bbox.second.setLongitude(std::max(bbox.second.longitude(), coord.longitude()));
         }
     }
     // draw the legs
     points.clear();
     points.push_back(Wt::WGoogleMap::Coordinate(flight_->takeoff()->pos().first, flight_->takeoff()->pos().second));
 
-    for(Flight::Waypoints::const_iterator it = flight_->Waypoints.begin(); it != flight_->Waypoints.end(); ++it)
-    {
-        points.push_back(Wt::WGoogleMap::Coordinate((*it)->pos().first, (*it)->pos().second));
-    }
+    for(const auto& waypoint : flight_->Waypoints)
+        points.push_back(Wt::WGoogleMap::Coordinate(waypoint->pos().first, waypoint->pos().second));
     points.push_back(Wt::WGoogleMap::Coordinate(flight_->landing()->pos().first, flight_->landing()->pos().second));
 
     gmap->addPolyline(points, Wt::WColor("#FF0000"), 2, 0.9);
     // bounding box
-    for(vector<Wt::WGoogleMap::Coordinate>::const_iterator itb = points.begin(); itb != points.end(); ++itb)
+    for(const auto& coord : points)
     {
-        bbox.first.setLatitude(  std::min(bbox.first.latitude(),   itb->latitude()));
-        bbox.first.setLongitude( std::min(bbox.first.longitude(),  itb->longitude()));
-        bbox.second.setLatitude( std::max(bbox.second.latitude(),  itb->latitude()));
-        bbox.second.setLongitude(std::max(bbox.second.longitude(), itb->longitude()));
+        bbox.first.setLatitude(  std::min(bbox.first.latitude(),   coord.latitude()));
+        bbox.first.setLongitude( std::min(bbox.first.longitude(),  coord.longitude()));
+        bbox.second.setLatitude( std::max(bbox.second.latitude(),  coord.latitude()));
+        bbox.second.setLongitude(std::max(bbox.second.longitude(), coord.longitude()));
     }
     gmap->zoomWindow(bbox);
 
@@ -468,14 +458,14 @@ FlightTable::FlightTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WConta
 
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightTable::filter(const string &area)
+void FlightTable::filter(const std::string &area)
 {
     flights_.clear();
 
     if(area == "alle")
-        std::copy(flightDb_->flights().begin(), flightDb_->flights().end(), back_inserter(flights_));
+        brng::copy(flightDb_->flights(), back_inserter(flights_));
     else
-        BOOST_FOREACH(shared_ptr<Flight> fl, flightDb_->flights())
+        for(const auto& fl : flightDb_->flights())
             if(area == fl->takeoff()->area()->name())
                 flights_.push_back(fl);
 
@@ -490,9 +480,9 @@ void FlightTable::loadPage(unsigned int page)
     const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < flights_.size())
     {
-        vector<shared_ptr<Flight> >::iterator ibeg = flights_.begin();
+        auto ibeg = flights_.begin();
         std::advance(ibeg, (pageNr_ - 1) * entriesPerPage_);
-        vector<shared_ptr<Flight> >::iterator iend = ibeg;
+        auto iend = ibeg;
         const int nLast = std::min<int>(flights_.size(), nFirst + entriesPerPage_);
         std::advance(iend, nLast - nFirst);
         for(size_t i=1; ibeg != iend; ++ibeg, ++i)
@@ -506,11 +496,11 @@ void FlightTable::loadPage(unsigned int page)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightTable::createHeaderRow()
 {
-    string captions[8] = {"Nr",         "Datum", "Gleitschirm", "Startplatz",
-                          "Landeplatz", "Dauer", "Hoehendiff",  "Strecke"};
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    static const std::string captions[8] = {"Nr",         "Datum", "Gleitschirm", "Startplatz",
+                                            "Landeplatz", "Dauer", "Hoehendiff",  "Strecke"};
+    for(size_t i=0; i<sizeof(captions) / sizeof(std::string); ++i)
     {
-        WText *labelText = new WText(captions[i]);
+        Wt::WText *labelText = new Wt::WText(captions[i]);
         //labelText_->setFormatting(labelFormatting);
         labelText->setStyleClass("tableHeader");
         elementAt(0, i + 1)->addWidget(labelText);
@@ -520,14 +510,14 @@ void FlightTable::createHeaderRow()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightTable::createFooterRow()
 {
-    WImage *wiAdd = new WImage("img/add.png");
+    Wt::WImage *wiAdd = new Wt::WImage("img/add.png");
     wiAdd->setAlternateText("add new flight");
     wiAdd->setToolTip("Flug hinzufuegen");
 	elementAt(insertRowNr_++, 0)->addWidget(wiAdd);
 	wiAdd->clicked().connect(SLOT(this, FlightTable::addNewFlight));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-FlightTableRow* FlightTable::addFlight(shared_ptr<Flight> fl, size_t row, bool newEntry)
+FlightTableRow* FlightTable::addFlight(boost::shared_ptr<Flight> fl, size_t row, bool newEntry)
 {
 	FlightTableRow *flr = new FlightTableRow(fl, this, flightDb_, row, newEntry);
 	flr->show();
@@ -541,7 +531,7 @@ void FlightTable::addNewFlight()
     if(flightDb_->flights().size())
     {
         // create a new flight by copying the last flight and modify some fields
-        shared_ptr<Flight> newFlight(new Flight(**flightDb_->flights().rbegin()));
+        boost::shared_ptr<Flight> newFlight(new Flight(**flightDb_->flights().rbegin()));
         newFlight->setNumber(newFlight->number() + 1);
         newFlight->setDate(boost::gregorian::day_clock::local_day());
         newFlight->setDuration(boost::posix_time::time_duration(0, 0, 0));
@@ -559,10 +549,10 @@ void FlightTable::addNewFlight()
             return;
         }
         // find the first takeoff and the first landing place
-        FlightDatabase::Locations::const_iterator itTo = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
-                            bind(&Location::usage, *bll::_1) & static_cast<int>(Location::UA_TAKEOFF));
-        FlightDatabase::Locations::const_iterator itLa = find_if(flightDb_->Locations.begin(), flightDb_->Locations.end(),
-                            bind(&Location::usage, *bll::_1) & static_cast<int>(Location::UA_LANDING));
+        const auto itTo = brng::find_if(flightDb_->Locations, [](const boost::shared_ptr<Location>& loc)
+            { return loc->usage() & Location::UA_TAKEOFF; });
+        const auto itLa = brng::find_if(flightDb_->Locations, [](const boost::shared_ptr<Location>& loc)
+            { return loc->usage() & Location::UA_LANDING; });
         if(itTo == flightDb_->Locations.end())
         {
             Wt::Ext::MessageBox::show("Error", "Bitte erfassen Sie zuerst einen Startplatz.", Wt::Ok, true);
@@ -574,7 +564,7 @@ void FlightTable::addNewFlight()
             return;
         }
         // create the new flight
-        shared_ptr<Flight> newFlight(new Flight(1,                              // number
+        boost::shared_ptr<Flight> newFlight(new Flight(1,                              // number
                                                 boost::gregorian::day_clock::local_day(),  // date
                                                 boost::posix_time::time_duration(0, 0, 0), // airtime
                                                 *flightDb_->Gliders.begin(),    // glider
@@ -589,7 +579,7 @@ void FlightTable::addNewFlight()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
+FlightPanel::FlightPanel(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
@@ -605,9 +595,9 @@ FlightPanel::FlightPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     // header
     Wt::WTable *topBar = new Wt::WTable();
     topBar->setStyleClass("FilterBar");
-    WText *wtFilt = new WText("Filter : ");
+    Wt::WText *wtFilt = new Wt::WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
-    WText *wtArea = new WText("Fluggebiet");
+    Wt::WText *wtArea = new Wt::WText("Fluggebiet");
     wtArea->setStyleClass("FilterSubTitle");
     topBar->elementAt(0, 0)->addWidget(wtFilt);
     topBar->elementAt(0, 1)->addWidget(wtArea);
@@ -628,16 +618,20 @@ void FlightPanel::load()
 {
     cbArea_->clear();
     cbArea_->addItem("alle");
-    vector<string> areaNames;
-    std::transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), back_inserter(areaNames), bind(&FlightArea::name, *bll::_1));
+    std::vector<std::string> areaNames;
+    brng::transform(flightDb_->FlightAreas, back_inserter(areaNames), [](const boost::shared_ptr<FlightArea>& area)
+        {
+            return area->name();
+        });
     std::sort(areaNames.begin(), areaNames.end());
-    for_each(areaNames.begin(), areaNames.end(), bind(&Wt::Ext::ComboBox::addItem, cbArea_, bll::_1));
+    for(const auto& area : areaNames)
+        cbArea_->addItem(area);
     cbArea_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void FlightPanel::filter()
 {
-    const string area = cbArea_->currentText().narrow();
+    const std::string area = cbArea_->currentText().narrow();
 
     table_->filter(area);
     table_->loadPage(1);

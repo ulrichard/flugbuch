@@ -11,24 +11,13 @@
 #include <Wt/WBorderLayout>
 // boost
 #include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
+#include <boost/range/algorithm.hpp>
 // std lib
 #include <stdexcept>
 
 using namespace flbwt;
 using namespace flb;
-using Wt::WImage;
-using Wt::WText;
-using std::string;
-using std::vector;
-using std::set;
-using namespace boost::lambda;
-namespace bll = boost::lambda;
-using boost::shared_ptr;
-using boost::lexical_cast;
-
+namespace brng = boost::range;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void GliderTableRow::clearRow()
@@ -56,19 +45,19 @@ void GliderTableRow::show()
 	table_->elementAt(rowNr_, colOp)->addWidget(wiEdit);
 	wiEdit->clicked().connect(SLOT(this, GliderTableRow::edit));
 
-	WImage *wiDelete = new WImage("img/delete.png");
+	Wt::WImage *wiDelete = new Wt::WImage("img/delete.png");
 	wiDelete->setToolTip("Schirm löschen");
 	wiDelete->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiDelete);
 	wiDelete->clicked().connect(SLOT(this, GliderTableRow::remove));
 
 	// prepare the text
-	vector<string> vsText;
+	std::vector<std::string> vsText;
 	vsText.push_back(glider_->brand());
 	vsText.push_back(glider_->model());
 	vsText.push_back(glider_->size());
 	vsText.push_back(glider_->color());
-	vsText.push_back(lexical_cast<std::string>(glider_->year()));
+	vsText.push_back(boost::lexical_cast<std::string>(glider_->year()));
 	vsText.push_back(glider_->classification());
 	vsText.push_back(glider_->description());
 	// add the text widgets
@@ -85,13 +74,13 @@ void GliderTableRow::edit()
 	clearRow();
 
 	// the save image
-	WImage *wiSave = new WImage("img/save.png");
+	Wt::WImage *wiSave = new Wt::WImage("img/save.png");
 	wiSave->setToolTip("speichern");
 	wiSave->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiSave);
 	wiSave->clicked().connect(SLOT(this, GliderTableRow::save));
     // the cancel image
-	WImage *wiCancel = new WImage("img/undo.png");
+	Wt::WImage *wiCancel = new Wt::WImage("img/undo.png");
 	wiCancel->setToolTip("abbrechen");
 	wiCancel->setStyleClass("operationImg");
 	table_->elementAt(rowNr_, colOp)->addWidget(wiCancel);
@@ -136,7 +125,7 @@ void GliderTableRow::edit()
 	// the glider image
 	if(glider_->image().length())
 	{
-        img_ = new WImage(glider_->image());
+        img_ = new Wt::WImage(glider_->image());
         table_->elementAt(rowNr_, colImg)->addWidget(wiSave);
 	}
 }
@@ -204,9 +193,9 @@ GliderTable::GliderTable(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WConta
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void GliderTable::createHeaderRow()
 {
-    string captions[8] = {"Marke",   "Typ",    "Groesse",      "Farbe",
-                          "Baujahr", "Klasse", "Beschreibung", "Bild"};
-    for(size_t i=0; i<sizeof(captions) / sizeof(string); ++i)
+    static const std::string captions[8] = {"Marke",   "Typ",    "Groesse",      "Farbe",
+                                            "Baujahr", "Klasse", "Beschreibung", "Bild"};
+    for(size_t i=0; i<sizeof(captions) / sizeof(std::string); ++i)
     {
         Wt::WText *labelText = new Wt::WText(captions[i]);
         //labelText_->setFormatting(labelFormatting);
@@ -218,14 +207,14 @@ void GliderTable::createHeaderRow()
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void GliderTable::createFooterRow()
 {
-    WImage *wiAdd = new WImage("img/add.png");
+    Wt::WImage *wiAdd = new Wt::WImage("img/add.png");
     wiAdd->setAlternateText("add new glider");
     wiAdd->setToolTip("Schirm hinzufuegen");
 	elementAt(insertRowNr_, 0)->addWidget(wiAdd);
 	wiAdd->clicked().connect(SLOT(this, GliderTable::addNewGlider));
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-GliderTableRow * GliderTable::addGlider(shared_ptr<Glider> gld, size_t row, bool newEntry)
+GliderTableRow * GliderTable::addGlider(boost::shared_ptr<Glider> gld, size_t row, bool newEntry)
 {
 	GliderTableRow *gldrw = new GliderTableRow(gld, this, flightDb_, row, newEntry);
 	gldrw->show();
@@ -236,7 +225,7 @@ GliderTableRow * GliderTable::addGlider(shared_ptr<Glider> gld, size_t row, bool
 void GliderTable::addNewGlider()
 {
     // create the new glider
-    shared_ptr<Glider> newGlider(new Glider("",                                              // brand
+    boost::shared_ptr<Glider> newGlider(new Glider("",                                              // brand
                                             "",                                              // model
                                             "",                                              // size
                                             "",                                              // color
@@ -253,19 +242,18 @@ void GliderTable::filter(const std::string &brand, const std::string &classifica
     gliders_.clear();
 
     if(brand == "alle")
-        std::copy(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), back_inserter(gliders_));
+        brng::copy(flightDb_->Gliders, back_inserter(gliders_));
     else
     {
-        std::remove_copy_if(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::back_inserter(gliders_),
-            brand != bind(&Glider::brand, *boost::lambda::_1));
-
-//        BOOST_FOREACH(shared_ptr<FlightArea> flar, flightDb_->flightAreas())
-//            if(flar->country() == country)
-//                areas_.push_back(loc);
+        for(const auto& glider : flightDb_->Gliders)
+            if(glider->brand() == brand)
+                gliders_.push_back(glider);
     }
     if(classification == "alle")
         return;
-    gliders_.erase(std::remove_if(gliders_.begin(), gliders_.end(), classification != bind(&Glider::classification, *boost::lambda::_1)), gliders_.end());
+    auto classificationFilter = [&classification](boost::shared_ptr<Glider>& glider)
+        { return glider->classification() != classification; };
+    gliders_.erase(brng::remove_if(gliders_, classificationFilter), gliders_.end());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void GliderTable::loadPage(unsigned int page)
@@ -277,9 +265,9 @@ void GliderTable::loadPage(unsigned int page)
     const size_t nFirst = (pageNr_ - 1) * entriesPerPage_;
     if(nFirst < gliders_.size())
     {
-        vector<shared_ptr<Glider> >::iterator ibeg = gliders_.begin();
+        auto ibeg = gliders_.begin();
         std::advance(ibeg, (pageNr_ - 1) * entriesPerPage_);
-        vector<shared_ptr<Glider> >::iterator iend = ibeg;
+        auto iend = ibeg;
         const int nLast = std::min<int>(gliders_.size(), nFirst + entriesPerPage_);
         std::advance(iend, nLast - nFirst);
         for(size_t i=1; ibeg != iend; ++ibeg, ++i)
@@ -293,7 +281,7 @@ void GliderTable::loadPage(unsigned int page)
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-GliderPanel::GliderPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
+GliderPanel::GliderPanel(boost::shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
  : Wt::WCompositeWidget(parent), flightDb_(flightDb), impl_(new Wt::WContainerWidget())
 {
     setImplementation(impl_);
@@ -310,11 +298,11 @@ GliderPanel::GliderPanel(shared_ptr<FlightDatabase>  flightDb, Wt::WContainerWid
     // header
     Wt::WTable *topBar = new Wt::WTable();
     topBar->setStyleClass("FilterBar");
-    WText *wtFilt = new WText("Filter : ");
+    Wt::WText *wtFilt = new Wt::WText("Filter : ");
     wtFilt->setStyleClass("FilterTitle");
-    WText *wtBrand = new WText("Hersteller");
+    Wt::WText *wtBrand = new Wt::WText("Hersteller");
     wtBrand->setStyleClass("FilterSubTitle");
-    WText *wtClassi = new WText("Klassierung");
+    Wt::WText *wtClassi = new Wt::WText("Klassierung");
     wtClassi->setStyleClass("FilterSubTitle");
     topBar->elementAt(0, 0)->addWidget(wtFilt);
     topBar->elementAt(0, 1)->addWidget(wtBrand);
@@ -336,29 +324,21 @@ void GliderPanel::load()
 {
     cbBrand_->clear();
     cbBrand_->addItem("alle");
-    set<string> brands;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), std::inserter(brands, brands.end()),
-		bll::bind(&Glider::brand, *bll::_1));
-//    for_each(brands.begin(), brands.end(), bind(&Wt::Ext::ComboBox::addItem, cbBrand_, *bll::_1));
-    BOOST_FOREACH(string str, brands)
-        cbBrand_->addItem(str);
+    for(const auto& glider : flightDb_->Gliders)
+        cbBrand_->addItem(glider->brand());
     cbBrand_->setCurrentIndex(0);
 
     cbClassi_->clear();
     cbClassi_->addItem("alle");
-    set<string> classis;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classis, classis.end()),
-		bll::bind(&Glider::classification, *bll::_1));
-//    for_each(classis.begin(), classis.end(), bind(&Wt::Ext::ComboBox::addItem, cbClassi_, *boost::lambda::_1));
-    BOOST_FOREACH(string str, classis)
-        cbClassi_->addItem(str);
+    for(const auto& glider : flightDb_->Gliders)
+        cbClassi_->addItem(glider->classification());
     cbClassi_->setCurrentIndex(0);
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 void GliderPanel::filter()
 {
-    const string brand  = cbBrand_->currentText().narrow();
-    const string classi = cbClassi_->currentText().narrow();
+    const std::string brand  = cbBrand_->currentText().narrow();
+    const std::string classi = cbClassi_->currentText().narrow();
 
     table_->filter(brand, classi);
     table_->loadPage(1);

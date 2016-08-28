@@ -7,6 +7,8 @@ SET(VERSION_SERIES 2)
 SET(VERSION_MAJOR 1)
 SET(VERSION_MINOR 0)
 
+SET(CMAKE_CXX_STANDARD 11)
+
 
 SET(USERLIB_ROOT /usr CACHE PATH "Other installation prefix for dependent libraries")
 SET(RUNDIR "/usr/flugbuch/run" CACHE PATH "Default path for wt session management (only used by FCGI connector; not relative to CMAKE_INSTALL_PREFIX)")

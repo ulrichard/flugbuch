@@ -39,7 +39,6 @@ public:
     void loadFlightDb(const std::string &usr, const std::string &pwd);
     void createFlightDb(const std::string &usr, const std::string &pwd, bool useStdLoc);
     void loadTestDb();
-    void importFlightDb(const boost::filesystem::path &file, bool del, const std::string &usr, const std::string &pwd, bool assignIgc);
     void loadFlights(boost::shared_ptr<flb::FlightDatabase> fldb);
     void saveDb(void);
     void reload(void);

@@ -17,34 +17,16 @@
 #include <Wt/WSelectionBox>
 #include <Wt/WTable>
 // boost
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/range/algorithm.hpp>
 // standard library
-#include <algorithm>
 #include <map>
 #include <utility>
 
-using std::string;
-using std::vector;
-using std::set;
-using std::map;
-using std::pair;
-using std::make_pair;
-using std::for_each;
-using std::max;
-using std::auto_ptr;
-using boost::shared_ptr;
-using boost::any;
-using boost::gregorian::date;
-using boost::ptr_vector;
-using boost::lexical_cast;
-using namespace boost::lambda;
-namespace bll = boost::lambda;
 using namespace flbwt;
+namespace brng = boost::range;
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
 StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent)
@@ -54,15 +36,15 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     impl_->setStyleClass("flb_detail_panel");
 
     // add new statistics classes here
-    addStatistic(auto_ptr<StatBase>(new FlightsPerGlider(flightDb_)));
-    addStatistic(auto_ptr<StatBase>(new FlightsPerArea(flightDb_)));
-    addStatistic(auto_ptr<StatBase>(new FlightlessTime(flightDb_)));
-    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_YEAR)));
-    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_MONTH)));
-    addStatistic(auto_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_WEEK)));
-    addStatistic(auto_ptr<StatBase>(new StatMap(flightDb_)));
-    addStatistic(auto_ptr<StatBase>(new StatFlightReport(flightDb_)));
-    addStatistic(auto_ptr<StatBase>(new StatGeneralOverview(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightsPerGlider(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightsPerArea(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightlessTime(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_YEAR)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_MONTH)));
+    addStatistic(std::unique_ptr<StatBase>(new FlightsPerPeriod(flightDb_, FLP_WEEK)));
+    addStatistic(std::unique_ptr<StatBase>(new StatMap(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new StatFlightReport(flightDb_)));
+    addStatistic(std::unique_ptr<StatBase>(new StatGeneralOverview(flightDb_)));
 
     // header
     Wt::WTable *topBar = new Wt::WTable();
@@ -73,7 +55,7 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     cbStatSel_ = new Wt::Ext::ComboBox();
     cbStatSel_->resize(150, cbStatSel_->height());
     cbStatSel_->activated().connect(SLOT(this, StatisticsPanel::load));
-    for(boost::ptr_map<std::string, StatBase>::iterator it = stats_.begin(); it != stats_.end(); ++it)
+    for(auto it = stats_.begin(); it != stats_.end(); ++it)
         cbStatSel_->addItem(it->first);
 //    for_each(stats_.begin(), stats_.end(), bind(&Wt::Ext::ComboBox::addItem, cbStatSel_, bind(&pair<string, StatBase*>::first, ::_1)));
     topBar->elementAt(0, 0)->addWidget(wtStat);
@@ -83,10 +65,10 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     wtCountry->setStyleClass("FilterSubTitle");
     sbCountry_ = new Wt::WSelectionBox();
     sbCountry_->setSelectionMode(Wt::ExtendedSelection);
-    set<string> countries;
-    transform(flightDb_->FlightAreas.begin(), flightDb_->FlightAreas.end(), inserter(countries, countries.end()),
-        bind(&flb::FlightArea::country, *bll::_1));
-    BOOST_FOREACH(string str, countries)
+    std::set<std::string> countries;
+    brng::transform(flightDb_->FlightAreas, inserter(countries, countries.end()),
+        [](const boost::shared_ptr<flb::FlightArea>& area){ return area->country(); });
+    for(std::string str : countries)
         sbCountry_->addItem(str);
     std::set<int> selind;
     for(size_t i=0; i<countries.size(); ++i)
@@ -101,11 +83,11 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     wtYear->setStyleClass("FilterSubTitle");
     sbYear_ = new Wt::WSelectionBox();
     sbYear_->setSelectionMode(Wt::ExtendedSelection);
-    set<int> years;
-    BOOST_FOREACH(shared_ptr<flb::Flight> flt, flightDb_->flights())
+    std::set<int> years;
+    for(auto& flt : flightDb_->flights())
         years.insert(flt->date().year());
-    BOOST_FOREACH(int yyy, years)
-        sbYear_->addItem(lexical_cast<string>(yyy));
+    for(int yyy : years)
+        sbYear_->addItem(boost::lexical_cast<std::string>(yyy));
     selind.clear();
     for(size_t i=0; i<years.size(); ++i)
         selind.insert(i);
@@ -119,10 +101,10 @@ StatisticsPanel::StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  f
     wtClassi->setStyleClass("FilterSubTitle");
     sbClassi_ = new Wt::WSelectionBox();
     sbClassi_->setSelectionMode(Wt::ExtendedSelection);
-    set<string> classes;
-    transform(flightDb_->Gliders.begin(), flightDb_->Gliders.end(), inserter(classes, classes.end()),
-        bind(&flb::Glider::classification, *bll::_1));
-    BOOST_FOREACH(string str, classes)
+    std::set<std::string> classes;
+    brng::transform(flightDb_->Gliders, inserter(classes, classes.end()),
+        [](const boost::shared_ptr<flb::Glider>& glider){ return glider->classification(); });
+    for(const auto& str : classes)
         sbClassi_->addItem(str);
     selind.clear();
     for(size_t i=0; i<classes.size(); ++i)
@@ -142,8 +124,8 @@ void StatisticsPanel::load()
 {
     Wt::WBorderLayout *blayout = dynamic_cast<Wt::WBorderLayout*>(impl_->layout());
     assert(blayout);
-    const string statname = cbStatSel_->text().narrow();
-    static string laststatname = "";
+    const std::string statname = cbStatSel_->text().narrow();
+    static std::string laststatname = "";
     Wt::WContainerWidget *cont = dynamic_cast<Wt::WContainerWidget*>(blayout->widgetAt(Wt::WBorderLayout::Center));
     if(statname != laststatname && cont)
     {
@@ -158,9 +140,9 @@ void StatisticsPanel::load()
     }
 
     initFilter();
-    set<shared_ptr<flb::Flight> > flights;
-    remove_copy_if(flightDb_->flights().begin(), flightDb_->flights().end(), inserter(flights, flights.end()),
-        !bll::bind(&StatisticsPanel::filter, this, *bll::_1));
+    std::set<boost::shared_ptr<flb::Flight> > flights;
+    std::remove_copy_if(flightDb_->flights().begin(), flightDb_->flights().end(), inserter(flights, flights.end()),
+        [this](const boost::shared_ptr<flb::Flight>& flight){ return filter(*flight); });
 
     if(statname.length())
     {
@@ -175,21 +157,21 @@ void StatisticsPanel::load()
 void StatisticsPanel::initFilter()
 {
     filtCountries_.clear();
-    const set<int> &countrysel = sbCountry_->selectedIndexes();
+    const std::set<int> &countrysel = sbCountry_->selectedIndexes();
 //    transform(countrysel.begin(), countrysel.end(), inserter(filtCountries_, filtCountries_.end()),
 //        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbCountry_, ::_1)));
-    BOOST_FOREACH(int cn, countrysel)
+    for(int cn : countrysel)
         filtCountries_.insert(sbCountry_->itemText(cn).narrow());
 
     filtYears_.clear();
-    BOOST_FOREACH(int idx, sbYear_->selectedIndexes())
-        filtYears_.insert(lexical_cast<int>(sbYear_->itemText(idx).narrow()));
+    for(int idx : sbYear_->selectedIndexes())
+        filtYears_.insert(boost::lexical_cast<int>(sbYear_->itemText(idx).narrow()));
 
     filtClassi_.clear();
-    const set<int> &classisel = sbClassi_->selectedIndexes();
+    const std::set<int> &classisel = sbClassi_->selectedIndexes();
 //    transform(classisel.begin(), classisel.end(), inserter(filtClassi_, filtClassi_.end()),
 //        bind(&Wt::WString::narrow, bind(&Wt::WSelectionBox::itemText, sbClassi_, ::_1)));
-    BOOST_FOREACH(int csn, classisel)
+    for(int csn : classisel)
         filtClassi_.insert(sbClassi_->itemText(csn).narrow());
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A

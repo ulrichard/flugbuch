@@ -30,7 +30,7 @@ public:
     StatisticsPanel(const boost::shared_ptr<flb::FlightDatabase>  flightDb, Wt::WContainerWidget *parent = 0);
     virtual ~StatisticsPanel() { }
 
-    void addStatistic(std::auto_ptr<StatBase> stat) { std::string nam = stat->name(); stats_.insert(nam, stat.release()); }
+    void addStatistic(std::unique_ptr<StatBase> stat) { std::string nam = stat->name(); stats_.insert(nam, stat.release()); }
 
     void load();
 

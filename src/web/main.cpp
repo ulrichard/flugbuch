@@ -7,11 +7,6 @@
 #include "MainMenu.h"
 #include "SystemInformation.h"
 #include "IgcImportForm.h"
-#ifdef WIN32
-  #include "inout_mdb_win.h"
-#else
-  #include "inout_mdb.h"
-#endif
 #include "inout_igc.h"
 #include "igc_storage.h"
 // witty
@@ -165,61 +160,6 @@ void FlightLogApp::loadTestDb()
     catch(std::exception &ex)
     {
         Wt::Ext::MessageBox::show("Error loading test db", ex.what(), Wt::Ok, true);
-    }
-}
-/////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
-void FlightLogApp::importFlightDb(const bfs::path &file, bool del, const string &usr, const string &pwd, bool assignIgc)
-{
-    try
-    {
-        flb::inout_mdb iomdb;
-        shared_ptr<flb::FlightDatabase> fldb(new flb::FlightDatabase(iomdb.read(file)));
-        fldb->setPilotNameAndPwd(usr, pwd);
-
-        if(assignIgc)
-        {
-            // try to match igc files
-            string igcBaseDir;
-            if(!Wt::WApplication::readConfigurationProperty("igcBaseDir", igcBaseDir))
-                igcBaseDir = (flb::SystemInformation::homeDir() / "gipsy").string();
-            flb::igc_storage igcstore(bfs::path(igcBaseDir) / usr, true);
-            vector<bfs::path> igcnames = igcstore.find_all_igc_files();
-            map<bgreg::date, vector<pair<bfs::path, shared_ptr<flb::inout_igc> > > > igcdata;
-
-            for(vector<bfs::path>::const_iterator it = igcnames.begin(); it != igcnames.end(); ++it)
-            {
-                shared_ptr<flb::inout_igc> igcf(new flb::inout_igc(flightDb_));
-                igcf->read(*it);
-                igcdata[igcf->Trackpoints.begin()->timestamp_.date()].push_back(make_pair(*it, igcf));
-            }
-
-            // todo: handle multible flights per day
-            if(igcdata.size())
-                for(flb::FlightDatabase::SeqFlights::iterator it = fldb->flights().begin(); it != fldb->flights().end(); ++it)
-                {
-                    if(igcdata[(*it)->date()].size() == 1)
-                    {
-#if BOOST_FILESYSTEM_VERSION >= 3
-                        (*it)->setTrack(igcdata[(*it)->date()][0].first.filename().string());
-#else
-                        (*it)->setTrack(igcdata[(*it)->date()][0].first.filename());
-#endif
-                        igcdata[(*it)->date()].clear();
-                        std::cout << "assigned ifg file : " << igcdata[(*it)->date()][0].first.filename() << " to fight " << (*it)->number() << std::endl;
-                    }
-                }
-        } // if(assignIgc)
-
-        loadFlights(fldb);
-
-#ifndef WIN32
-        if(del)
-            bfs::remove(file);
-#endif
-    }
-    catch(std::exception &ex)
-    {
-        Wt::Ext::MessageBox::show("Error importing flight db", ex.what(), Wt::Ok, true);
     }
 }
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8/////////9/////////A
