@@ -1,3 +1,9 @@
+flugbuch2 (2.0.29~xenial) xenial; urgency=medium
+
+  * started modernizing
+
+ -- Richard Ulrich <richi@paraeasy.ch>  Sun, 28 Aug 2016 23:35:40 +0200
+
 flugbuch2 (2.0.28~xenial) xenial; urgency=medium
 
   * adapted the apache config files
