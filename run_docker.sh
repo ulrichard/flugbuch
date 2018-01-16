@@ -1,9 +1,11 @@
 #! /bin/sh
 
-if [ ! -d /usr/share/flugbuch2 ]; then
-    sudo mkdir -p /usr/share/flugbuch2
+if [ ! -d $HOME/flugbuch2 ]; then
+    mkdir -p $HOME/flugbuch2
 fi
 docker build -t flugbuch2 .
-docker run -d -v /usr/share/flugbuch2:/usr/share/flugbuch2 -p 8083:80 -p 2283:22 flugbuch2 
-sleep 2
-ssh -p 2283 docker@localhost
+firefox http://localhost:8383
+docker run -ti --rm \
+    -v $HOME/flugbuch2:/root/flugbuch2 \
+    -p 8383:80 \
+    flugbuch2 
