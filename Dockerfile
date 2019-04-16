@@ -17,7 +17,7 @@ RUN apt-add-repository -y ppa:pgquiles/wt && \
     apt-add-repository -y ppa:richi-paraeasy/ppa
 
 # install flugbuch
-RUN apt-get update && apt-get install -y flugbuch2
+RUN apt-get update && apt-get install -y --force-yes flugbuch2
 
 # Set locale (fix locale warnings)
 RUN localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 || true
